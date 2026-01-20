@@ -75,9 +75,9 @@ export const Sidebar = ({}) => {
           <NavLink to="/" className="nav-item" onClick={() => setMobileOpen(false)}>
             <LayoutDashboard /><span>Dashboard</span>
           </NavLink>
-          {(rol === 'Administrador' && rol === 'Productor') && (
+          {(rol === 'Administrador' || rol === 'Productor') && (
             <NavLink to={`/${rutas[rol]}/users`} className="nav-item" onClick={() => setMobileOpen(false)}>
-              <User/><span>{rol === 'Administrador'? Usuarios : Productores }</span>
+              <User/><span>{rol === 'Administrador'? "Usuarios" : "Productores" }</span>
             </NavLink>
           )}
           {(rol === 'Administrador' || rol === 'Productor'|| rol === 'Manager' || rol === 'Asesor') && (

@@ -12,15 +12,15 @@
   top: 0;
   flex-shrink: 0; /* evita que se reduzca en layouts flex */
 }
+
 .LogoPrincipal {
   color: #cbd5e1;
 }
+
 .Logout{
   color: #9ca3af;
 }
-.Logout:hover{
-  color: red;
-}
+
 /* HEADER */
 .sidebar-header {
   margin-top: 2rem;
@@ -99,6 +99,7 @@
   align-items: center;
   gap: 0.8rem;
 }
+
 .logout-text {
   font-size: 0.9rem;
   color: #9ca3af;
@@ -107,21 +108,16 @@
   transition: 0.3s;
 }
 
-.logout-text:hover{
-  color: red;
-}
-
 .logout img {
   filter: invert(1);
   width: 2rem;
 }
 
-
-
 /* COLAPSO */
 .sidebar.collapsed {
   width: 7rem;
 }
+
 .logoColapsado {
   background-color: #f59e0b;
   padding: 12px;
