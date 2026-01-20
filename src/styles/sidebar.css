@@ -1,0 +1,265 @@
+/* SIDEBAR */
+.sidebar {
+  width: 16.25rem; /* 260px */
+  height: 100vh;
+  background: var(--verde-oscuro);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  border-right: 0.0625rem solid rgba(255,255,255,0.05);
+  position: sticky;
+  top: 0;
+  flex-shrink: 0; /* evita que se reduzca en layouts flex */
+}
+.LogoPrincipal {
+  color: #cbd5e1;
+}
+.Logout{
+  color: #9ca3af;
+}
+.Logout:hover{
+  color: red;
+}
+/* HEADER */
+.sidebar-header {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+/* NAVIGATION */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1.8rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1.4rem;
+  margin: 0 0.75rem;
+  border-radius: 0.75rem;
+  color: #cbd5e1;
+  text-decoration: none;
+}
+
+.nav-item img {
+  filter: invert(1);
+  width: 2rem;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* FOOTER */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1.25rem;
+  border-top: 0.0625rem solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: flex-start;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.user-role {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.logout-text {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.logout-text:hover{
+  color: red;
+}
+
+.logout img {
+  filter: invert(1);
+  width: 2rem;
+}
+
+
+
+/* COLAPSO */
+.sidebar.collapsed {
+  width: 7rem;
+}
+.logoColapsado {
+  background-color: #f59e0b;
+  padding: 12px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.8rem;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+}
+.sidebar.collapsed .sidebar-nav{
+  margin-top: 4rem;
+}
+.sidebar.collapsed .nav-item span {
+  display: none;
+}
+.sidebar.collapsed .sidebar-header h2 {
+  display: none;
+}
+.sidebar.collapsed .logout{
+  margin-left: 1.2rem;
+}
+
+/* ===== RESPONSIVE SIDEBAR ===== */
+
+/* Overlay oscuro */
+.sidebar-overlay {
+  display: none;
+}
+.mobile-menu-btn {
+  display: none;
+}
+
+/* TABLET */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 7rem;
+  }
+
+  .sidebar .nav-item span,
+  .sidebar .sidebar-header h2 {
+    display: none;
+  }
+
+  .sidebar .nav-item {
+    justify-content: center;
+  }
+}
+
+/* MÓVIL */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 7rem;           /* tamaño colapsado */
+    transform: translateX(-100%);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Ignorar collapsed en móvil */
+  .sidebar.collapsed {
+    width: 7rem !important;
+  }
+
+  /* Ocultar textos de nav y footer */
+  .sidebar-nav span,
+  .sidebar-footer .user-name,
+  .sidebar-footer .user-role,
+  .logout-text {
+    display: none;
+  }
+
+  /* Nav items centrados */
+  .sidebar-nav .nav-item {
+    justify-content: center;
+  }
+
+  /* Footer más compacto */
+  .sidebar-footer {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  /* Header botón solo estético */
+  .sidebar-header .menu-btn {
+    pointer-events: none;  /* desactiva click en móvil */
+    justify-content: center; 
+  }
+
+  .logoColapsado {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+  }
+
+  /* Overlay visible cuando sidebar abierto */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+
+  /* Botón de menú ☰ */
+  .mobile-menu-btn {
+    display: flex;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1101;
+    background: #14243b;
+    color: white;
+    border: none;
+    font-size: 1.8rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Bloquear scroll cuando sidebar abierto */
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
