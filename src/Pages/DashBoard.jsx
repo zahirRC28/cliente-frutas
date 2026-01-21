@@ -13,8 +13,8 @@ export const DashBoard = () => {
   const [mostrarUsers, setMostrarUsers] = useState(null);
   const [mostrarCultivos, setMostrarCultivos] = useState(null);
   const [mostrarReportes, setMostrarReportes] = useState(null);
-
   const rol = getRole();
+
   //console.log(rol);
 
   const cargandoDatos = async()=>{
@@ -55,27 +55,37 @@ export const DashBoard = () => {
     { key: "correo", label: "Email" }
   ];
   return (
-  <>
-    { rol === 'Administrador' && (
-      <>
-        <section className="cards-container">
-          <Card icono={<Users />} titulo="Usuarios" subtitulo={datosUser.length} variant="counter" onClick={verUsers}/>
-          <Card icono={<Sprout />} titulo="Cultivos" subtitulo={18} variant="counter" onClick={verCultivos}/>
-          <Card icono={<FileText />} titulo="Informes" subtitulo={57} variant="counter" onClick={verReportes}/>
-        </section>
-        {mostrarUsers &&(
-          <DataTable
-            title="Usuarios del sistema"
-            columnas={userColumns}
-            data={datosUser}
-            //todos="/admin/users"
-            limit={3}
-          />
-        )}
-        
+    <div style={{ padding: '20px' }}>
+      <h1>Panel de Control</h1>
+      
+      {/* VISTA ADMINISTRADOR */}
+      {rol === 'Administrador' && (
+        <>
+          <section className="cards-container">
+            <Card icono={<Users />} titulo="Usuarios" subtitulo={datosUser.length} variant="counter" onClick={verUsers}/>
+            <Card icono={<Sprout />} titulo="Cultivos" subtitulo={18} variant="counter" onClick={verCultivos}/>
+            <Card icono={<FileText />} titulo="Informes" subtitulo={57} variant="counter" onClick={verReportes}/>
+          </section>
 
-      </>
-    )}
-  </>
-  )
-}
+          {mostrarUsers && (
+            <DataTable
+              title="Usuarios del sistema"
+              columnas={userColumns}
+              data={datosUser}
+              limit={3}
+            />
+          )}
+        </>
+      )}
+      {/* VISTA PRODUCTOR (Simplificada) */}
+      {rol === 'Productor' && (
+        <div>
+            <p>Bienvenido a tu panel de gestión.</p>
+            <section className="cards-container">
+                <Card icono={<Sprout />} titulo="Mis Cultivos Activos" subtitulo={2} variant="counter"/>
+            </section>
+        </div>
+      )}
+    </div>
+  );
+};

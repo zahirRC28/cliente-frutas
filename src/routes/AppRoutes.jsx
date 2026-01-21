@@ -9,6 +9,7 @@ import { PublicProtection } from '../components/protections/PublicProtection'
 import { LayoutGeneral } from '../layouts/LayoutGeneral'
 import { DashBoard } from '../Pages/DashBoard'
 import { Login } from '../Pages/Login'
+import { Cultivos } from '../Pages/Cultivos' // <--- IMPORT NUEVO
 
 /**
  * Componente de rutas principales de la aplicación.
@@ -16,10 +17,10 @@ import { Login } from '../Pages/Login'
  *
  * Rutas principales:
  * - /               -> LoginPage (protegida como pública)
- * - /admin/*        -> Panel de administrador
- * - /manager/*         -> Panel de manager
- * - /asesor/*      -> Panel de asesor
- * - /productor/*      -> Panel de productor
+ * - /admin/* -> Panel de administrador
+ * - /manager/* -> Panel de manager
+ * - /asesor/* -> Panel de asesor
+ * - /productor/* -> Panel de productor
  *
  * @component
  * @returns {JSX.Element} Elemento JSX con la definición de rutas
@@ -33,6 +34,7 @@ export const AppRoutes = () => {
             <Login/>
           </PublicProtection>
         } />
+        
         {/*RUTAS DE ADMINISTRADOR*/}
         <Route path="admin" element={
           <ProtectedRoutes roles={['Administrador']}>
@@ -41,8 +43,7 @@ export const AppRoutes = () => {
         }>
           <Route index element={<DashBoard/>} />
           {/*SUBRUTAS DE ADMIN*/}
-          
-
+          <Route path="cultivos" element={<Cultivos/>} />
         </Route>
 
         {/*RUTAS DE MANAGER*/}
@@ -53,7 +54,7 @@ export const AppRoutes = () => {
         }>
           <Route index element={<DashBoard/>} />
           {/*SUBRUTAS DE MANAGER*/}
-
+          <Route path="cultivos" element={<Cultivos/>} />
         </Route>
 
         {/*RUTAS DE ASESOR*/}
@@ -64,6 +65,7 @@ export const AppRoutes = () => {
         }>
           <Route index element={<DashBoard/>} />
           {/*SUBRUTAS DE ASESOR*/}
+          <Route path="cultivos" element={<Cultivos/>} />
         </Route>
 
         {/*RUTAS DE PRODUCTOR*/}
@@ -74,7 +76,7 @@ export const AppRoutes = () => {
         }>
           <Route index element={<DashBoard/>} />
           {/*SUBRUTAS DE PRODUCTOR*/}
-
+          <Route path="cultivos" element={<Cultivos/>} />
         </Route>
       </Route>
       <Route path='/*' element={<Navigate to={'/'} />} />
