@@ -29,6 +29,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["@eslint/js", "npm:9.39.2"],\
+          ["@react-leaflet/core", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:3.0.0"],\
           ["@types/react", "npm:19.2.8"],\
           ["@types/react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"],\
           ["@vitejs/plugin-react", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.1.2"],\
@@ -40,10 +41,15 @@ const RAW_RUNTIME_STATE =
           ["globals", "npm:16.5.0"],\
           ["js-cookie", "npm:3.0.5"],\
           ["jwt-decode", "npm:4.0.0"],\
+          ["leaflet", "npm:1.9.4"],\
+          ["leaflet-draw", "npm:1.0.4"],\
           ["lucide-react", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:0.562.0"],\
+          ["prop-types", "npm:15.8.1"],\
           ["react", "npm:19.2.3"],\
           ["react-chartjs-2", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.3.1"],\
           ["react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"],\
+          ["react-leaflet", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.0.0"],\
+          ["react-leaflet-draw", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:0.21.0"],\
           ["react-router-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:7.12.0"],\
           ["vite", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:7.3.1"]\
         ],\
@@ -806,6 +812,36 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@react-leaflet/core", [\
+      ["npm:3.0.0", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@react-leaflet-core-npm-3.0.0-4e3f2d62b5-10c0.zip/node_modules/@react-leaflet/core/",\
+        "packageDependencies": [\
+          ["@react-leaflet/core", "npm:3.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:3.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@react-leaflet-core-virtual-21e4e85e1a/4/AppData/Local/Yarn/Berry/cache/@react-leaflet-core-npm-3.0.0-4e3f2d62b5-10c0.zip/node_modules/@react-leaflet/core/",\
+        "packageDependencies": [\
+          ["@react-leaflet/core", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:3.0.0"],\
+          ["@types/leaflet", null],\
+          ["@types/react", "npm:19.2.8"],\
+          ["@types/react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"],\
+          ["leaflet", "npm:1.9.4"],\
+          ["react", "npm:19.2.3"],\
+          ["react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"]\
+        ],\
+        "packagePeers": [\
+          "@types/leaflet",\
+          "@types/react-dom",\
+          "@types/react",\
+          "leaflet",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@rolldown/pluginutils", [\
       ["npm:1.0.0-beta.53", {\
         "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/@rolldown-pluginutils-npm-1.0.0-beta.53-0e2b6fa8ac-10c0.zip/node_modules/@rolldown/pluginutils/",\
@@ -1358,6 +1394,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["@eslint/js", "npm:9.39.2"],\
+          ["@react-leaflet/core", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:3.0.0"],\
           ["@types/react", "npm:19.2.8"],\
           ["@types/react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"],\
           ["@vitejs/plugin-react", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.1.2"],\
@@ -1369,10 +1406,15 @@ const RAW_RUNTIME_STATE =
           ["globals", "npm:16.5.0"],\
           ["js-cookie", "npm:3.0.5"],\
           ["jwt-decode", "npm:4.0.0"],\
+          ["leaflet", "npm:1.9.4"],\
+          ["leaflet-draw", "npm:1.0.4"],\
           ["lucide-react", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:0.562.0"],\
+          ["prop-types", "npm:15.8.1"],\
           ["react", "npm:19.2.3"],\
           ["react-chartjs-2", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.3.1"],\
           ["react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"],\
+          ["react-leaflet", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.0.0"],\
+          ["react-leaflet-draw", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:0.21.0"],\
           ["react-router-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:7.12.0"],\
           ["vite", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:7.3.1"]\
         ],\
@@ -2159,6 +2201,24 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["leaflet", [\
+      ["npm:1.9.4", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/leaflet-npm-1.9.4-8d372b0fe6-10c0.zip/node_modules/leaflet/",\
+        "packageDependencies": [\
+          ["leaflet", "npm:1.9.4"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["leaflet-draw", [\
+      ["npm:1.0.4", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/leaflet-draw-npm-1.0.4-0ca0ebcf65-10c0.zip/node_modules/leaflet-draw/",\
+        "packageDependencies": [\
+          ["leaflet-draw", "npm:1.0.4"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["levn", [\
       ["npm:0.4.1", {\
         "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/levn-npm-0.4.1-d183b2d7bb-10c0.zip/node_modules/levn/",\
@@ -2180,11 +2240,30 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["lodash-es", [\
+      ["npm:4.17.22", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/lodash-es-npm-4.17.22-2fc5a201e5-10c0.zip/node_modules/lodash-es/",\
+        "packageDependencies": [\
+          ["lodash-es", "npm:4.17.22"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["lodash.merge", [\
       ["npm:4.6.2", {\
         "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/lodash.merge-npm-4.6.2-77cb4416bf-10c0.zip/node_modules/lodash.merge/",\
         "packageDependencies": [\
           ["lodash.merge", "npm:4.6.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["loose-envify", [\
+      ["npm:1.4.0", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/loose-envify-npm-1.4.0-6307b72ccf-10c0.zip/node_modules/loose-envify/",\
+        "packageDependencies": [\
+          ["js-tokens", "npm:4.0.0"],\
+          ["loose-envify", "npm:1.4.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2420,6 +2499,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["object-assign", [\
+      ["npm:4.1.1", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/object-assign-npm-4.1.1-1004ad6dec-10c0.zip/node_modules/object-assign/",\
+        "packageDependencies": [\
+          ["object-assign", "npm:4.1.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["optionator", [\
       ["npm:0.9.4", {\
         "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/optionator-npm-0.9.4-1f114b00e8-10c0.zip/node_modules/optionator/",\
@@ -2562,6 +2650,18 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["prop-types", [\
+      ["npm:15.8.1", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/prop-types-npm-15.8.1-17c71ee7ee-10c0.zip/node_modules/prop-types/",\
+        "packageDependencies": [\
+          ["loose-envify", "npm:1.4.0"],\
+          ["object-assign", "npm:4.1.1"],\
+          ["prop-types", "npm:15.8.1"],\
+          ["react-is", "npm:16.13.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["punycode", [\
       ["npm:2.3.1", {\
         "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/punycode-npm-2.3.1-97543c420d-10c0.zip/node_modules/punycode/",\
@@ -2624,6 +2724,86 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-is", [\
+      ["npm:16.13.1", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/react-is-npm-16.13.1-a9b9382b4f-10c0.zip/node_modules/react-is/",\
+        "packageDependencies": [\
+          ["react-is", "npm:16.13.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-leaflet", [\
+      ["npm:5.0.0", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/react-leaflet-npm-5.0.0-5b3e60bcbf-10c0.zip/node_modules/react-leaflet/",\
+        "packageDependencies": [\
+          ["react-leaflet", "npm:5.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/react-leaflet-virtual-80e0ce3ce7/4/AppData/Local/Yarn/Berry/cache/react-leaflet-npm-5.0.0-5b3e60bcbf-10c0.zip/node_modules/react-leaflet/",\
+        "packageDependencies": [\
+          ["@react-leaflet/core", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:3.0.0"],\
+          ["@types/leaflet", null],\
+          ["@types/react", "npm:19.2.8"],\
+          ["@types/react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"],\
+          ["leaflet", "npm:1.9.4"],\
+          ["react", "npm:19.2.3"],\
+          ["react-dom", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:19.2.3"],\
+          ["react-leaflet", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.0.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/leaflet",\
+          "@types/react-dom",\
+          "@types/react",\
+          "leaflet",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-leaflet-draw", [\
+      ["npm:0.21.0", {\
+        "packageLocation": "../../../AppData/Local/Yarn/Berry/cache/react-leaflet-draw-npm-0.21.0-3dc53c6f20-10c0.zip/node_modules/react-leaflet-draw/",\
+        "packageDependencies": [\
+          ["react-leaflet-draw", "npm:0.21.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:0.21.0", {\
+        "packageLocation": "./.yarn/__virtual__/react-leaflet-draw-virtual-2053a9046b/4/AppData/Local/Yarn/Berry/cache/react-leaflet-draw-npm-0.21.0-3dc53c6f20-10c0.zip/node_modules/react-leaflet-draw/",\
+        "packageDependencies": [\
+          ["@types/leaflet", null],\
+          ["@types/leaflet-draw", null],\
+          ["@types/prop-types", null],\
+          ["@types/react", "npm:19.2.8"],\
+          ["@types/react-leaflet", null],\
+          ["fast-deep-equal", "npm:3.1.3"],\
+          ["leaflet", "npm:1.9.4"],\
+          ["leaflet-draw", "npm:1.0.4"],\
+          ["lodash-es", "npm:4.17.22"],\
+          ["prop-types", "npm:15.8.1"],\
+          ["react", "npm:19.2.3"],\
+          ["react-leaflet", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:5.0.0"],\
+          ["react-leaflet-draw", "virtual:d3db797c3f365d5a48becefa90cb80133da5a7d5830bda66dffb5ff7bd286f9ac18fcc3c6809bdd0b132bfff249d40590c0f1362506ebf9dc2c9a8fdad4b89a6#npm:0.21.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/leaflet-draw",\
+          "@types/leaflet",\
+          "@types/prop-types",\
+          "@types/react-leaflet",\
+          "@types/react",\
+          "leaflet-draw",\
+          "leaflet",\
+          "prop-types",\
+          "react-leaflet",\
           "react"\
         ],\
         "linkType": "HARD"\
