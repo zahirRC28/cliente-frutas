@@ -1,0 +1,149 @@
+/* CARD GENERAL */
+.table-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border: 1px solid #e5e7eb;
+  overflow-x: auto; /* horizontal scroll para pantallas pequeñas */
+}
+
+/* CABECERA */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.table-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.table-header button {
+  background-color: #2563eb;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.table-header button:hover {
+  background: #6192f2;
+}
+
+/* TABLA */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f9fafb;
+}
+
+th {
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+td {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+/* BADGES */
+.rol {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.rol.administrador {
+  background: #e0ecff;
+  color: #2563eb;
+}
+
+.rol.jefe {
+  background: #fff4e5;
+  color: #f59e0b;
+}
+
+.rol.tecnico {
+  background: #e6f9f0;
+  color: #16a34a;
+}
+
+.rol.cliente {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* BOTÓN DE ACCIONES */
+.table-action-button {
+  background-color: #2563eb;
+  border: none;
+  color: white;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.table-action-button:hover {
+  background-color: #6192f2;
+}
+
+/* ================================== */
+/* MOBILE-FIRST: estilo “cards” para móvil */
+/* ================================== */
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none; /* Oculta cabecera de tabla */
+  }
+
+  tbody tr {
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+    background: white;
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border-top: none;
+    font-size: 0.9rem;
+  }
+
+  tbody td::before {
+    content: attr(data-label); /* Muestra el nombre de la columna como etiqueta */
+    font-weight: 600;
+    color: #6b7280;
+    flex: 1;
+  }
+
+  /* Botón de acción centrado */
+  .table-action-button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
