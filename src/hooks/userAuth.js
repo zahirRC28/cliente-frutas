@@ -84,7 +84,7 @@ export const userAuth = () => {
         //----------renewToken();
         //console.log(info);
         const {usuarios} = info;
-        console.log(usuarios);
+        //console.log(usuarios);
         return usuarios;
     }
 
