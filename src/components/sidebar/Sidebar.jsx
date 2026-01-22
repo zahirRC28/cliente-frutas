@@ -59,7 +59,7 @@ export const Sidebar = ({}) => {
           )}
 
           {/* ENLACE USUARIOS / PRODUCTORES */}
-          {(rol === 'Administrador' || rol === 'Productor') && rutaBase && (
+          {(rol === 'Administrador' || rol === 'Manager') && rutaBase && (
             <NavLink to={`/${rutaBase}/users`} className="nav-item" onClick={() => setMobileOpen(false)}>
               <User/><span>{rol === 'Administrador'? "Usuarios" : "Productores" }</span>
             </NavLink>
