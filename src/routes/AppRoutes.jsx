@@ -28,7 +28,7 @@ import { Cultivos } from '../Pages/Cultivos' // <--- IMPORT NUEVO
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path='/' element={<RendAni />}>
+      <Route path='/' element={<RendAni/>}>
         <Route index element={
           <PublicProtection>
             <Login/>

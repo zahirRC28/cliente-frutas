@@ -1,0 +1,88 @@
+/* ===============================
+   BASE (MÓVIL FIRST)
+================================ */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 columna en móvil */
+  gap: 16px;
+  margin-top: 16px;
+  justify-items: center; /* centra las tarjetas */
+}
+
+/* ===============================
+   TARJETA
+================================ */
+
+.chart-card {
+  width: 100%;
+  max-width: 48rem; /* ancho máximo de la tarjeta */
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.chart-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+/* ===============================
+   CUERPO DEL GRÁFICO
+================================ */
+
+.chart-body {
+  width: 100%;
+  aspect-ratio: 20/11; /* mayor altura que antes */
+  position: relative;
+}
+
+.chart-body canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ===============================
+   TABLET (≥ 640px)
+================================ */
+
+@media (min-width: 640px) {
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .chart-body {
+    aspect-ratio: 21/11;
+  }
+}
+
+/* ===============================
+   DESKTOP (≥ 1024px)
+================================ */
+
+@media (min-width: 1024px) {
+  .charts-grid {
+    gap: 24px;
+  }
+
+  .chart-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .chart-body {
+    aspect-ratio: 22/11;
+  }
+}
+
