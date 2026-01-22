@@ -20,21 +20,20 @@ export const AdminDashboardCharts = ({ reportes, cultivos }) => {
   return (
     <>
         <div className="charts-grid">
-            <ChartWrapper title="Reportes por mes">
-            <LineChart
-                labels={reportesPorMes.labels}
-                data={reportesPorMes.data}
-                label="Reportes"
-            />
-            </ChartWrapper>
-
-            <ChartWrapper title="Cultivos por tipo">
+          <ChartWrapper title="Cultivos por tipo">
             <PieChart
-                labels={cultivosPorTipo.labels}
-                data={cultivosPorTipo.data}
-                label="Cultivos"
+              labels={cultivosPorTipo.labels}
+              data={cultivosPorTipo.data}
+              label="Cultivos"
             />
-            </ChartWrapper>
+          </ChartWrapper>
+          <ChartWrapper title="Reportes por mes">
+            <LineChart
+              labels={reportesPorMes.labels}
+              data={reportesPorMes.data}
+              label="Reportes"
+            />
+          </ChartWrapper>
         </div>
     </>
   );
