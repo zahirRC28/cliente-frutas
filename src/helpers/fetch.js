@@ -33,9 +33,9 @@ const conectar = async (urlApi, method = 'GET', body = {}, token, responseType =
       headers: {},
       credentials: 'include'
     };
-    //El blob es lo que se usa para tratar los archivos, como imgenes, pdf, etc
-    // Si la respuesta NO es un blob, se asume JSON
-    if (responseType !== 'blob') {
+    
+    // Solo agregar Content-Type para JSON
+    if (responseType === 'json') {
       options.headers['Content-Type'] = 'application/json';
     }
 
@@ -47,17 +47,20 @@ const conectar = async (urlApi, method = 'GET', body = {}, token, responseType =
     // Detecta si el body es FormData (para enviar archivos)
     const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
     if (isFormData) {
-      // FormData se envía sin Content-Type, el navegador lo maneja automáticamente
-      if (options.headers && options.headers['Content-Type']) {
-        delete options.headers['Content-Type'];
-      }
+      // FormData se envía sin Content-Type
+      delete options.headers['Content-Type'];
     }
+    
     // Solo los métodos con cuerpo necesitan body
     if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
       options.body = isFormData ? body : JSON.stringify(body);
     }
-    //console.log(options);
+
     const resp = await fetch(urlApi, options);
+
+    // --- CORRECCIÓN: VERIFICAR SI ES JSON VÁLIDO ANTES DE PARSEAR ---
+    const contentType = resp.headers.get('content-type');
+    const isJson = contentType && contentType.includes('application/json');
 
     // Devuelve la respuesta según el tipo esperado
     if (responseType === 'blob') {
@@ -67,70 +70,55 @@ const conectar = async (urlApi, method = 'GET', body = {}, token, responseType =
     if (responseType === 'arrayBuffer') {
       return await resp.arrayBuffer();
     }
-    //asta qui.
-    
-    //console.log(resp);
+
+    // Si esperamos JSON pero la respuesta no es JSON
+    if (!isJson) {
+      const text = await resp.text();
+      console.error('Respuesta no-JSON del servidor:', {
+        url: urlApi,
+        status: resp.status,
+        statusText: resp.statusText,
+        contentType,
+        body: text.substring(0, 500)
+      });
+      
+      throw new Error(`El servidor respondió con ${resp.status} (${resp.statusText}). No es JSON.`);
+    }
+
+    // Si es JSON pero la respuesta está vacía
+    if (resp.status === 204 || resp.status === 205) {
+      return null; // No Content, No hay cuerpo
+    }
+
+    // Verificar si la respuesta es OK
+    if (!resp.ok) {
+      const errorData = await resp.json().catch(() => ({}));
+      const error = new Error(errorData.message || `Error ${resp.status}`);
+      error.status = resp.status;
+      error.data = errorData;
+      throw error;
+    }
+
+    // Ahora sí parsear JSON
     const datos = await resp.json();
-    //console.log(datos);
     return datos;
 
   } catch (error) {
-    console.log(error);
-    return error;
+    console.error('Error en conectar:', {
+      url: urlApi,
+      method,
+      error: error.message,
+      stack: error.stack
+    });
+    
+    // Devolver error estructurado
+    return {
+      error: true,
+      message: error.message,
+      status: error.status,
+      data: error.data
+    };
   }
 };
 
-export default conectar ; 
-
-
-/**
- * Helper para peticiones HTTP
- * CORREGIDO: Maneja errores HTML y envía Authorization Bearer
- */
-/* const conectar = async (endpoint, method = 'GET', body, token) => {
-    const url = endpoint; 
-
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    // Usamos Bearer como pide tu backend
-    if (token) {
-        options.headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    if (method !== 'GET' && body) {
-        options.body = JSON.stringify(body);
-    }
-
-    try {
-        console.log(` Fetch a: ${url}`); // Muestra la URL en consola
-        const resp = await fetch(url, options);
-
-        // --- PROTECCIÓN CONTRA ERRORES HTML ---
-        // Si el servidor devuelve HTML (error 404, 500, etc.), leemos el texto para ver el error
-        const contentType = resp.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            const text = await resp.text();
-            console.error(" EL SERVIDOR DEVOLVIÓ HTML (ERROR):", text);
-            
-            // Devolvemos un objeto de error controlado para que la app no explote
-            return { 
-                ok: false, 
-                msg: `Error de ruta o servidor (${resp.status}). Mira la consola.` 
-            };
-        }
-
-        const data = await resp.json();
-        return data;
-
-    } catch (error) {
-        console.error("Error grave de conexión:", error);
-        return { ok: false, msg: "Error de conexión (Backend caído o URL mal)" };
-    }
-};
-
-export default conectar; */
+export default conectar;

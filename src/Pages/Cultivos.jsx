@@ -47,17 +47,17 @@ export const Cultivos = () => {
       try {
         let datosFinales = [];
         if (rol === 'productor') {
-            const data = await conectar(`${urlBase}/cultivo/productor/${uid}`, 'GET', {}, token);
+            const data = await conectar(`${urlBase}cultivo/productor/${uid}`, 'GET', {}, token);
             if (data?.ok) datosFinales = data.cultivos;
         } else if (rol === 'manager') {
-            const dataCultivos = await conectar(`${urlBase}/cultivo`, 'GET', {}, token);
+            const dataCultivos = await conectar(`${urlBase}cultivo`, 'GET', {}, token);
             const todosCultivos = dataCultivos?.cultivos || [];
-            const dataUsers = await conectar(`${urlBase}/user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
+            const dataUsers = await conectar(`${urlBase}user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
             const todosProductores = dataUsers?.usuarios || [];
             const misProductoresIds = todosProductores.filter(u => u.id_manager === uid).map(u => u.id_usuario);
             datosFinales = todosCultivos.filter(c => misProductoresIds.includes(c.id_productor));
         } else {
-            const data = await conectar(`${urlBase}/cultivo`, 'GET', {}, token);
+            const data = await conectar(`${urlBase}cultivo`, 'GET', {}, token);
             if (data?.ok) datosFinales = data.cultivos || [];
         }
         setCultivos(Array.isArray(datosFinales) ? datosFinales : []);
@@ -149,7 +149,7 @@ export const Cultivos = () => {
     const body = { ...formulario, poligono: poligonoGeoJSON };
 
     try {
-        const respuesta = await conectar(`${urlBase}/cultivo/crear`, 'POST', body, token);
+        const respuesta = await conectar(`${urlBase}cultivo/crear`, 'POST', body, token);
         if (respuesta?.ok) {
             toast.success("¡Cultivo guardado con éxito!");
             setCultivos([respuesta.cultivo, ...cultivos]); 
