@@ -26,7 +26,7 @@
  * const archivo = await conectar('/api/incidencias/1/pdf', 'GET', {}, miToken, 'blob');
  */
 
-const conectar = async (urlApi, method = 'GET', body = {}, token, responseType = 'json') => {
+/* const conectar = async (urlApi, method = 'GET', body = {}, token, responseType = 'json') => {
   try {
     let options = {
       method,
@@ -80,4 +80,57 @@ const conectar = async (urlApi, method = 'GET', body = {}, token, responseType =
   }
 };
 
-export default conectar ;
+export default conectar ; */
+
+
+/**
+ * Helper para peticiones HTTP
+ * CORREGIDO: Maneja errores HTML y envía Authorization Bearer
+ */
+const conectar = async (endpoint, method = 'GET', body, token) => {
+    const url = endpoint; 
+
+    const options = {
+        method,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    // Usamos Bearer como pide tu backend
+    if (token) {
+        options.headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    if (method !== 'GET' && body) {
+        options.body = JSON.stringify(body);
+    }
+
+    try {
+        console.log(`📡 Fetch a: ${url}`); // Muestra la URL en consola
+        const resp = await fetch(url, options);
+
+        // --- PROTECCIÓN CONTRA ERRORES HTML ---
+        // Si el servidor devuelve HTML (error 404, 500, etc.), leemos el texto para ver el error
+        const contentType = resp.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await resp.text();
+            console.error("❌ EL SERVIDOR DEVOLVIÓ HTML (ERROR):", text);
+            
+            // Devolvemos un objeto de error controlado para que la app no explote
+            return { 
+                ok: false, 
+                msg: `Error de ruta o servidor (${resp.status}). Mira la consola.` 
+            };
+        }
+
+        const data = await resp.json();
+        return data;
+
+    } catch (error) {
+        console.error("Error grave de conexión:", error);
+        return { ok: false, msg: "Error de conexión (Backend caído o URL mal)" };
+    }
+};
+
+export default conectar;
