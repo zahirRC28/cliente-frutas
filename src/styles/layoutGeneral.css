@@ -8,6 +8,6 @@
   padding: 2rem;
   background: #f4f6f8;
   min-width: 0;
-  height: 100vh; /* hace que solo el contenido principal tenga scroll */
+  height: 100vh; /* hace que solo el contenido principal tenga scroll  */
   overflow-y: auto;
 }
