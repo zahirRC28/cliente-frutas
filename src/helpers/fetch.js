@@ -26,7 +26,7 @@
  * const archivo = await conectar('/api/incidencias/1/pdf', 'GET', {}, miToken, 'blob');
  */
 
-/* const conectar = async (urlApi, method = 'GET', body = {}, token, responseType = 'json') => {
+const conectar = async (urlApi, method = 'GET', body = {}, token, responseType = 'json') => {
   try {
     let options = {
       method,
@@ -80,14 +80,14 @@
   }
 };
 
-export default conectar ; */
+export default conectar ; 
 
 
 /**
  * Helper para peticiones HTTP
  * CORREGIDO: Maneja errores HTML y envía Authorization Bearer
  */
-const conectar = async (endpoint, method = 'GET', body, token) => {
+/* const conectar = async (endpoint, method = 'GET', body, token) => {
     const url = endpoint; 
 
     const options = {
@@ -107,7 +107,7 @@ const conectar = async (endpoint, method = 'GET', body, token) => {
     }
 
     try {
-        console.log(`📡 Fetch a: ${url}`); // Muestra la URL en consola
+        console.log(` Fetch a: ${url}`); // Muestra la URL en consola
         const resp = await fetch(url, options);
 
         // --- PROTECCIÓN CONTRA ERRORES HTML ---
@@ -115,7 +115,7 @@ const conectar = async (endpoint, method = 'GET', body, token) => {
         const contentType = resp.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             const text = await resp.text();
-            console.error("❌ EL SERVIDOR DEVOLVIÓ HTML (ERROR):", text);
+            console.error(" EL SERVIDOR DEVOLVIÓ HTML (ERROR):", text);
             
             // Devolvemos un objeto de error controlado para que la app no explote
             return { 
@@ -133,4 +133,4 @@ const conectar = async (endpoint, method = 'GET', body, token) => {
     }
 };
 
-export default conectar;
+export default conectar; */

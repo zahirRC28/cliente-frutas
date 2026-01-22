@@ -8,10 +8,9 @@ import conectar from "../helpers/fetch";
 import Cookies from 'js-cookie'; 
 import * as turf from "@turf/turf";
 
-const urlBase = 'http://localhost:3005/api/v1';
+const urlBase = import.meta.env.VITE_BACKEND_URL;
 
 export const Cultivos = () => {
-  // --- AUTENTICACIÓN Y ROLES ---
   const auth = userAuth();
   let user = { rol: '', uid: 0 };
   if (auth) {
