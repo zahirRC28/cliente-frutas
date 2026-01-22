@@ -28,8 +28,7 @@ export const DashBoard = () => {
         const reportes = await todosLosReportes();
         const cultivos = await todosLosCultivos();
         //console.log(users);
-        console.log(reportes);
-        console.log(cultivos);
+        
         setDatosUser(users);
         setDatosCulti(cultivos);
         setDatosReporte(reportes);

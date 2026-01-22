@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Map as MapIcon, Save, Loader } from "lucide-react";
+import { Map as MapIcon, Save, Loader, Users } from "lucide-react";
 import { userAuth } from "../hooks/userAuth"; 
 import MapDraw from "../components/map/Map"; 
 import { ToastContainer, toast } from 'react-toastify';
@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import conectar from "../helpers/fetch";
 import Cookies from 'js-cookie'; 
 import * as turf from "@turf/turf";
+import "./Cultivos.css";
 
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
@@ -20,66 +21,86 @@ export const Cultivos = () => {
   }
 
   const token = Cookies.get('miToken') || localStorage.getItem('miToken') || user.token;
-  const uid = user.uid || user.id; 
+  const uid = Number(user.uid || user.id); 
   const rol = user.rol ? user.rol.toLowerCase().trim() : '';
-  const puedeCrear = ['administrador', 'productor', 'admin'].includes(rol);
+  
+  const esAdmin = rol === 'administrador' || rol === 'admin';
+  const esManager = rol === 'manager';
+  const puedeCrear = ['productor', 'admin'].includes(rol);
 
   // --- ESTADOS ---
   const [cultivos, setCultivos] = useState([]);
+  const [productores, setProductores] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [poligonoGeoJSON, setPoligonoGeoJSON] = useState(null); 
-  const [filtroTipo, setFiltroTipo] = useState("Todos");
   
+  // Por defecto, el Admin y Manager ven sus propios cultivos al entrar
+  const [usuarioAFiltrar, setUsuarioAFiltrar] = useState(uid);
+
   const [formulario, setFormulario] = useState({
     nombre: "",
     zona_cultivo: "Zona Norte",
     tipo_cultivo: "Fruta",      
-    region: "Galicia",         
+    region: "Galicia",          
     pais: "ES",            
     sistema_riego: "Goteo" 
   });
 
-  // --- CARGA DE DATOS ---
+  // --- 1. CARGAR PRODUCTORES (PARA MANAGER Y ADMIN) ---
   useEffect(() => {
-    const cargarDatos = async () => {
-      if (!uid || !token) return;
+    const obtenerProductores = async () => {
+      // Ambos roles necesitan la lista de productores para el filtro
+      if (!['manager', 'administrador', 'asesor'].includes(rol) || !token) return;
+      
+      try {
+        const res = await conectar(`${urlBase}user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
+        if (res?.ok && res.usuarios) {
+          if (esAdmin) {
+            // El Admin ve TODOS los productores
+            setProductores(res.usuarios);
+          } else if (esManager) {
+            // El Manager solo ve los suyos
+            const vinculados = res.usuarios.filter(p => Number(p.id_manager) === uid);
+            setProductores(vinculados);
+          }
+        }
+      } catch (error) {
+        console.error("Error al obtener equipo:", error);
+      }
+    };
+    obtenerProductores();
+  }, [rol, uid, token]);
+
+  // --- 2. CARGAR CULTIVOS ---
+  useEffect(() => {
+    const cargarCultivos = async () => {
+      if (!usuarioAFiltrar || !token) return;
+      
       setLoading(true);
       try {
-        let datosFinales = [];
-        if (rol === 'productor') {
-            const data = await conectar(`${urlBase}cultivo/productor/${uid}`, 'GET', {}, token);
-            if (data?.ok) datosFinales = data.cultivos;
-        } else if (rol === 'manager') {
-            const dataCultivos = await conectar(`${urlBase}cultivo`, 'GET', {}, token);
-            const todosCultivos = dataCultivos?.cultivos || [];
-            const dataUsers = await conectar(`${urlBase}user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
-            const todosProductores = dataUsers?.usuarios || [];
-            const misProductoresIds = todosProductores.filter(u => u.id_manager === uid).map(u => u.id_usuario);
-            datosFinales = todosCultivos.filter(c => misProductoresIds.includes(c.id_productor));
+        // Usamos la ruta unificada: cultivos por ID de usuario
+        const data = await conectar(`${urlBase}cultivo/productor/${usuarioAFiltrar}`, 'GET', {}, token);
+        if (data?.ok) {
+          setCultivos(data.cultivos || []);
         } else {
-            const data = await conectar(`${urlBase}cultivo`, 'GET', {}, token);
-            if (data?.ok) datosFinales = data.cultivos || [];
+          setCultivos([]);
         }
-        setCultivos(Array.isArray(datosFinales) ? datosFinales : []);
       } catch (error) {
         console.error("Error cargando cultivos:", error);
+        setCultivos([]);
       } finally {
         setLoading(false);
       }
     };
-    cargarDatos();
-  }, [rol, uid, token]);
 
-  // --- LÓGICA DEL MAPA (FILTRADO Y GEOJSON) ---
+    cargarCultivos();
+  }, [usuarioAFiltrar, token]);
+
+  // --- LÓGICA DEL MAPA ---
   const zonasParaMapa = useMemo(() => {
     if (!cultivos.length) return [];
     
-    // Aplicar filtro de tipo del Código 1
-    const filtrados = filtroTipo === "Todos" 
-        ? cultivos 
-        : cultivos.filter(c => c.tipo_cultivo === filtroTipo);
-
-    return filtrados.map((c) => {
+    return cultivos.map((c) => {
         try {
             let geometry = c.poligono || (c.poligono_geojson ? (typeof c.poligono_geojson === 'string' ? JSON.parse(c.poligono_geojson) : c.poligono_geojson) : null);
             if (!geometry || !geometry.coordinates) return null;
@@ -88,104 +109,97 @@ export const Cultivos = () => {
             return {
                 id: c.id_cultivo,
                 nombre: c.nombre,
-                tipo: c.tipo_cultivo,
                 coords: coordsLeaflet, 
                 color: c.tipo_cultivo === 'Fruta' ? '#e74c3c' : '#2ecc71',
-                geojsonOriginal: geometry // Guardamos para validación de Turf
+                geojsonOriginal: geometry
             };
         } catch (err) { return null; }
     }).filter(Boolean);
-  }, [cultivos, filtroTipo]);
+  }, [cultivos]);
 
   const handleZoneCreated = (latLngs) => {
-    // 1. Convertir a formato GeoJSON para Turf
     const coordsGeoJSON = latLngs.map(p => [p.lng, p.lat]);
-    coordsGeoJSON.push(coordsGeoJSON[0]); // Cerrar el polígono
+    coordsGeoJSON.push(coordsGeoJSON[0]); 
     const nuevoPoligono = turf.polygon([coordsGeoJSON]);
-
     try {
-        // 2. Validar solapamiento con Turf (Lógica Código 1)
-        let haySolapamiento = false;
-        for (const cultivo of cultivos) {
-            let geometry = cultivo.poligono || (cultivo.poligono_geojson ? (typeof cultivo.poligono_geojson === 'string' ? JSON.parse(cultivo.poligono_geojson) : cultivo.poligono_geojson) : null);
+        let solapado = false;
+        for (const c of cultivos) {
+            let geometry = c.poligono || (c.poligono_geojson ? (typeof c.poligono_geojson === 'string' ? JSON.parse(c.poligono_geojson) : c.poligono_geojson) : null);
             if (!geometry) continue;
-
-            const poligonoExistente = turf.polygon(geometry.coordinates);
-            const interseccion = turf.intersect(turf.featureCollection([nuevoPoligono, poligonoExistente]));
-            
-            if (interseccion) {
-                haySolapamiento = true;
-                break;
+            const poliExistente = turf.polygon(geometry.coordinates);
+            if (turf.intersect(turf.featureCollection([nuevoPoligono, poliExistente]))) {
+                solapado = true; break;
             }
         }
-
-        if (haySolapamiento) {
+        if (solapado) {
             setPoligonoGeoJSON(null);
-            toast.error("La zona se solapa con una existente.", { toastId: "valida-solapamiento", position: "bottom-center" });
+            toast.error("La zona se solapa con una existente.");
         } else {
             setPoligonoGeoJSON({ type: "Polygon", coordinates: [coordsGeoJSON] });
-            toast.success("Zona válida seleccionada.", { toastId: "valida-ok", position: "bottom-center" });
+            toast.success("Zona válida seleccionada.");
         }
-    } catch (err) {
-        console.error("Error de geometría:", err);
-        toast.error("Error al procesar el área dibujada");
-    }
+    } catch (err) { toast.error("Error al procesar el área dibujada"); }
   };
 
-  // --- FORMULARIO Y GUARDADO ---
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'pais') {
-        setFormulario({ ...formulario, pais: value.toUpperCase().slice(0, 2) });
+        setFormulario({ ...formulario, [name]: value.toUpperCase().slice(0, 2) });
     } else {
         setFormulario({ ...formulario, [name]: value });
     }
   };
 
   const guardarCultivo = async () => {
-    if (!poligonoGeoJSON) return toast.warning("Dibuja una zona válida en el mapa primero");
+    if (!poligonoGeoJSON) return toast.warning("Dibuja una zona primero");
     if (formulario.nombre.length < 3) return toast.error("El nombre debe tener al menos 3 letras");
 
-    const body = { ...formulario, poligono: poligonoGeoJSON };
-
     try {
-        const respuesta = await conectar(`${urlBase}cultivo/crear`, 'POST', body, token);
+        const respuesta = await conectar(`${urlBase}cultivo/crear`, 'POST', { ...formulario, poligono: poligonoGeoJSON }, token);
         if (respuesta?.ok) {
-            toast.success("¡Cultivo guardado con éxito!");
+            toast.success("¡Cultivo guardado!");
             setCultivos([respuesta.cultivo, ...cultivos]); 
             setPoligonoGeoJSON(null);
             setFormulario({ ...formulario, nombre: "" }); 
         } else {
             toast.error(respuesta?.msg || "Error al guardar");
         }
-    } catch (error) {
-        toast.error("Error de conexión");
-    }
+    } catch (error) { toast.error("Error de conexión"); }
   };
 
-  const inputStyle = { padding: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '100%', marginBottom: '10px' };
-
   return (
-    <div style={{ padding: '20px', display: 'flex', gap: '20px', flexWrap: 'wrap', fontFamily: 'Arial, sans-serif' }}>
+    <div className="cultivos-container">
       <ToastContainer position="bottom-center" limit={1} />
 
-      {/* SECCIÓN IZQUIERDA: MAPA Y FILTRO */}
-      <div style={{ flex: 2, minWidth: '400px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }}>
-            <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
-                <MapIcon color="#2c3e50" /> Mapa de Cultivos
+      <div className="cultivos-left-section">
+        <div className="cultivos-header">
+            <h2 className="cultivos-title">
+                <MapIcon color="#2c3e50" /> 
+                {esAdmin ? "Panel de Administración" : esManager ? "Gestión de Productores" : "Mis Cultivos"}
             </h2>
-            <select value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)} style={{ padding: '8px', borderRadius: '5px' }}>
-                <option value="Todos">Todos los tipos</option>
-                <option value="Fruta">Frutas</option>
-                <option value="Hortaliza">Hortalizas</option>
-                <option value="Cereal">Cereal</option>
-            </select>
+
+            {(esAdmin || esManager) && (
+              <div className="cultivos-filter-container">
+                <Users size={18} color="#666" />
+                <select 
+                  className="cultivos-select"
+                  value={usuarioAFiltrar} 
+                  onChange={(e) => setUsuarioAFiltrar(Number(e.target.value))}
+                >
+                  <option value={uid}>{esAdmin ? "Mis Cultivos (Admin)" : "Mis Cultivos (Manager)"}</option>
+                  {productores.map(p => (
+                    <option key={p.id_usuario} value={p.id_usuario}>
+                      {p.nombre_completo || p.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
         </div>
 
-        <div style={{ background: 'white', padding: '10px', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+        <div className="cultivos-map-wrapper">
             {loading ? (
-                <div style={{ height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div className="cultivos-loader-container">
                     <Loader className="animate-spin" size={40} />
                 </div>
             ) : (
@@ -198,37 +212,36 @@ export const Cultivos = () => {
         </div>
       </div>
 
-      {/* SECCIÓN DERECHA: FORMULARIO (SOLO SI TIENE PERMISO) */}
       {puedeCrear && (
-        <div style={{ flex: 1, minWidth: '300px', background: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', height: 'fit-content' }}>
-          <h3 style={{ borderBottom: '2px solid #22c55e', paddingBottom: '10px', marginTop: 0 }}>Nuevo Cultivo</h3>
+        <div className="cultivos-right-section">
+          <h3 className="cultivos-form-title">Registrar Parcela</h3>
           
-          <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Nombre Parcela:</label>
-          <input name="nombre" value={formulario.nombre} placeholder="Ej: Finca Olivos" onChange={handleInputChange} style={inputStyle} />
+          <label className="cultivos-label">Nombre Parcela:</label>
+          <input name="nombre" value={formulario.nombre} placeholder="Ej: Finca Olivos" onChange={handleInputChange} className="cultivos-input" />
           
-          <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Zona:</label>
-          <input name="zona_cultivo" value={formulario.zona_cultivo} onChange={handleInputChange} style={inputStyle} />
+          <label className="cultivos-label">Zona:</label>
+          <input name="zona_cultivo" value={formulario.zona_cultivo} onChange={handleInputChange} className="cultivos-input" />
           
-          <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Tipo de Cultivo:</label>
-          <select name="tipo_cultivo" value={formulario.tipo_cultivo} onChange={handleInputChange} style={inputStyle}>
+          <label className="cultivos-label">Tipo de Cultivo:</label>
+          <select name="tipo_cultivo" value={formulario.tipo_cultivo} onChange={handleInputChange} className="cultivos-input">
             <option value="Fruta">Fruta</option>
             <option value="Hortaliza">Hortaliza</option>
             <option value="Cereal">Cereal</option>
           </select>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="cultivos-flex-row">
             <div style={{ flex: 2 }}>
-                <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Región:</label>
-                <input name="region" value={formulario.region} onChange={handleInputChange} style={inputStyle} />
+                <label className="cultivos-label">Región:</label>
+                <input name="region" value={formulario.region} onChange={handleInputChange} className="cultivos-input" />
             </div>
             <div style={{ flex: 1 }}>
-                <label style={{ fontSize: '14px', fontWeight: 'bold' }}>País:</label>
-                <input name="pais" value={formulario.pais} maxLength={2} onChange={handleInputChange} style={inputStyle} />
+                <label className="cultivos-label">País:</label>
+                <input name="pais" value={formulario.pais} maxLength={2} onChange={handleInputChange} className="cultivos-input" />
             </div>
           </div>
 
-          <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Sistema de Riego:</label>
-          <select name="sistema_riego" value={formulario.sistema_riego} onChange={handleInputChange} style={inputStyle}>
+          <label className="cultivos-label">Sistema de Riego:</label>
+          <select name="sistema_riego" value={formulario.sistema_riego} onChange={handleInputChange} className="cultivos-input">
             <option value="Goteo">Goteo</option>
             <option value="Aspersión">Aspersión</option>
             <option value="Gravedad">Gravedad</option>
@@ -236,22 +249,12 @@ export const Cultivos = () => {
           </select>
 
           <button 
-            onClick={guardarCultivo}
+            className="cultivos-btn-save"
+            onClick={guardarCultivo} 
             disabled={!poligonoGeoJSON}
             style={{ 
-                width: '100%', 
-                padding: '14px', 
                 background: poligonoGeoJSON ? '#22c55e' : '#cbd5e1', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '6px', 
-                cursor: poligonoGeoJSON ? 'pointer' : 'not-allowed', 
-                fontWeight: 'bold',
-                marginTop: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
+                cursor: poligonoGeoJSON ? 'pointer' : 'not-allowed' 
             }}
           >
             <Save size={18} /> Guardar Parcela
