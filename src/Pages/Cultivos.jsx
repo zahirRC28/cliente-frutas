@@ -28,7 +28,8 @@ export const Cultivos = () => {
   const rol = user.rol ? user.rol.toLowerCase().trim() : '';
   
   const esAdmin = rol === 'administrador' || rol === 'admin';
-  const esManager = rol === 'manager';
+  const esManager = rol === 'manager';  
+  const esAsesor = rol === 'asesor';
   const puedeCrear = ['productor', 'admin'].includes(rol);
 
   // --- ESTADOS ---
