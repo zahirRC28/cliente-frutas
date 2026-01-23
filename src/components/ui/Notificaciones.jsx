@@ -1,116 +1,89 @@
-import { CloudHail, Droplet, Bug, Bell } from "lucide-react";
+import { CloudRainWind, CloudSnow, Bug, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
+import { tiempoRelativo } from "../../helpers/convertirTiempo"
+import { useNotificaciones } from "../../hooks/notificaciones";
 import "../../styles/Notificaciones.css";
-import { notificaciones } from "../../hooks/notificaciones";
-const notisPrueba = [
-    {
-        id: 1,
-        type: "rain",
-        title: "Alerta de lluvia",
-        message: "Se esperan precipitaciones moderadas en las próximas horas.",
-        time: "Hace 10 min",
-        unread: true,
-    },
-    {
-        id: 2,
-        type: "irrigation",
-        title: "Riego programado",
-        message: "El sistema de riego automático se activará a las 06:00.",
-        time: "Hace 1 hora",
-        unread: false,
-    },
-    {
-        id: 3,
-        type: "pest",
-        title: "Detección de plagas",
-        message: "Se han detectado indicios de pulgón en el sector B2.",
-        time: "Hace 3 horas",
-        unread: false,
-    },
-    {
-        id: 4,
-        type: "rain",
-        title: "Clima inestable",
-        message: "Posibles lluvias aisladas durante la tarde.",
-        time: "Hace 5 horas",
-        unread: true,
-    },
-    {
-        id: 5,
-        type: "irrigation",
-        title: "Riego finalizado",
-        message: "El riego del sector A1 ha finalizado correctamente.",
-        time: "Hace 1 día",
-        unread: false,
-    },
-    {
-        id: 6,
-        type: "pest",
-        title: "Seguimiento fitosanitario",
-        message: "Revisar sector C1 por posibles insectos.",
-        time: "Hace 2 días",
-        unread: false,
-    }
-];
 
-const getIcon = (type) => {
-    switch (type) {
-        case "rain":
-            return <CloudHail stroke="var(--verde-oscuro)" />;
-        case "irrigation":
-            return <Droplet stroke="var(--verde-oscuro)" />;
-        case "pest":
+const getIcon = (tipo) => {
+    switch (tipo) {
+        case "Diluvio":
+            return <CloudRainWind stroke="var(--verde-oscuro)" />;
+        case "Helada":
+            return <CloudSnow stroke="var(--verde-oscuro)" />;
+        case "Plaga":
             return <Bug stroke="var(--verde-oscuro)" />;
         default:
             return <Bell stroke="var(--verde-oscuro)" />;
     }
 };
 export const Notificaciones = () => {
-    const [notificaciones, setNotificaciones] = useState(notisPrueba);
-    const handleNotisLeidas = (id) => {
-        setNotificaciones((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, unread: false } : n)),
+    const [notificaciones, setNotificaciones] = useState([]);
+    const { obtenerNotificaciones, marcarComoLeida } = useNotificaciones();
+
+    const handleNotisLeidas = async (id) => {
+        const noti = notificaciones.find(n => n.id_notificacion === id);
+        if (!noti || noti.leido) return;
+
+        setNotificaciones(prev =>
+            prev.map(n =>
+                n.id_notificacion === id
+                    ? { ...n, leido: true }
+                    : n
+            )
         );
+
+        try {
+            await marcarComoLeida(id);
+        } catch (error) {
+            console.error("Error al marcar como leída", error);
+
+            setNotificaciones(prev =>
+                prev.map(n =>
+                    n.id_notificacion === id
+                        ? { ...n, leido: false }
+                        : n
+                )
+            );
+        }
     };
-    const contador = notificaciones.filter((n) => n.unread).length;
 
-    /*const { todasNotifi } = notificaciones();
-    const [ datosNotifi, setDatosNotifi ] = useState([]);
-
-    const cargandoDatos = async()=>{
-        const datos = await todasNotifi();
-        console.log(datos);
-        setDatosNotifi(datos);
+    const cargarDatos = async () => {
+        const datos = await obtenerNotificaciones();
+        setNotificaciones(datos);
     }
 
     useEffect(() => {
-        cargandoDatos();
-    }, []);*/
+        cargarDatos();
+    }, []);
+
+    const contador = notificaciones.filter((n) => !n.leido).length;
 
     return (
         <aside className="notifications-panel">
             <header className="notifications-header">
                 <h3>Notificaciones</h3>
                 {contador > 0 && (
-                    <span className="new-badge">{contador} nuevas</span>
+                    <span className="new-badge">{contador} {`nueva${contador !== 1 ? "s" : ""}`}</span>
                 )}
             </header>
             <ul className="notifications-list">
                 {notificaciones.map((notification) => (
                     <li
-                        key={notification.id}
+                        key={notification.id_notificacion}
                         className={`notification-item ${
-                            notification.unread ? "unread" : ""
+                            !notification.leido ? "unread" : ""
                         }`}
-                        onClick={() => handleNotisLeidas(notification.id)}
+                        onClick={() => !notification.leido && handleNotisLeidas(notification.id_notificacion)}
                     >
-                        <div className="icon">{getIcon(notification.type)}</div>
+                        <div className="icon">{getIcon(notification.tipo)}</div>
                         <div className="content">
-                            <strong>{notification.title}</strong>
-                            <p>{notification.message}</p>
-                            <span className="time">{notification.time}</span>
+                            <strong>{notification.titulo}</strong>
+                            <p>{notification.mensaje}</p>
+                            <span className="time">
+                                {tiempoRelativo(notification.creado)}
+                            </span>
                         </div>
-                        {notification.unread && <span className="dot" />}
+                        {!notification.leido && <span className="dot" />}
                     </li>
                 ))}
             </ul>
