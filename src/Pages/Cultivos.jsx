@@ -9,6 +9,9 @@ import Cookies from 'js-cookie';
 import * as turf from "@turf/turf";
 import "./Cultivos.css";
 
+// 1. COMPONENTE DE DETALLES
+import DetalleCultivo from "../components/Cultivos/DetalleCultivo"; 
+
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
 export const Cultivos = () => {
@@ -35,39 +38,27 @@ export const Cultivos = () => {
   const [loading, setLoading] = useState(false);
   const [poligonoGeoJSON, setPoligonoGeoJSON] = useState(null); 
   
-  // Por defecto, el Admin y Manager ven sus propios cultivos al entrar
+  //  2. GRAFICOS
+  const [cultivoSeleccionado, setCultivoSeleccionado] = useState(null); 
+  
   const [usuarioAFiltrar, setUsuarioAFiltrar] = useState(uid);
 
   const [formulario, setFormulario] = useState({
-    nombre: "",
-    zona_cultivo: "Zona Norte",
-    tipo_cultivo: "Fruta",      
-    region: "Galicia",          
-    pais: "ES",            
-    sistema_riego: "Goteo" 
+    nombre: "", zona_cultivo: "Zona Norte", tipo_cultivo: "Fruta",      
+    region: "Galicia", pais: "ES", sistema_riego: "Goteo" 
   });
 
   // --- 1. CARGAR PRODUCTORES (PARA MANAGER Y ADMIN) ---
   useEffect(() => {
     const obtenerProductores = async () => {
-      // Ambos roles necesitan la lista de productores para el filtro
       if (!['manager', 'administrador', 'asesor'].includes(rol) || !token) return;
-      
       try {
         const res = await conectar(`${urlBase}user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
         if (res?.ok && res.usuarios) {
-          if (esAdmin) {
-            // El Admin ve TODOS los productores
-            setProductores(res.usuarios);
-          } else if (esManager) {
-            // El Manager solo ve los suyos
-            const vinculados = res.usuarios.filter(p => Number(p.id_manager) === uid);
-            setProductores(vinculados);
-          }
+          if (esAdmin) setProductores(res.usuarios);
+          else if (esManager) setProductores(res.usuarios.filter(p => Number(p.id_manager) === uid));
         }
-      } catch (error) {
-        console.error("Error al obtener equipo:", error);
-      }
+      } catch (error) { console.error("Error al obtener equipo:", error); }
     };
     obtenerProductores();
   }, [rol, uid, token]);
@@ -76,36 +67,24 @@ export const Cultivos = () => {
   useEffect(() => {
     const cargarCultivos = async () => {
       if (!usuarioAFiltrar || !token) return;
-      
       setLoading(true);
       try {
-        // Usamos la ruta unificada: cultivos por ID de usuario
         const data = await conectar(`${urlBase}cultivo/productor/${usuarioAFiltrar}`, 'GET', {}, token);
-        if (data?.ok) {
-          setCultivos(data.cultivos || []);
-        } else {
-          setCultivos([]);
-        }
-      } catch (error) {
-        console.error("Error cargando cultivos:", error);
-        setCultivos([]);
-      } finally {
-        setLoading(false);
-      }
+        if (data?.ok) setCultivos(data.cultivos || []);
+        else setCultivos([]);
+      } catch (error) { setCultivos([]); } 
+      finally { setLoading(false); }
     };
-
     cargarCultivos();
   }, [usuarioAFiltrar, token]);
 
-  // --- LÓGICA DEL MAPA ---
+  // --- LÓGICA DEL MAPA  ---
   const zonasParaMapa = useMemo(() => {
     if (!cultivos.length) return [];
-    
     return cultivos.map((c) => {
         try {
             let geometry = c.poligono || (c.poligono_geojson ? (typeof c.poligono_geojson === 'string' ? JSON.parse(c.poligono_geojson) : c.poligono_geojson) : null);
             if (!geometry || !geometry.coordinates) return null;
-            
             const coordsLeaflet = geometry.coordinates[0].map(point => [point[1], point[0]]); 
             return {
                 id: c.id_cultivo,
@@ -144,11 +123,7 @@ export const Cultivos = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'pais') {
-        setFormulario({ ...formulario, [name]: value.toUpperCase().slice(0, 2) });
-    } else {
-        setFormulario({ ...formulario, [name]: value });
-    }
+    setFormulario({ ...formulario, [name]: name === 'pais' ? value.toUpperCase().slice(0, 2) : value });
   };
 
   const guardarCultivo = async () => {
@@ -162,10 +137,14 @@ export const Cultivos = () => {
             setCultivos([respuesta.cultivo, ...cultivos]); 
             setPoligonoGeoJSON(null);
             setFormulario({ ...formulario, nombre: "" }); 
-        } else {
-            toast.error(respuesta?.msg || "Error al guardar");
-        }
+        } else toast.error(respuesta?.msg || "Error al guardar");
     } catch (error) { toast.error("Error de conexión"); }
+  };
+
+  //  3. CAMBIOS DE GRAFICOS
+  const onCultivoClick = (id_cultivo) => {
+    const cultivo = cultivos.find(c => c.id_cultivo === id_cultivo);
+    setCultivoSeleccionado(cultivo);
   };
 
   return (
@@ -207,61 +186,71 @@ export const Cultivos = () => {
                 <MapDraw 
                     zonasVisibles={zonasParaMapa} 
                     onZoneCreated={handleZoneCreated} 
+                    onZoneClicked={onCultivoClick} // <-- Enviamos el clic al mapa
                     readOnly={!puedeCrear} 
                 />
             )}
         </div>
       </div>
 
-      {puedeCrear && (
-        <div className="cultivos-right-section">
-          <h3 className="cultivos-form-title">Registrar Parcela</h3>
-          
-          <label className="cultivos-label">Nombre Parcela:</label>
-          <input name="nombre" value={formulario.nombre} placeholder="Ej: Finca Olivos" onChange={handleInputChange} className="cultivos-input" />
-          
-          <label className="cultivos-label">Zona:</label>
-          <input name="zona_cultivo" value={formulario.zona_cultivo} onChange={handleInputChange} className="cultivos-input" />
-          
-          <label className="cultivos-label">Tipo de Cultivo:</label>
-          <select name="tipo_cultivo" value={formulario.tipo_cultivo} onChange={handleInputChange} className="cultivos-input">
-            <option value="Fruta">Fruta</option>
-            <option value="Hortaliza">Hortaliza</option>
-            <option value="Cereal">Cereal</option>
-          </select>
+      <div className="cultivos-right-section">
+        {/*  CAMBIO ENTRE FORMU Y TABLA */}
+        {cultivoSeleccionado ? (
+            <DetalleCultivo 
+               cultivo={cultivoSeleccionado} 
+               onCerrar={() => setCultivoSeleccionado(null)} 
+               token={token}
+            />
+        ) : puedeCrear ? (
+            <>
+              <h3 className="cultivos-form-title">Registrar Parcela</h3>
+              
+              <label className="cultivos-label">Nombre Parcela:</label>
+              <input name="nombre" value={formulario.nombre} placeholder="Ej: Finca Olivos" onChange={handleInputChange} className="cultivos-input" />
+              
+              <label className="cultivos-label">Zona:</label>
+              <input name="zona_cultivo" value={formulario.zona_cultivo} onChange={handleInputChange} className="cultivos-input" />
+              
+              <label className="cultivos-label">Tipo de Cultivo:</label>
+              <select name="tipo_cultivo" value={formulario.tipo_cultivo} onChange={handleInputChange} className="cultivos-input">
+                <option value="Fruta">Fruta</option>
+                <option value="Hortaliza">Hortaliza</option>
+                <option value="Cereal">Cereal</option>
+              </select>
 
-          <div className="cultivos-flex-row">
-            <div style={{ flex: 2 }}>
-                <label className="cultivos-label">Región:</label>
-                <input name="region" value={formulario.region} onChange={handleInputChange} className="cultivos-input" />
-            </div>
-            <div style={{ flex: 1 }}>
-                <label className="cultivos-label">País:</label>
-                <input name="pais" value={formulario.pais} maxLength={2} onChange={handleInputChange} className="cultivos-input" />
-            </div>
-          </div>
+              <div className="cultivos-flex-row">
+                <div style={{ flex: 2 }}>
+                    <label className="cultivos-label">Región:</label>
+                    <input name="region" value={formulario.region} onChange={handleInputChange} className="cultivos-input" />
+                </div>
+                <div style={{ flex: 1 }}>
+                    <label className="cultivos-label">País:</label>
+                    <input name="pais" value={formulario.pais} maxLength={2} onChange={handleInputChange} className="cultivos-input" />
+                </div>
+              </div>
 
-          <label className="cultivos-label">Sistema de Riego:</label>
-          <select name="sistema_riego" value={formulario.sistema_riego} onChange={handleInputChange} className="cultivos-input">
-            <option value="Goteo">Goteo</option>
-            <option value="Aspersión">Aspersión</option>
-            <option value="Gravedad">Gravedad</option>
-            <option value="Manual">Manual</option>
-          </select>
+              <label className="cultivos-label">Sistema de Riego:</label>
+              <select name="sistema_riego" value={formulario.sistema_riego} onChange={handleInputChange} className="cultivos-input">
+                <option value="Goteo">Goteo</option>
+                <option value="Aspersión">Aspersión</option>
+                <option value="Gravedad">Gravedad</option>
+                <option value="Manual">Manual</option>
+              </select>
 
-          <button 
-            className="cultivos-btn-save"
-            onClick={guardarCultivo} 
-            disabled={!poligonoGeoJSON}
-            style={{ 
-                background: poligonoGeoJSON ? '#22c55e' : '#cbd5e1', 
-                cursor: poligonoGeoJSON ? 'pointer' : 'not-allowed' 
-            }}
-          >
-            <Save size={18} /> Guardar Parcela
-          </button>
-        </div>
-      )}
+              <button 
+                className="cultivos-btn-save"
+                onClick={guardarCultivo} 
+                disabled={!poligonoGeoJSON}
+                style={{ 
+                    background: poligonoGeoJSON ? '#22c55e' : '#cbd5e1', 
+                    cursor: poligonoGeoJSON ? 'pointer' : 'not-allowed' 
+                }}
+              >
+                <Save size={18} /> Guardar Parcela
+              </button>
+            </>
+        ) : null}
+      </div>
     </div>
   );
 };

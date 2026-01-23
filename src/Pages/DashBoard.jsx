@@ -1,4 +1,4 @@
-import { Users, Sprout, FileText, ChartNoAxesCombined } from "lucide-react"
+import { Users, Sprout, FileText, ChartNoAxesCombined, Shovel } from "lucide-react"
 import { Card } from "../components/ui/Card"
 import { userAuth } from "../hooks/userAuth"
 import { useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import { DataTable } from "../components/DataTable";
 import { reportes } from "../hooks/reportes";
 import { cultivos } from "../hooks/cultivos";
 import { AdminDashboardCharts } from "../components/dashboards/AdminDashboardCharts";
+import { Notificaciones } from "../components/ui/Notificaciones";
 
 export const DashBoard = () => {
   const { getRole, todosUser } = userAuth();
@@ -28,7 +29,7 @@ export const DashBoard = () => {
         const reportes = await todosLosReportes();
         const cultivos = await todosLosCultivos();
         //console.log(users);
-        
+
         setDatosUser(users);
         setDatosCulti(cultivos);
         setDatosReporte(reportes);
@@ -79,9 +80,7 @@ export const DashBoard = () => {
     { key: "nombre_productor", label: "Nombre Productor" }
   ];
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Panel de Control</h1>
-      
+    <div>
       {/* VISTA ADMINISTRADOR */}
       {rol === 'Administrador' && (
         <>
@@ -91,18 +90,17 @@ export const DashBoard = () => {
             <Card icono={<FileText />} titulo="Reportes" subtitulo={datosReporte.length} variant="counter" onClick={verReportes}/>
             <Card icono={<ChartNoAxesCombined />} titulo="Graficos" variant="counter" onClick={ninguno}/>
           </section>
-          {(!mostrarUsers && !mostrarCultivos && !mostrarReportes )&& (
-            <AdminDashboardCharts
-              reportes={datosReporte}
-              cultivos={datosCulti}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false
-              }}
-            />
-          )}
-          
-
+          <div className="contenedor-Info">
+            {(!mostrarUsers && !mostrarCultivos && !mostrarReportes )&& (
+              <AdminDashboardCharts
+                reportes={datosReporte}
+                cultivos={datosCulti}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false
+                }}
+              />
+            )}
           {mostrarUsers && (
             <DataTable
               title="Usuarios del sistema"
@@ -127,8 +125,57 @@ export const DashBoard = () => {
               limit={4}
             />
           )}
-
+          <Notificaciones/>
+        </div>
         </>
+      )}
+
+      {/* VISTA MANAGER */}
+      {rol === 'Manager' && (
+        <div>
+            <section className="cards-container">
+                <Card icono={<Sprout />} titulo="Cultivos Activos" subtitulo={2} variant="counter"/>
+                <Card icono={<Shovel />} titulo="Productores" subtitulo={2} variant="counter"/>
+                <Card icono={<ChartNoAxesCombined />} titulo="Graficos" variant="counter"/>
+            </section>
+            <div className="contenedor-Info">
+              {(!mostrarUsers && !mostrarCultivos && !mostrarReportes )&& (
+                <AdminDashboardCharts
+                  reportes={datosReporte}
+                  cultivos={datosCulti}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false
+                  }}
+                />
+              )}
+            {mostrarUsers && (
+              <DataTable
+                title="Usuarios del sistema"
+                columnas={userColumns}
+                data={datosUser}
+                limit={4}
+              />
+            )}
+            {mostrarCultivos && (
+              <DataTable
+                title="Usuarios del sistema"
+                columnas={cultivColumns}
+                data={datosCulti}
+                limit={4}
+              />
+            )}
+            {mostrarReportes && (
+              <DataTable
+                title="Usuarios del sistema"
+                columnas={reportColumns}
+                data={datosReporte}
+                limit={4}
+              />
+            )}
+            <Notificaciones/>
+          </div>
+        </div>
       )}
       {/* VISTA PRODUCTOR (Simplificada) */}
       {rol === 'Productor' && (
