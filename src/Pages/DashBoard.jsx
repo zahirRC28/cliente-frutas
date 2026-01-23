@@ -1,4 +1,4 @@
-import { Users, Sprout, FileText, ChartNoAxesCombined, Shovel } from "lucide-react"
+import { Users, Sprout, FileText, ChartNoAxesCombined, Shovel, Loader } from "lucide-react"
 import { Card } from "../components/ui/Card"
 import { userAuth } from "../hooks/userAuth"
 import { useEffect, useState } from "react";
@@ -18,30 +18,47 @@ export const DashBoard = () => {
   const [mostrarUsers, setMostrarUsers] = useState(null);
   const [mostrarCultivos, setMostrarCultivos] = useState(null);
   const [mostrarReportes, setMostrarReportes] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [rolCargado, setRolCargado] = useState(false);
   const rol = getRole();
+  useEffect(() => {
+    if (rol) {
+      setRolCargado(true);
+    }
+  }, [rol]);
+    //console.log(rol);
 
-  //console.log(rol);
+  const cargandoDatos = async () => {
+    setLoading(true);
+    setError(false);
 
-  const cargandoDatos = async()=>{
     try {
-      if(rol === 'Administrador'){
-        const users = await todosUser();
-        const reportes = await todosLosReportes();
-        const cultivos = await todosLosCultivos();
-        //console.log(users);
+      if (rol === 'Administrador') {
+        const [users, reportes, cultivos] = await Promise.all([
+          todosUser(),
+          todosLosReportes(),
+          todosLosCultivos()
+        ]);
 
-        setDatosUser(users);
-        setDatosCulti(cultivos);
-        setDatosReporte(reportes);
+        setDatosUser(users || []);
+        setDatosCulti(cultivos || []);
+        setDatosReporte(reportes || []);
       }
     } catch (error) {
       console.error(error);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
-    
-  }
-  useEffect(()=>{
-    cargandoDatos();
-  },[])
+  };
+
+  useEffect(() => {
+    if (rolCargado) {
+      cargandoDatos();
+    }
+  }, [rolCargado]);
+
   const verUsers = () =>{
     setMostrarUsers(true);
     setMostrarCultivos(false);
@@ -79,6 +96,21 @@ export const DashBoard = () => {
     { key: "fecha_reporte", label: "Fecha Creacion" },
     { key: "nombre_productor", label: "Nombre Productor" }
   ];
+  if (!rolCargado || loading) {
+    return (
+      <div className="dashboard-loader">
+        <Loader className="animate-spin" size={50} />
+        <p>Cargando panel...</p>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="dashboard-loader error">
+        <p>Error al cargar el panel</p>
+      </div>
+    );
+  }
   return (
     <div>
       {/* VISTA ADMINISTRADOR */}

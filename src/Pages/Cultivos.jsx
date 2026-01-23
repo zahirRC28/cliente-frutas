@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import conectar from "../helpers/fetch";
 import Cookies from 'js-cookie'; 
 import * as turf from "@turf/turf";
-import "./Cultivos.css";
+import "../styles/Cultivos.css";
 
 // 1. COMPONENTE DE DETALLES
 import DetalleCultivo from "../components/Cultivos/DetalleCultivo"; 
@@ -34,7 +34,7 @@ export const Cultivos = () => {
   // --- ESTADOS ---
   const [cultivos, setCultivos] = useState([]);
   const [productores, setProductores] = useState([]); 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [poligonoGeoJSON, setPoligonoGeoJSON] = useState(null); 
   
   //  2. GRAFICOS
@@ -65,17 +65,30 @@ export const Cultivos = () => {
   // --- 2. CARGAR CULTIVOS ---
   useEffect(() => {
     const cargarCultivos = async () => {
-      if (!usuarioAFiltrar || !token) return;
+      if (!usuarioAFiltrar || !token) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
-        const data = await conectar(`${urlBase}cultivo/productor/${usuarioAFiltrar}`, 'GET', {}, token);
-        if (data?.ok) setCultivos(data.cultivos || []);
-        else setCultivos([]);
-      } catch (error) { setCultivos([]); } 
-      finally { setLoading(false); }
-    };
-    cargarCultivos();
-  }, [usuarioAFiltrar, token]);
+        const data = await conectar(
+          `${urlBase}cultivo/productor/${usuarioAFiltrar}`,
+          'GET',
+          {},
+          token
+        );
+
+        setCultivos(data?.ok ? data.cultivos || [] : []);
+      } catch {
+        setCultivos([]);
+      } finally {
+        setLoading(false);
+      }
+  };
+
+  cargarCultivos();
+}, [usuarioAFiltrar, token]);
 
   // --- LÓGICA DEL MAPA  ---
   const zonasParaMapa = useMemo(() => {
