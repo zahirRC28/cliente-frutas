@@ -1,0 +1,340 @@
+import React, { useEffect, useState } from 'react';
+import conectar from '../helpers/fetch';
+import { userAuth } from '../hooks/userAuth';
+import "./reportes.css";
+import { useReportes } from '../hooks/useReportes';
+import { cultivos } from '../hooks/cultivos';
+
+const urlBase = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/+$/, '') + '/';
+
+export const Reportes = () => {
+  const { token, user, userPoRole } = userAuth();
+  const { crearReporte, editarReporte, eliminarReporte } = useReportes();
+  const { cultivosProductor } = cultivos();
+  const [cargando, setCargando] = useState(false);
+  const [reportes, setReportes] = useState([]);
+  const [productores, setProductores] = useState([]);
+  const [selectedProductor, setSelectedProductor] = useState('todos');
+  const [filtroTitulo, setFiltroTitulo] = useState('');
+  const [dataCultivos, setDataCultivos] = useState([]);
+
+  // Solo para Productor: controla si se ve la lista o el formulario de crear
+  const [vista, setVista] = useState('lista'); // 'lista' | 'crear' | 'editar'
+
+  // Estados para edición (prellenado). No cambian la lógica de envío: handleEditar usa ev.target.*
+  const [editId, setEditId] = useState(null);
+  const [editInitial, setEditInitial] = useState({ titulo: '', descripcion: '', id_cultivo: '' });
+
+  const loadReportes = async () => {
+    try {
+      setCargando(true);
+      const res = await conectar(`${urlBase}reporte/`, 'GET', {}, token);
+      const cults = await cultivosProductor();
+      setDataCultivos(Array.isArray(cults) ? cults : []);
+      const reports = res?.reports || [];
+      setReportes(reports);
+    } catch (err) {
+      console.error('Error cargando reportes:', err);
+      setReportes([]);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const loadProductores = async () => {
+    try {
+      const lista = await userPoRole('Productor');
+      if (!Array.isArray(lista)) {
+        setProductores([]);
+        return;
+      }
+      if (user?.rol === 'Manager') {
+        setProductores(lista.filter(p => Number(p.id_manager) === Number(user.uid)));
+      } else {
+        setProductores(lista);
+      }
+    } catch (err) {
+      console.error('Error cargando productores:', err);
+      setProductores([]);
+    }
+  };
+
+  useEffect(() => {
+    loadReportes();
+    if (user?.rol !== 'Productor'){
+      loadProductores();
+    }
+  }, []);
+
+  const handleCrear = async (ev) => {
+    ev.preventDefault();
+    const tituloform = ev.target.titulo.value;
+    const descripcionform = ev.target.descripcion.value;
+    const idCultivoform = ev.target.idcultivo.value;
+    const data = {
+      "titulo": tituloform,
+      "descripcion": descripcionform,
+      "id_cultivo": idCultivoform
+    }
+    await crearReporte(data);
+    setVista('lista');
+    loadReportes();
+  };
+
+  const handleEditar = async (ev) => {
+    ev.preventDefault();
+
+    if (!editId) {
+      alert('No se ha seleccionado el reporte a editar');
+      return;
+    }
+
+    const tituloform = ev.target.titulo.value;
+    const descripcionform = ev.target.descripcion.value;
+    const idCultivoform = ev.target.idcultivo.value;
+
+    const payload = {
+      titulo: tituloform,
+      descripcion: descripcionform,
+      id_cultivo: idCultivoform
+    };
+
+    try {
+      // pasar primero el id, luego el payload (así lo espera useReportes.editarReporte)
+      await editarReporte(editId, payload);
+
+      setVista('lista'); // volver a la lista por defecto
+      setEditId(null);
+      setEditInitial({ titulo: '', descripcion: '', id_cultivo: '' });
+      await loadReportes();
+    } catch (err) {
+      console.error('Error editando reporte:', err);
+      const msg = err?.data?.msg || err?.message || 'Error al editar reporte';
+      alert(msg);
+    }
+  };
+
+  const handleEliminar = async (id_reporte) => {
+    if (!confirm('¿Seguro que quieres eliminar este reporte?')) return;
+    try {
+      const res = await conectar(`${urlBase}reporte/eliminar/${id_reporte}`, 'DELETE', {}, token);
+      if (res?.ok) {
+        alert('Eliminado');
+        loadReportes();
+      } else {
+        alert('No se pudo eliminar: ' + (res.msg || JSON.stringify(res)));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error al eliminar');
+    }
+  };
+
+  const filtrarReportes = () => {
+    let lista = [...reportes];
+    if (!lista) return [];
+
+    if (user?.rol === 'Productor') {
+      lista = lista.filter(r => Number(r.id_productor) === Number(user.uid));
+    } else {
+      if (selectedProductor !== 'todos') {
+        lista = lista.filter(r => String(r.id_productor) === String(selectedProductor));
+      }
+    }
+    if (filtroTitulo.trim()) {
+      lista = lista.filter(r => (r.titulo || '').toLowerCase().includes(filtroTitulo.toLowerCase()));
+    }
+    return lista;
+  };
+
+  const listaFinal = filtrarReportes();
+
+  const tabBase = {
+    padding: '10px 14px',
+    borderRadius: 10,
+    border: '1.6px solid rgba(0,0,0,0.08)',
+    background: '#fff',
+    color: 'var(--texto-negro)',
+    cursor: 'pointer',
+    fontWeight: 600,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+  };
+  const tabActive = {
+    ...tabBase,
+    background: 'linear-gradient(180deg, var(--verde) 0%, var(--verde-oscuro) 100%)',
+    color: 'var(--texto-blanco)',
+    borderColor: 'transparent',
+    boxShadow: '0 8px 20px rgba(46,139,87,0.12)',
+  };
+
+  const prepararEdicion = (r) => {
+    setEditId(r.id_reporte);
+    setEditInitial({
+      titulo: r.titulo || '',
+      descripcion: r.descripcion || '',
+      id_cultivo: r.id_cultivo || r.id_cultivo || ''
+    });
+    setVista('editar');
+  };
+
+  return (
+    <div className="reportes-page">
+      <h1>Reportes</h1>
+
+      <div className="user-info">
+        <strong>Usuario:</strong> {user?.nombre || '—'} ({user?.rol || '—'})
+      </div>
+
+      {user?.rol === 'Productor' ? (
+        <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+          <button
+            type="button"
+            style={vista === 'lista' ? tabActive : tabBase}
+            onClick={() => setVista('lista')}
+          >
+            Lista Reportes
+          </button>
+          <button
+            type="button"
+            style={vista === 'crear' ? tabActive : tabBase}
+            onClick={() => setVista('crear')}
+          >
+            + Nuevo Reporte
+          </button>
+        </div>
+      ) : (
+        <div className="filtros" style={{ marginBottom: 12 }}>
+          {user?.rol !== 'Productor' && (
+            <div className="filtro-productor">
+              <label>Filtrar por productor</label>
+              <select value={selectedProductor} onChange={e => setSelectedProductor(e.target.value)}>
+                <option value="todos">Todos</option>
+                {productores.map(p => (
+                  <option key={p.id_usuario} value={p.id_usuario}>{p.nombre_completo}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="filtro-titulo" style={{ marginTop: user?.rol !== 'Productor' ? 0 : undefined }}>
+            <label>Buscar por título</label>
+            <input value={filtroTitulo} onChange={e => setFiltroTitulo(e.target.value)} placeholder="Título..." />
+          </div>
+        </div>
+      )}
+
+      {/* Vista crear */}
+      {user?.rol === 'Productor' && vista === 'crear' && (
+        <section className="crear-section">
+          <h3>Crear reporte</h3>
+          <form onSubmit={handleCrear} className="form-crear">
+            <div>
+              <input name="titulo" placeholder="Título" />
+            </div>
+            <div>
+              <textarea name="descripcion" placeholder="Descripción"/>
+            </div>
+            <div>
+              <label htmlFor="idcultivo">Cultivo</label>
+              <select name="idcultivo" id="idcultivo" defaultValue="">
+                <option value="" disabled>Selecciona un cultivo</option>
+                {dataCultivos.map(c => (
+                  <option key={c.id_cultivo || c.id} value={c.id_cultivo || c.id}>
+                    {c.nombre || c.nombre_cultivo || c.titulo || `Cultivo ${c.id_cultivo || c.id}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <button type="submit" className="btn btn-guardar">Crear</button>
+              <button type="button" className="btn btn-cancelar" onClick={() => setVista('lista')}>Cancelar</button>
+            </div>
+          </form>
+        </section>
+      )}
+
+      {/* Vista editar (usa el mismo handleEditar que ya tienes: recibe el event) */}
+      {user?.rol === 'Productor' && vista === 'editar' && (
+        <section className="crear-section">
+          <h3>Editar reporte</h3>
+          <form onSubmit={handleEditar} className="form-crear">
+            <div>
+              <input name="titulo" defaultValue={editInitial.titulo} placeholder="Título" />
+            </div>
+            <div>
+              <textarea name="descripcion" defaultValue={editInitial.descripcion} placeholder="Descripción" />
+            </div>
+            <div>
+              <label htmlFor="idcultivo_edit">Cultivo</label>
+              <select name="idcultivo" id="idcultivo_edit" defaultValue={editInitial.id_cultivo || ''}>
+                <option value="" disabled>Selecciona un cultivo</option>
+                {dataCultivos.map(c => (
+                  <option key={c.id_cultivo || c.id} value={c.id_cultivo || c.id}>
+                    {c.nombre || c.nombre_cultivo || c.titulo || `Cultivo ${c.id_cultivo || c.id}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <button type="submit" className="btn btn-guardar">Guardar cambios</button>
+              <button
+                type="button"
+                className="btn btn-cancelar"
+                onClick={() => {
+                  setVista('lista');
+                  setEditId(null);
+                  setEditInitial({ titulo: '', descripcion: '', id_cultivo: '' });
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </section>
+      )}
+
+      {/* Vista lista */}
+      {(user?.rol !== 'Productor' || vista === 'lista') && (
+        <>
+          <div>
+            {cargando ? <p className="empty">Cargando...</p> : <p className="empty">Mostrando {listaFinal.length} reportes</p>}
+            <div className="lista-reportes">
+              {listaFinal.length === 0 && !cargando && <div className="empty">No hay reportes que coincidan.</div>}
+              {listaFinal.map(r => (
+                <article key={r.id_reporte} className="reporte-card" role="article" aria-labelledby={`titulo-${r.id_reporte}`}>
+                  <div className="contenido">
+                    <strong className='mb10' id={`titulo-${r.id_reporte}`}>{r.titulo}</strong>
+                    <div className="meta">
+                      <span className="badge-productor mb10">{r.nombre_productor || r.id_productor}</span>
+                      <span>{r.nombre_cultivo || '—'}</span>
+                      <span>{r.fecha_reporte ? new Date(r.fecha_reporte).toLocaleString() : ''}</span>
+                    </div>
+                    <p>{r.descripcion}</p>
+                  </div>
+
+                  <div className="acciones">
+                    {(user?.rol === 'Productor' && Number(user.uid) === Number(r.id_productor)) && (
+                      <>
+                        <button className="btn btn-cancelar" onClick={() => prepararEdicion(r)}>Editar</button>
+                        <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
+                      </>
+                    )}
+
+                    {user?.rol === 'Administrador' && (
+                      <>
+                        <button className="btn btn-cancelar" onClick={() => prepararEdicion(r)}>Editar</button>
+                        <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
+                      </>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+      
+    </div>
+  );
+};
+

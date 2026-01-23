@@ -39,6 +39,11 @@
     align-self: flex-start;
 }
 
+.mb20{
+    margin-bottom: 20px;
+}
+.mb10{margin-bottom: 10px;}
+
 @media (max-width: 700px) {
     .contenedor-Info {
         flex-direction: column;

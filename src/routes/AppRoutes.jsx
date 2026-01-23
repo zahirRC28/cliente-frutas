@@ -1,29 +1,16 @@
-import { Route, Routes }  from 'react-router-dom'
-import { Navigate } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom';
 
-import { RendAni } from '../components/RendAni'
-//import { LoginPage } from '../pages/LoginPage'
-
-import { ProtectedRoutes } from '../components/protections/ProtectedRoutes'
-import { PublicProtection } from '../components/protections/PublicProtection'
-import { LayoutGeneral } from '../layouts/LayoutGeneral'
-import { DashBoard } from '../Pages/DashBoard'
-import { Login } from '../Pages/Login'
-import { Cultivos } from '../Pages/Cultivos' // <--- IMPORT NUEVO
+import { RendAni } from '../components/RendAni';
+import { ProtectedRoutes } from '../components/protections/ProtectedRoutes';
+import { PublicProtection } from '../components/protections/PublicProtection';
+import { LayoutGeneral } from '../layouts/LayoutGeneral';
+import { DashBoard } from '../Pages/DashBoard';
+import { Login } from '../Pages/Login';
+import { Cultivos } from '../Pages/Cultivos';
+import { Reportes } from '../Pages/ReportesPage';
 
 /**
  * Componente de rutas principales de la aplicación.
- * Define todas las rutas públicas y protegidas según el rol del usuario.
- *
- * Rutas principales:
- * - /               -> LoginPage (protegida como pública)
- * - /admin/* -> Panel de administrador
- * - /manager/* -> Panel de manager
- * - /asesor/* -> Panel de asesor
- * - /productor/* -> Panel de productor
- *
- * @component
- * @returns {JSX.Element} Elemento JSX con la definición de rutas
  */
 export const AppRoutes = () => {
   return (
@@ -34,7 +21,7 @@ export const AppRoutes = () => {
             <Login/>
           </PublicProtection>
         } />
-        
+
         {/*RUTAS DE ADMINISTRADOR*/}
         <Route path="admin" element={
           <ProtectedRoutes roles={['Administrador']}>
@@ -42,8 +29,9 @@ export const AppRoutes = () => {
           </ProtectedRoutes>
         }>
           <Route index element={<DashBoard/>} />
-          {/*SUBRUTAS DE ADMIN*/}
           <Route path="cultivos" element={<Cultivos/>} />
+          {/* Reportes para administrador */}
+          <Route path="reportes" element={<Reportes/>} />
         </Route>
 
         {/*RUTAS DE MANAGER*/}
@@ -53,8 +41,9 @@ export const AppRoutes = () => {
           </ProtectedRoutes>
         }>
           <Route index element={<DashBoard/>} />
-          {/*SUBRUTAS DE MANAGER*/}
           <Route path="cultivos" element={<Cultivos/>} />
+          {/* Reportes para manager */}
+          <Route path="reportes" element={<Reportes/>} />
         </Route>
 
         {/*RUTAS DE ASESOR*/}
@@ -64,8 +53,9 @@ export const AppRoutes = () => {
           </ProtectedRoutes>
         }>
           <Route index element={<DashBoard/>} />
-          {/*SUBRUTAS DE ASESOR*/}
           <Route path="cultivos" element={<Cultivos/>} />
+          {/* Reportes para asesor */}
+          <Route path="reportes" element={<Reportes/>} />
         </Route>
 
         {/*RUTAS DE PRODUCTOR*/}
@@ -75,11 +65,13 @@ export const AppRoutes = () => {
           </ProtectedRoutes>
         }>
           <Route index element={<DashBoard/>} />
-          {/*SUBRUTAS DE PRODUCTOR*/}
           <Route path="cultivos" element={<Cultivos/>} />
+          {/* Reportes para productor */}
+          <Route path="reportes" element={<Reportes/>} />
         </Route>
       </Route>
+
       <Route path='/*' element={<Navigate to={'/'} />} />
     </Routes>
-  )
-}
+  );
+};
