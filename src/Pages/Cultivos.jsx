@@ -29,7 +29,10 @@ export const Cultivos = () => {
   
   const esAdmin = rol === 'administrador' || rol === 'admin';
   const esManager = rol === 'manager';
+  const esAsesor = rol === 'asesor';
+  const esProductor = rol === 'productor';
   const puedeCrear = ['productor', 'admin'].includes(rol);
+  const puedeVerTodos = esAdmin || esAsesor || esManager; // Asesor puede ver todos
 
   // --- ESTADOS ---
   const [cultivos, setCultivos] = useState([]);
@@ -37,9 +40,10 @@ export const Cultivos = () => {
   const [loading, setLoading] = useState(false);
   const [poligonoGeoJSON, setPoligonoGeoJSON] = useState(null); 
   
-  //  2. GRAFICOS
+  // 2. GRAFICOS
   const [cultivoSeleccionado, setCultivoSeleccionado] = useState(null); 
   
+  // Asesor puede filtrar como el admin
   const [usuarioAFiltrar, setUsuarioAFiltrar] = useState(uid);
 
   const [formulario, setFormulario] = useState({
@@ -47,15 +51,21 @@ export const Cultivos = () => {
     region: "Galicia", pais: "ES", sistema_riego: "Goteo" 
   });
 
-  // --- 1. CARGAR PRODUCTORES (PARA MANAGER Y ADMIN) ---
+  // --- 1. CARGAR PRODUCTORES (PARA ADMIN, MANAGER Y ASESOR) ---
   useEffect(() => {
     const obtenerProductores = async () => {
+      // Admin, manager y asesor pueden ver productores
       if (!['manager', 'administrador', 'asesor'].includes(rol) || !token) return;
       try {
         const res = await conectar(`${urlBase}user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
         if (res?.ok && res.usuarios) {
-          if (esAdmin) setProductores(res.usuarios);
-          else if (esManager) setProductores(res.usuarios.filter(p => Number(p.id_manager) === uid));
+          if (esAdmin || esAsesor) {
+            // Asesor y admin ven todos los productores
+            setProductores(res.usuarios);
+          } else if (esManager) {
+            // Manager solo ve sus productores asignados
+            setProductores(res.usuarios.filter(p => Number(p.id_manager) === uid));
+          }
         }
       } catch (error) { console.error("Error al obtener equipo:", error); }
     };
@@ -69,6 +79,7 @@ export const Cultivos = () => {
       setLoading(true);
       try {
         const data = await conectar(`${urlBase}cultivo/productor/${usuarioAFiltrar}`, 'GET', {}, token);
+        
         if (data?.ok) setCultivos(data.cultivos || []);
         else setCultivos([]);
       } catch (error) { setCultivos([]); } 
@@ -79,25 +90,34 @@ export const Cultivos = () => {
 
   // --- LÓGICA DEL MAPA  ---
   const zonasParaMapa = useMemo(() => {
-    if (!cultivos.length) return [];
-    return cultivos.map((c) => {
-        try {
-            let geometry = c.poligono || (c.poligono_geojson ? (typeof c.poligono_geojson === 'string' ? JSON.parse(c.poligono_geojson) : c.poligono_geojson) : null);
-            if (!geometry || !geometry.coordinates) return null;
-            const coordsLeaflet = geometry.coordinates[0].map(point => [point[1], point[0]]); 
-            return {
-                id: c.id_cultivo,
-                nombre: c.nombre,
-                coords: coordsLeaflet, 
-                color: c.tipo_cultivo === 'Fruta' ? '#e74c3c' : '#2ecc71',
-                geojsonOriginal: geometry
-            };
-        } catch (err) { return null; }
-    }).filter(Boolean);
-  }, [cultivos]);
+  if (!cultivos.length) return [];
+  return cultivos.map((c) => {
+    try {
+      let geometry = c.poligono || (c.poligono_geojson ? (typeof c.poligono_geojson === 'string' ? JSON.parse(c.poligono_geojson) : c.poligono_geojson) : null);
+      if (!geometry || !geometry.coordinates) return null;
+
+      // Calculamos el centroide usando turf
+      const poli = turf.polygon(geometry.coordinates);
+      const centroide = turf.centroid(poli);
+      const [lon, lat] = centroide.geometry.coordinates;
+
+      const coordsLeaflet = geometry.coordinates[0].map(point => [point[1], point[0]]); 
+      return {
+        id: c.id_cultivo,
+        nombre: c.nombre,
+        coords: coordsLeaflet, 
+        centro: [lat, lon], // <--- Guardamos el centro aquí
+        color: c.tipo_cultivo === 'Fruta' ? '#e74c3c' : '#2ecc71',
+        // Pasamos el resto de datos del cultivo original
+        ...c 
+      };
+    } catch (err) { return null; }
+  }).filter(Boolean);
+}, [cultivos]);
 
   const handleZoneCreated = (latLngs) => {
     const coordsGeoJSON = latLngs.map(p => [p.lng, p.lat]);
+    console.log("Zona dibujada:", coordsGeoJSON);
     coordsGeoJSON.push(coordsGeoJSON[0]); 
     const nuevoPoligono = turf.polygon([coordsGeoJSON]);
     try {
@@ -140,10 +160,13 @@ export const Cultivos = () => {
     } catch (error) { toast.error("Error de conexión"); }
   };
 
-  //  3. CAMBIOS DE GRAFICOS
+  // 3. CAMBIOS DE GRAFICOS
   const onCultivoClick = (id_cultivo) => {
-    const cultivo = cultivos.find(c => c.id_cultivo === id_cultivo);
-    setCultivoSeleccionado(cultivo);
+    const zonaEnriquecida = zonasParaMapa.find(z => z.id === id_cultivo);
+    
+    if (zonaEnriquecida) {
+      setCultivoSeleccionado(zonaEnriquecida);
+    }
   };
 
   return (
@@ -154,10 +177,13 @@ export const Cultivos = () => {
         <div className="cultivos-header">
             <h2 className="cultivos-title">
                 <MapIcon color="#2c3e50" /> 
-                {esAdmin ? "Panel de Administración" : esManager ? "Gestión de Productores" : "Mis Cultivos"}
+                {esAdmin ? "Panel de Administración" : 
+                 esManager ? "Gestión de Productores" : 
+                 esAsesor ? "Panel de Asesoría" : 
+                 "Mis Cultivos"}
             </h2>
 
-            {(esAdmin || esManager) && (
+            {(puedeVerTodos) && (
               <div className="cultivos-filter-container">
                 <Users size={18} color="#666" />
                 <select 
@@ -165,7 +191,12 @@ export const Cultivos = () => {
                   value={usuarioAFiltrar} 
                   onChange={(e) => setUsuarioAFiltrar(Number(e.target.value))}
                 >
-                  <option value={uid}>{esAdmin ? "Mis Cultivos (Admin)" : "Mis Cultivos (Manager)"}</option>
+                  <option value={uid}>
+                    {esAdmin ? "Mis Cultivos (Admin)" : 
+                     esManager ? "Mis Cultivos (Manager)" : 
+                     esAsesor ? "Mis Cultivos (Asesor)" : 
+                     "Mis Cultivos"}
+                  </option>
                   {productores.map(p => (
                     <option key={p.id_usuario} value={p.id_usuario}>
                       {p.nombre_completo || p.nombre}
@@ -185,7 +216,7 @@ export const Cultivos = () => {
                 <MapDraw 
                     zonasVisibles={zonasParaMapa} 
                     onZoneCreated={handleZoneCreated} 
-                    onZoneClicked={onCultivoClick} // <-- Enviamos el clic al mapa
+                    onZoneClicked={onCultivoClick}
                     readOnly={!puedeCrear} 
                 />
             )}
@@ -193,7 +224,7 @@ export const Cultivos = () => {
       </div>
 
       <div className="cultivos-right-section">
-        {/*  CAMBIO ENTRE FORMU Y TABLA */}
+        {/* CAMBIO ENTRE FORMU Y TABLA */}
         {cultivoSeleccionado ? (
             <DetalleCultivo 
                cultivo={cultivoSeleccionado} 

@@ -1,0 +1,272 @@
+
+/* --- Contenedor Principal --- */
+.cultivos-detalle-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cultivos-flex-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cultivos-form-title {
+  margin: 0;
+  color: #1e293b;
+}
+
+.cultivos-zona-info {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  opacity: 0.7;
+}
+
+.cultivos-label {
+  margin-top: 10px;
+  color: #475569;
+}
+
+.cultivos-divider {
+  margin: 15px 0;
+  border: 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* --- Estados de Carga --- */
+.cultivos-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.cultivos-loader-text {
+  margin-top: 10px;
+  color: #64748b;
+}
+
+/* --- Dashboard y Tarjetas (Cards) --- */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  padding-right: 5px; /* Para que el scrollbar no se coma el contenido */
+}
+
+/* Estilo base para todas las tarjetas */
+.card-base {
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.card-grafico, .card-tabla {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.card-plagas {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+/* Títulos de las tarjetas */
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: #334155;
+  margin-top: 0;
+}
+
+.card-title.danger {
+  color: #991b1b;
+}
+
+.chart-container {
+  width: 100%;
+  height: 250px;
+}
+
+/* --- Lista de Plagas --- */
+.plagas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plaga-item {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.plaga-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.plaga-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plaga-name {
+  color: #1e293b;
+  font-size: 15px;
+  text-transform: capitalize;
+}
+
+.plaga-risk-badge {
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.plaga-status {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plaga-gdd {
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.plagas-empty {
+  font-size: 14px;
+  color: #991b1b;
+  margin: 0;
+}
+
+/* --- Tabla de Sensores --- */
+.tabla-sensores {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabla-sensores th, .tabla-sensores td {
+  padding: 8px;
+}
+
+.tabla-sensores thead tr {
+  border-bottom: 2px solid #cbd5e1;
+  color: #64748b;
+}
+
+.tabla-sensores tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tabla-sensores td.sensor-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabla-empty {
+  text-align: center;
+  color: #94a3b8;
+}
+
+/* --- Filtros del Gráfico --- */
+.chart-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  background: white;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  width: fit-content;
+}
+
+.chart-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chart-btn:hover {
+  background: #f1f5f9;
+}
+
+.chart-btn.active {
+  background: #3b82f6; /* Azul base */
+  color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Colores específicos cuando están activos */
+.chart-btn.active.temperatura { background: #f59e0b; }
+.chart-btn.active.humedad { background: #3b82f6; }
+.chart-btn.active.lluvia { background: #10b981; }
+
+.card-meteo {
+  margin-top: 16px;
+}
+
+.meteo-list {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.meteo-item {
+  min-width: 220px;        /* clave para que no se aplasten */
+  flex-shrink: 0;
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+
+.meteo-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.meteo-datos {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #475569;
+}
