@@ -18,8 +18,7 @@ const UsuariosPage = () => {
   // Vista: 'lista' | 'crear' | 'editar' (como en Reportes)
   const [vista, setVista] = useState('lista');
 
-  // Estado para crear (usamos el formulario no-controlado para crear, similar a Reportes)
-  // Estado para edición (controlado)
+
   const [formEditar, setFormEditar] = useState({ id: null, nombre: '', correo: '', contrasenia: '', rol: '', id_manager: '' });
 
   const load = async () => {
@@ -45,7 +44,6 @@ const UsuariosPage = () => {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line
   }, []);
 
   const listaFiltrada = useMemo(() => {
@@ -88,7 +86,6 @@ const UsuariosPage = () => {
       });
 
       // crearUsuario en el hook setea mensajes pero no siempre devuelve la respuesta.
-      // Si queremos garantizar feedback, podemos mostrar éxito por defecto y refrescar lista.
       await load();
       ev.target.reset();
       setVista('lista');
@@ -255,7 +252,7 @@ const UsuariosPage = () => {
     boxShadow: '0 8px 20px rgba(46,139,87,0.12)',
   };
 
-  // Si el usuario no es Administrador, bloquear acceso a esta página (fallback)
+  // Si el usuario no es Administrador, bloquear acceso a esta página 
   if (user?.rol !== 'Administrador') {
     return <div style={{ padding: 16 }}>No tienes permisos para ver esta sección.</div>;
   }

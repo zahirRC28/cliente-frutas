@@ -9,7 +9,7 @@ import { Login } from '../Pages/Login';
 import { Cultivos } from '../Pages/Cultivos';
 import { Reportes } from '../Pages/ReportesPage';
 import Productores from '../Pages/Productores';
-import UsuariosPage from '../Pages/Usuarios'; // <-- nueva página
+import UsuariosPage from '../Pages/Usuarios'; 
 
 export const AppRoutes = () => {
   return (
@@ -31,8 +31,7 @@ export const AppRoutes = () => {
           <Route path="cultivos" element={<Cultivos/>} />
           <Route path="reportes" element={<Reportes/>} />
           <Route path="productores" element={<Productores/>} />
-          <Route path="users" element={<UsuariosPage/>} /> {/* <-- admin user management */}
-          {/* nested redirects para compatibilidad si quieres mantenerlos */}
+          <Route path="users" element={<UsuariosPage/>} />
           <Route path="user" element={<Navigate to="users" replace />} />
         </Route>
 

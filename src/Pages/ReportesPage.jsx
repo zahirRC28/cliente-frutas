@@ -23,7 +23,7 @@ export const Reportes = () => {
   // Solo para Productor: controla si se ve la lista o el formulario de crear
   const [vista, setVista] = useState('lista'); // 'lista' | 'crear' | 'editar'
 
-  // Estados para edición (prellenado). No cambian la lógica de envío: handleEditar usa ev.target.*
+  // Estados para edición. No cambian la lógica de envío: handleEditar usa ev.target.*
   const [editId, setEditId] = useState(null);
   const [editInitial, setEditInitial] = useState({ titulo: '', descripcion: '', id_cultivo: '' });
 
@@ -76,7 +76,6 @@ export const Reportes = () => {
     if (user?.rol !== 'Productor') {
       loadProductores();
     }
-    // eslint-disable-next-line
   }, []);
 
   const handleCrear = async (ev) => {
@@ -155,7 +154,7 @@ export const Reportes = () => {
     };
 
     try {
-      // pasar primero el id, luego el payload (así lo espera useReportes.editarReporte)
+      // pasar primero el id, luego el payload 
       await editarReporte(editId, payload);
 
       setVista('lista'); // volver a la lista por defecto
@@ -198,7 +197,6 @@ export const Reportes = () => {
 
       if (!result.isConfirmed) return;
 
-      // Preferimos usar el hook eliminarReporte si existe
       if (typeof eliminarReporte === 'function') {
         try {
           const resHook = await eliminarReporte(id_reporte);
@@ -218,7 +216,6 @@ export const Reportes = () => {
           // si el hook devolvió estructura diferente, seguir con fallback
         } catch (errHook) {
           console.warn('eliminarReporte hook falló, fallback a conectar:', errHook);
-          // continuar a fallback abajo (conectar)
         }
       }
 
@@ -374,7 +371,6 @@ export const Reportes = () => {
         </section>
       )}
 
-      {/* Vista editar (usa el mismo handleEditar que ya tienes: recibe el event) */}
       {user?.rol === 'Productor' && vista === 'editar' && (
         <section className="crear-section">
           <h3>Editar reporte</h3>
