@@ -1,6 +1,5 @@
-// src/hooks/useProductores.js
-import { useState, useEffect } from "react";
-import conectar from "../helpers/fetch";
+import { useState, useEffect } from 'react';
+import conectar from '../helpers/fetch';
 
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
@@ -10,31 +9,23 @@ export const useProductores = (rol, uid, token) => {
 
   useEffect(() => {
     const obtenerProductores = async () => {
-      // 1. Verificamos si el usuario tiene permiso para ver esta lista
-      const rolActual = rol?.toLowerCase().trim() || '';
-      const rolesValidos = ['manager', 'administrador', 'admin', 'asesor'];
-      
-      if (!rolesValidos.includes(rolActual) || !token) return;
+      // Roles permitidos para ver la lista: Administrador, Manager, Asesor
+      const rolesValidos = ['Administrador', 'Manager', 'Asesor'];
+      if (!rolesValidos.includes(rol) || !token) {
+        setProductores([]);
+        return;
+      }
 
-      setLoading(true);
       try {
-        // Pedimos al backend todos los usuarios con el rol "Productor"
-        const res = await conectar(`${urlBase}user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
-
-        if (res?.ok && res.usuarios) {
-          const esAdmin = ['administrador', 'admin'].includes(rolActual);
-
-          if (esAdmin) {
-            // El Admin ve TODOS los productores
-            setProductores(res.usuarios);
-          } else {
-            // El Manager solo ve a los productores que tengan su ID como id_manager
-            const vinculados = res.usuarios.filter(p => Number(p.id_manager) === Number(uid));
-            setProductores(vinculados);
-          }
+        setLoading(true);
+        const res = await conectar(`${urlBase}user/productores`, 'GET', {}, token);
+        if (res?.ok && Array.isArray(res.productores)) {
+          setProductores(res.productores);
+        } else {
+          setProductores([]);
         }
-      } catch (error) {
-        console.error("Error al obtener equipo de productores:", error);
+      } catch (err) {
+        console.error('Error obteniendo productores:', err);
         setProductores([]);
       } finally {
         setLoading(false);
