@@ -28,14 +28,10 @@ export const Cultivos = () => {
   const rol = user.rol ? user.rol.toLowerCase().trim() : '';
   
   const esAdmin = rol === 'administrador' || rol === 'admin';
-<<<<<<< HEAD
-  const esManager = rol === 'manager';
-  const esAsesor = rol === 'asesor';
-  const esProductor = rol === 'productor';
-=======
+
   const esManager = rol === 'manager';  
   const esAsesor = rol === 'asesor';
->>>>>>> cdbc32b18e6ca4fb764624ea05f14e305667eda6
+
   const puedeCrear = ['productor', 'admin'].includes(rol);
   const puedeVerTodos = esAdmin || esAsesor || esManager; // Asesor puede ver todos
 
@@ -87,17 +83,6 @@ export const Cultivos = () => {
 
       setLoading(true);
       try {
-<<<<<<< HEAD
-        const data = await conectar(`${urlBase}cultivo/productor/${usuarioAFiltrar}`, 'GET', {}, token);
-        
-        if (data?.ok) setCultivos(data.cultivos || []);
-        else setCultivos([]);
-      } catch (error) { setCultivos([]); } 
-      finally { setLoading(false); }
-    };
-    cargarCultivos();
-  }, [usuarioAFiltrar, token]);
-=======
         const data = await conectar(
           `${urlBase}cultivo/productor/${usuarioAFiltrar}`,
           'GET',
@@ -115,7 +100,6 @@ export const Cultivos = () => {
 
   cargarCultivos();
 }, [usuarioAFiltrar, token]);
->>>>>>> cdbc32b18e6ca4fb764624ea05f14e305667eda6
 
   // --- LÓGICA DEL MAPA  ---
   const zonasParaMapa = useMemo(() => {

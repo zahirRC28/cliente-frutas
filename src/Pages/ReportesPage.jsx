@@ -6,7 +6,7 @@ import { userAuth } from '../hooks/userAuth';
 import "./reportes.css";
 import { useReportes } from '../hooks/useReportes';
 import { cultivos } from '../hooks/cultivos';
-
+//hoola
 const urlBase = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/+$/, '') + '/';
 
 export const Reportes = () => {
