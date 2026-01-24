@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { userAuth } from '../hooks/userAuth';
 import { useProductores } from '../hooks/useProductores';
-import './reportes.css'; 
+import './reportes.css';
 
 export const Productores = () => {
+  const navigate = useNavigate();
   const { user, token } = userAuth();
   const rol = user?.rol;
   const uid = user?.uid;
@@ -54,6 +56,12 @@ export const Productores = () => {
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="btn btn-cancelar"
+                onClick={() => {
+                  // Si rol es 'Administrador', ruta -> '/admin'
+                  // Si rol es 'Manager', ruta -> '/manager'
+                  const rutaBase = user.rol === 'Administrador' ? 'admin' : user.rol.toLowerCase();
+                  navigate(`/${rutaBase}/productores/${p.id_usuario}`);
+                }}
               >
                 Ver más
               </button>

@@ -1,0 +1,91 @@
+/* Espacio entre cabecera y contenido */
+.detalle-header {
+    margin-bottom: 30px; 
+}
+
+.detalle-card {
+    display: flex !important;
+    flex-direction: column !important; 
+    align-items: flex-start !important;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Forzar nombre y valor en la misma línea */
+.dato-linea {
+    display: flex;
+    gap: 8px; 
+    margin-bottom: 5px;
+}
+
+/* CONTENEDOR PRINCIPAL: Aquí activamos el contador */
+.secciones-verticales {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; 
+}
+
+.seccion-header-bloque {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    padding-bottom: 8px;
+    color: var(--verde-oscuro);
+}
+
+/* BLOQUE DE CADA CULTIVO */
+.item-detalle-lista {
+    width: 100%;
+    position: relative;
+}
+
+
+.item-detalle-lista p {
+    margin: 4px 0;
+    display: flex;
+    gap: 5px;
+}
+
+/* SEPARADOR*/
+.separador-item {
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+    margin: 15px -24px; 
+    width: auto; 
+}
+
+/*  Quitar última línea */
+.item-detalle-lista:last-of-type + .separador-item {
+    display: none;
+}
+
+.nombre-destacado {
+    display: block;
+    color: #1b8040;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+/* Contenedor de tipo y estado */
+.info-secundaria {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.item-detalle-lista p {
+    margin: 2px 0;
+    color: #333;
+    line-height: 1.4;
+}
+
+/* contenido de la sección no tenga padding extra que corte líneas */
+.seccion-contenido-bloque {
+    width: 100%;
+}

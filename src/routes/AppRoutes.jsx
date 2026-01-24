@@ -10,6 +10,7 @@ import { Cultivos } from '../Pages/Cultivos';
 import { Reportes } from '../Pages/ReportesPage';
 import Productores from '../Pages/Productores';
 import UsuariosPage from '../Pages/Usuarios'; 
+import { DetalleProductor } from '../Pages/DetalleProductor';
 
 export const AppRoutes = () => {
   return (
@@ -31,6 +32,7 @@ export const AppRoutes = () => {
           <Route path="cultivos" element={<Cultivos/>} />
           <Route path="reportes" element={<Reportes/>} />
           <Route path="productores" element={<Productores/>} />
+          <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="users" element={<UsuariosPage/>} />
           <Route path="user" element={<Navigate to="users" replace />} />
         </Route>
@@ -45,6 +47,7 @@ export const AppRoutes = () => {
           <Route path="cultivos" element={<Cultivos/>} />
           <Route path="reportes" element={<Reportes/>} />
           <Route path="productores" element={<Productores/>} />
+          <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
         </Route>
@@ -59,6 +62,7 @@ export const AppRoutes = () => {
           <Route path="cultivos" element={<Cultivos/>} />
           <Route path="reportes" element={<Reportes/>} />
           <Route path="productores" element={<Productores/>} />
+          <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
         </Route>
