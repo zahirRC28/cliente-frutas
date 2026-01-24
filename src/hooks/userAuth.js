@@ -150,21 +150,25 @@ export const userAuth = () => {
    * @param {number} idUser ID del usuario
    * @param {string} email Email del usuario
    */
-    const eliminarUser = async(idUser, email)=>{
-        //console.log(idUser);
-        //console.log(email);
-        const datos = {
-            "correo": email
-        }
-        const info = await conectar(`${urlBase}user/eliminar/${idUser}`,'DELETE',datos,token)
-        console.log(info);
-        const { ok, msg } = info;
-        if(ok === true){
-            setMensaje(msg);
-            setError(null)
-        }
-    }
+const eliminarUser = async(idUser, email) => {
+  const datos = { correo: email };
+  // Llamada al backend
+  const info = await conectar(`${urlBase}user/eliminar/${idUser}`, 'DELETE', datos, token);
+  console.log('eliminarUser response:', info);
 
+  // Si la respuesta está estructurada como { ok: true, msg: ... }
+  if (info && info.ok === true) {
+    setMensaje(info.msg || 'Usuario eliminado');
+    setError(null);
+  } else {
+    // almacena el error para mostrarlo si hace falta
+    const msg = info?.msg || info?.message || 'Error al eliminar usuario';
+    setError(msg);
+  }
+
+  // Importante: devolver la respuesta para que el componente pueda comprobarla
+  return info;
+};
     /**
    * Cambia el estado (activo/inactivo) de un usuario
    * @param {number} idUser ID del usuario

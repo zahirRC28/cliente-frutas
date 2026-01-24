@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import conectar from '../helpers/fetch';
 import { userAuth } from '../hooks/userAuth';
 import "./reportes.css";
@@ -36,6 +38,11 @@ export const Reportes = () => {
     } catch (err) {
       console.error('Error cargando reportes:', err);
       setReportes([]);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No fue posible cargar reportes. Revisa la consola.'
+      });
     } finally {
       setCargando(false);
     }
@@ -56,42 +63,90 @@ export const Reportes = () => {
     } catch (err) {
       console.error('Error cargando productores:', err);
       setProductores([]);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No fue posible cargar productores. Revisa la consola.'
+      });
     }
   };
 
   useEffect(() => {
     loadReportes();
-    if (user?.rol !== 'Productor'){
+    if (user?.rol !== 'Productor') {
       loadProductores();
     }
+    // eslint-disable-next-line
   }, []);
 
   const handleCrear = async (ev) => {
     ev.preventDefault();
-    const tituloform = ev.target.titulo.value;
-    const descripcionform = ev.target.descripcion.value;
+    const tituloform = ev.target.titulo.value?.trim();
+    const descripcionform = ev.target.descripcion.value?.trim();
     const idCultivoform = ev.target.idcultivo.value;
-    const data = {
-      "titulo": tituloform,
-      "descripcion": descripcionform,
-      "id_cultivo": idCultivoform
+
+    if (!tituloform || !descripcionform || !idCultivoform) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Faltan datos',
+        text: 'Rellena título, descripción y selecciona un cultivo'
+      });
+      return;
     }
-    await crearReporte(data);
-    setVista('lista');
-    loadReportes();
+
+    const data = {
+      titulo: tituloform,
+      descripcion: descripcionform,
+      id_cultivo: idCultivoform
+    };
+
+    try {
+      await crearReporte(data);
+      setVista('lista');
+      await loadReportes();
+      Swal.fire({
+        title: 'Creado',
+        text: 'Reporte creado correctamente.',
+        icon: 'success',
+        timer: 1400,
+        showConfirmButton: false,
+        draggable: true
+      });
+    } catch (err) {
+      console.error('Error creando reporte:', err);
+      const msg = err?.data?.msg || err?.message || 'Error al crear reporte';
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg
+      });
+    }
   };
 
   const handleEditar = async (ev) => {
     ev.preventDefault();
 
     if (!editId) {
-      alert('No se ha seleccionado el reporte a editar');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se ha seleccionado el reporte a editar'
+      });
       return;
     }
 
-    const tituloform = ev.target.titulo.value;
-    const descripcionform = ev.target.descripcion.value;
+    const tituloform = ev.target.titulo.value?.trim();
+    const descripcionform = ev.target.descripcion.value?.trim();
     const idCultivoform = ev.target.idcultivo.value;
+
+    if (!tituloform || !descripcionform || !idCultivoform) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Faltan datos',
+        text: 'Rellena título, descripción y selecciona un cultivo'
+      });
+      return;
+    }
 
     const payload = {
       titulo: tituloform,
@@ -107,26 +162,92 @@ export const Reportes = () => {
       setEditId(null);
       setEditInitial({ titulo: '', descripcion: '', id_cultivo: '' });
       await loadReportes();
+
+      Swal.fire({
+        title: 'Actualizado',
+        text: 'Reporte actualizado correctamente.',
+        icon: 'success',
+        timer: 1400,
+        showConfirmButton: false,
+        draggable: true
+      });
     } catch (err) {
       console.error('Error editando reporte:', err);
       const msg = err?.data?.msg || err?.message || 'Error al editar reporte';
-      alert(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg
+      });
     }
   };
 
   const handleEliminar = async (id_reporte) => {
-    if (!confirm('¿Seguro que quieres eliminar este reporte?')) return;
     try {
+      const result = await Swal.fire({
+        title: '¿Seguro que quieres eliminar este reporte?',
+        text: "No podrás deshacer esta acción.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        focusCancel: true
+      });
+
+      if (!result.isConfirmed) return;
+
+      // Preferimos usar el hook eliminarReporte si existe
+      if (typeof eliminarReporte === 'function') {
+        try {
+          const resHook = await eliminarReporte(id_reporte);
+          // asumir que el hook devuelve { ok: true } o lanza error
+          if (resHook && resHook.ok === true) {
+            await loadReportes();
+            Swal.fire({
+              title: 'Eliminado',
+              text: resHook.msg || 'Reporte eliminado correctamente.',
+              icon: 'success',
+              timer: 1400,
+              showConfirmButton: false,
+              draggable: true
+            });
+            return;
+          }
+          // si el hook devolvió estructura diferente, seguir con fallback
+        } catch (errHook) {
+          console.warn('eliminarReporte hook falló, fallback a conectar:', errHook);
+          // continuar a fallback abajo (conectar)
+        }
+      }
+
+      // Fallback: llamada directa a la API
       const res = await conectar(`${urlBase}reporte/eliminar/${id_reporte}`, 'DELETE', {}, token);
       if (res?.ok) {
-        alert('Eliminado');
-        loadReportes();
+        await loadReportes();
+        Swal.fire({
+          title: 'Eliminado',
+          text: res.msg || 'Reporte eliminado correctamente.',
+          icon: 'success',
+          timer: 1400,
+          showConfirmButton: false,
+          draggable: true
+        });
       } else {
-        alert('No se pudo eliminar: ' + (res.msg || JSON.stringify(res)));
+        Swal.fire({
+          icon: 'error',
+          title: 'No se pudo eliminar',
+          text: res?.msg || JSON.stringify(res)
+        });
       }
     } catch (err) {
-      console.error(err);
-      alert('Error al eliminar');
+      console.error('Error al eliminar reporte:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err?.message || 'Error al eliminar reporte'
+      });
     }
   };
 
@@ -232,7 +353,7 @@ export const Reportes = () => {
               <input name="titulo" placeholder="Título" />
             </div>
             <div>
-              <textarea name="descripcion" placeholder="Descripción"/>
+              <textarea name="descripcion" placeholder="Descripción" />
             </div>
             <div>
               <label htmlFor="idcultivo">Cultivo</label>
@@ -337,4 +458,3 @@ export const Reportes = () => {
     </div>
   );
 };
-

@@ -128,6 +128,7 @@
   transition: transform 0.12s ease, box-shadow 0.12s ease;
   position: relative;
   overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .reportes-page .reporte-card::before {
@@ -196,6 +197,11 @@
   outline-offset: 2px;
 }
 
+.form-crear input,
+.form-crear textarea,
+.form-crear select{
+  margin-bottom: 20px;
+}
 
 @media (min-width: 700px) {
   .reportes-page {

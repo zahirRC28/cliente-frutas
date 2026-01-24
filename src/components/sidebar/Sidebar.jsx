@@ -58,14 +58,22 @@ export const Sidebar = ({}) => {
             </NavLink>
           )}
 
-          {/* ENLACE USUARIOS / PRODUCTORES */}
-          {(rol === 'Administrador' || rol === 'Manager') && rutaBase && (
-            <NavLink to={`/${rutaBase}/users`} className="nav-item" onClick={() => setMobileOpen(false)}>
-              <User/><span>{rol === 'Administrador'? "Usuarios" : "Productores" }</span>
+          {/* ENLACE USUARIOS / PRODUCTORES:
+              - Administrador -> /admin/users con etiqueta "Usuarios"
+              - Manager / Asesor -> /<rutaBase>/productores con etiqueta "Productores"
+          */}
+          {( (rol === 'Administrador') || (rol === 'Manager') || (rol === 'Asesor') ) && rutaBase && (
+            <NavLink
+              to={rol === 'Administrador' ? `/${rutaBase}/users` : `/${rutaBase}/productores`}
+              className="nav-item"
+              onClick={() => setMobileOpen(false)}
+            >
+              <User/>
+              <span>{rol === 'Administrador' ? "Usuarios" : "Productores" }</span>
             </NavLink>
           )}
 
-          {/* ENLACE CULTIVOS (Ahora funcionará porque rutaBase ya no es undefined) */}
+          {/* ENLACE CULTIVOS */}
           {(rol === 'Administrador' || rol === 'Productor'|| rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/cultivos`} className="nav-item" onClick={() => setMobileOpen(false)}>
               <Leaf/><span>Cultivos</span>
