@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import conectar from "../helpers/fetch";
 import Cookies from 'js-cookie'; 
 import * as turf from "@turf/turf";
-import "./Cultivos.css";
+import "../styles/Cultivos.css";
 
 // 1. COMPONENTE DE DETALLES
 import DetalleCultivo from "../components/Cultivos/DetalleCultivo"; 
@@ -28,16 +28,21 @@ export const Cultivos = () => {
   const rol = user.rol ? user.rol.toLowerCase().trim() : '';
   
   const esAdmin = rol === 'administrador' || rol === 'admin';
+<<<<<<< HEAD
   const esManager = rol === 'manager';
   const esAsesor = rol === 'asesor';
   const esProductor = rol === 'productor';
+=======
+  const esManager = rol === 'manager';  
+  const esAsesor = rol === 'asesor';
+>>>>>>> cdbc32b18e6ca4fb764624ea05f14e305667eda6
   const puedeCrear = ['productor', 'admin'].includes(rol);
   const puedeVerTodos = esAdmin || esAsesor || esManager; // Asesor puede ver todos
 
   // --- ESTADOS ---
   const [cultivos, setCultivos] = useState([]);
   const [productores, setProductores] = useState([]); 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [poligonoGeoJSON, setPoligonoGeoJSON] = useState(null); 
   
   // 2. GRAFICOS
@@ -75,9 +80,14 @@ export const Cultivos = () => {
   // --- 2. CARGAR CULTIVOS ---
   useEffect(() => {
     const cargarCultivos = async () => {
-      if (!usuarioAFiltrar || !token) return;
+      if (!usuarioAFiltrar || !token) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
+<<<<<<< HEAD
         const data = await conectar(`${urlBase}cultivo/productor/${usuarioAFiltrar}`, 'GET', {}, token);
         
         if (data?.ok) setCultivos(data.cultivos || []);
@@ -87,6 +97,25 @@ export const Cultivos = () => {
     };
     cargarCultivos();
   }, [usuarioAFiltrar, token]);
+=======
+        const data = await conectar(
+          `${urlBase}cultivo/productor/${usuarioAFiltrar}`,
+          'GET',
+          {},
+          token
+        );
+
+        setCultivos(data?.ok ? data.cultivos || [] : []);
+      } catch {
+        setCultivos([]);
+      } finally {
+        setLoading(false);
+      }
+  };
+
+  cargarCultivos();
+}, [usuarioAFiltrar, token]);
+>>>>>>> cdbc32b18e6ca4fb764624ea05f14e305667eda6
 
   // --- LÓGICA DEL MAPA  ---
   const zonasParaMapa = useMemo(() => {
