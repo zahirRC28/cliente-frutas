@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom"
 import { userAuth } from "../../hooks/userAuth";
 import "../../styles/sidebar.css";
-import { User, Leaf, MessageCircle, File, LogOut, LeafyGreen, LayoutDashboard } from 'lucide-react'
+import { User, Leaf, MessageCircle, File, LogOut, LeafyGreen, LayoutDashboard, AlertTriangle } from 'lucide-react'
 
 
-export const Sidebar = ({}) => {
+export const Sidebar = ({ }) => {
   const { logoutUser, user } = userAuth();
-  
+
   const datosUser = user || {};
   const rol = datosUser.rol;
 
@@ -18,7 +18,7 @@ export const Sidebar = ({}) => {
     Administrador: "admin",
     Manager: "manager",
     Asesor: "asesor",
-    Productor: "productor" 
+    Productor: "productor"
   }
 
   const rutaBase = rutas[rol];
@@ -30,31 +30,31 @@ export const Sidebar = ({}) => {
   return (
     <>
       {mobileOpen && (
-      <div
-        className="sidebar-overlay"
-        onClick={() => setMobileOpen(false)}
-      />
+        <div
+          className="sidebar-overlay"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
       {!mobileOpen && (
         <button className="mobile-menu-btn" onClick={() => setMobileOpen(true)}>
           ☰
         </button>
       )}
-      
+
       <aside className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "open" : ""}`}>
-        
+
         <div className="sidebar-header">
-          <button className="menu-btn" onClick={() => { if (window.innerWidth > 768) { setCollapsed(!collapsed);}}}>
-            {collapsed && <LeafyGreen className='LogoPrincipal' size={35}/>}
-            {!collapsed && <LeafyGreen className='LogoPrincipal' size={40}/>}
+          <button className="menu-btn" onClick={() => { if (window.innerWidth > 768) { setCollapsed(!collapsed); } }}>
+            {collapsed && <LeafyGreen className='LogoPrincipal' size={35} />}
+            {!collapsed && <LeafyGreen className='LogoPrincipal' size={40} />}
           </button>
         </div>
 
         <nav className="sidebar-nav">
-          
+
           {rutaBase && (
             <NavLink to={`/${rutaBase}`} end className="nav-item" onClick={() => setMobileOpen(false)}>
-                <LayoutDashboard /><span>Dashboard</span>
+              <LayoutDashboard /><span>Dashboard</span>
             </NavLink>
           )}
 
@@ -62,35 +62,43 @@ export const Sidebar = ({}) => {
               - Administrador -> /admin/users con etiqueta "Usuarios"
               - Manager / Asesor -> /<rutaBase>/productores con etiqueta "Productores"
           */}
-          {( (rol === 'Administrador') || (rol === 'Manager') || (rol === 'Asesor') ) && rutaBase && (
+          {((rol === 'Administrador') || (rol === 'Manager') || (rol === 'Asesor')) && rutaBase && (
             <NavLink
               to={rol === 'Administrador' ? `/${rutaBase}/users` : `/${rutaBase}/productores`}
               className="nav-item"
               onClick={() => setMobileOpen(false)}
             >
-              <User/>
-              <span>{rol === 'Administrador' ? "Usuarios" : "Productores" }</span>
+              <User />
+              <span>{rol === 'Administrador' ? "Usuarios" : "Productores"}</span>
             </NavLink>
           )}
 
           {/* ENLACE CULTIVOS */}
-          {(rol === 'Administrador' || rol === 'Productor'|| rol === 'Manager' || rol === 'Asesor') && rutaBase && (
+          {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/cultivos`} className="nav-item" onClick={() => setMobileOpen(false)}>
-              <Leaf/><span>Cultivos</span>
+              <Leaf /><span>Cultivos</span>
             </NavLink>
           )}
 
           {/* ENLACE MENSAJES */}
-          {(rol === 'Administrador' || rol === 'Productor'|| rol === 'Manager' || rol === 'Asesor') && rutaBase && (
+          {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/mensajes`} className="nav-item" onClick={() => setMobileOpen(false)}>
-              <MessageCircle/><span>Mensajes</span>
+              <MessageCircle /><span>Mensajes</span>
             </NavLink>
           )}
 
           {/* ENLACE REPORTES */}
-          {(rol === 'Administrador' || rol === 'Productor'|| rol === 'Manager' || rol === 'Asesor') && rutaBase && (
+          {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/reportes`} className="nav-item" onClick={() => setMobileOpen(false)}>
-              <File/><span>Reportes</span>
+              <File /><span>Reportes</span>
+            </NavLink>
+          )}
+
+          {/* ENLACE INCIDENCIAS */}
+          {/* Todos los roles ven incidencias */}
+          {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
+            <NavLink to={`/${rutaBase}/incidencias`} className="nav-item" onClick={() => setMobileOpen(false)}>
+              <AlertTriangle /><span>Incidencias</span>
             </NavLink>
           )}
         </nav>
