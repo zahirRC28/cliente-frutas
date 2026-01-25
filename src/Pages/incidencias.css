@@ -1,0 +1,221 @@
+.incidencias-page {
+    padding: 20px;
+}
+
+/* Tabs */
+.tab-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--verde-claro);
+}
+
+.tab {
+    padding: 10px 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--texto-gris);
+    transition: 0.3s;
+}
+
+.tab.active {
+    color: var(--verde);
+    border-bottom: 3px solid var(--verde);
+}
+
+/* Formulario */
+.form-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.grid-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px; /* Espacio entre inputs */
+}
+
+@media (min-width: 768px) {
+    .grid-form {
+        grid-template-columns: 1fr 1fr;
+    }
+    .full-width { grid-column: span 2; }
+}
+
+.grid-form input, 
+.grid-form select, 
+.grid-form textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+/* Estado deshabilitado */
+.grid-form select:disabled, 
+.grid-form input:disabled {
+    background-color: #f9fafb;
+    color: var(--texto-gris);
+    cursor: not-allowed;
+    border-color: #f3f4f6;
+}
+
+/* Botonera con márgenes corregidos */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px; 
+}
+
+.btn-primary {
+    background-color: var(--verde);
+    color: var(--texto-blanco);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary:hover { background-color: var(--verde-oscuro); }
+
+/* Estilo botón Cancelar */
+.btn-secondary {
+    background-color: #f3f4f6;
+    color: var(--texto-negro);
+    border: 1px solid #d1d5db;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-secondary:hover { background-color: #e5e7eb; }
+
+/* Tarjetas de la Lista */
+.incidencias-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.incidencia-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (min-width: 640px) {
+    .incidencia-card {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+/* Bordes de prioridad */
+.priority-alta { border-left: 6px solid var(--error); }
+.priority-media { border-left: 6px solid #f59e0b; }
+.priority-baja { border-left: 6px solid var(--verde); }
+
+.card-main h4 {
+    margin-bottom: 8px;
+    color: var(--texto-negro);
+}
+
+.card-main small {
+    display: block;
+    margin-top: 10px; 
+    color: var(--texto-gris);
+}
+
+/* Botones en la tarjeta (Gestionar / Borrar) */
+.admin-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+@media (min-width: 640px) {
+    .admin-actions { margin-top: 0; }
+}
+
+.admin-actions button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-actions .del {
+    color: var(--error);
+    border-color: #fee2e2;
+}
+
+.admin-actions .del:hover {
+    background-color: #fef2f2;
+}
+
+.incidencia-card.is-closed {
+    opacity: 0.7;
+    filter: grayscale(0.9); 
+    background-color: #f9f9f9;
+    border-left: 5px solid #999 !important; 
+}
+
+.info-metadata p {
+    margin: 5px 0 !important;
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+/* Contenedor del filtro */
+.filter-container {
+    width: 100%;
+    margin: 1rem 0;
+    display: flex;
+    justify-content: center; 
+}
+
+
+.search-input {
+    width: 100%; 
+    padding: 14px 16px; 
+    font-size: 16px; 
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+    outline: none;
+    appearance: none; 
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+    border-color: #10b981; 
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Ajuste para pantallas grandes (Desktop) */
+@media (min-width: 768px) {
+    .filter-container {
+        justify-content: flex-start; 
+    }
+    
+    .search-input {
+        max-width: 400px; 
+    }
+}

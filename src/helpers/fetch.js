@@ -52,7 +52,7 @@ const conectar = async (urlApi, method = 'GET', body = {}, token, responseType =
     }
     
     // Solo los métodos con cuerpo necesitan body
-    if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
+    if (method === 'POST' || method === 'PUT' || method === 'DELETE'|| method === 'PATCH') {
       options.body = isFormData ? body : JSON.stringify(body);
     }
 
