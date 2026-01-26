@@ -1,0 +1,296 @@
+/* MANAGER DASHBOARD LAYOUT - MOBILE FIRST */
+.manager-dashboard-root {
+  background: #fafafa;
+  min-height: 100vh;
+  font-family: 'Inter', 'Geist', 'sans-serif';
+  padding: 16px 0 0 0;
+}
+.manager-dashboard-header {
+  margin-bottom: 24px;
+  padding-left: 16px;
+}
+.manager-dashboard-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 4px;
+}
+.manager-dashboard-header p {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+.manager-dashboard-grid,
+.manager-dashboard-grid-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 100vw;
+  margin: 0 auto;
+}
+.manager-col-center {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+}
+.manager-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Panel de notificaciones y reportes: mismo ancho, mobile first */
+.notifications-panel,
+.panel-reportes {
+  width: 100%;
+  min-width: 0;
+  max-width: 420px;
+  align-self: center;
+}
+
+/* Panel de notificaciones solo media altura */
+.panel-notificaciones-half {
+  height: 320px;
+  min-height: 180px;
+  max-height: 340px;
+  overflow-y: auto;
+  margin-bottom: 0;
+}
+
+/* Panel incidencias y grafico grandes */
+.panel-incidencias-large {
+  min-height: 220px;
+  font-size: 1.05em;
+}
+.panel-grafico-large {
+  min-height: 220px;
+  font-size: 1.05em;
+}
+.panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px 0 rgba(60,60,60,0.04);
+  padding: 18px 14px 14px 14px;
+  margin-bottom: 18px;
+  min-width: 0;
+}
+.panel h2 {
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.badge {
+  background: #f3f4f6;
+  color: #16a34a;
+  font-size: 0.95em;
+  border-radius: 8px;
+  padding: 2px 10px;
+  margin-left: 10px;
+  font-weight: 500;
+}
+/* Cultivos por tipo (donut) */
+.panel-grafico {
+  grid-row: 1 / span 1;
+}
+.donut-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+  font-size: 0.98em;
+}
+.donut-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.donut-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+}
+/* Cultivos activos */
+.panel-cultivos .cultivos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.cultivo-card {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 16px 18px 12px 18px;
+  box-shadow: 0 1px 4px 0 rgba(60,60,60,0.03);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.cultivo-card:hover {
+  background: #f1f5f9;
+}
+.cultivo-card .estado {
+  font-size: 0.95em;
+  font-weight: 500;
+  margin-left: 8px;
+}
+.cultivo-card .estado-Óptimo { color: #16a34a; }
+.cultivo-card .estado-Bueno { color: #2563eb; }
+.cultivo-card .estado-Atención { color: #facc15; }
+.cultivo-meta {
+  color: #6b7280;
+  font-size: 0.98em;
+  margin-top: 2px;
+}
+.cultivo-progress {
+  background: #e5e7eb;
+  border-radius: 6px;
+  height: 7px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.cultivo-progress-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+.cultivo-progress-bar.optimo { background: #16a34a; }
+.cultivo-progress-bar.bueno { background: #2563eb; }
+.cultivo-progress-bar.atencion { background: #facc15; }
+/* Incidencias pendientes */
+.panel-incidencias .incidencias-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.incidencia-card {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 14px 16px 10px 16px;
+  box-shadow: 0 1px 4px 0 rgba(60,60,60,0.03);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.incidencia-card:hover {
+  background: #f1f5f9;
+}
+.incidencia-card .estado {
+  font-size: 0.95em;
+  font-weight: 500;
+  margin-left: 8px;
+}
+.incidencia-card .alta { color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 6px; }
+.incidencia-card .media { color: #facc15; background: #fef9c3; padding: 2px 8px; border-radius: 6px; }
+.incidencia-card .baja { color: #6b7280; background: #f3f4f6; padding: 2px 8px; border-radius: 6px; }
+.inc-meta {
+  color: #6b7280;
+  font-size: 0.97em;
+  margin-top: 2px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+/* Últimos reportes */
+.panel-reportes .reportes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.reporte-card {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 14px 16px 10px 16px;
+  box-shadow: 0 1px 4px 0 rgba(60,60,60,0.03);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.reporte-card:hover {
+  background: #f1f5f9;
+}
+.reporte-card .badge {
+  margin-left: 10px;
+  font-size: 0.92em;
+  padding: 2px 8px;
+}
+.reporte-meta {
+  color: #6b7280;
+  font-size: 0.97em;
+  margin-top: 2px;
+}
+/* Notificaciones */
+.panel-notificaciones {
+  grid-row: 1 / span 2;
+  height: 100%;
+}
+.panel-notificaciones .notificaciones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.notificacion-card {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 14px 16px 10px 16px;
+  box-shadow: 0 1px 4px 0 rgba(60,60,60,0.03);
+  transition: background 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.notificacion-card:hover {
+  background: #f1f5f9;
+}
+.noti-meta {
+  color: #6b7280;
+  font-size: 0.95em;
+  margin-left: 8px;
+}
+/* Responsive */
+@media (min-width: 700px) {
+  .manager-dashboard-header {
+    margin-bottom: 32px;
+    padding-left: 32px;
+  }
+  .manager-dashboard-header h1 {
+    font-size: 2.2rem;
+  }
+  .manager-dashboard-header p {
+    font-size: 1.1rem;
+  }
+  .manager-dashboard-grid,
+  .manager-dashboard-grid-v2 {
+    flex-direction: row;
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 32px;
+    max-width: 1400px;
+    width: 100%;
+  }
+  .manager-col-center {
+    gap: 24px;
+  }
+  .manager-col-right {
+    gap: 24px;
+    min-width: 320px;
+    max-width: 420px;
+  }
+  .notifications-panel,
+  .panel-reportes {
+    max-width: 420px;
+    min-width: 320px;
+    width: 100%;
+  }
+  .panel {
+    padding: 28px 28px 20px 28px;
+    margin-bottom: 24px;
+  }
+  .panel h2 {
+    font-size: 1.15rem;
+    margin-bottom: 18px;
+  }
+}

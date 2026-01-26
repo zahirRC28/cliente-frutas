@@ -19,6 +19,7 @@ export const Reportes = () => {
   const [selectedProductor, setSelectedProductor] = useState('todos');
   const [filtroTitulo, setFiltroTitulo] = useState('');
   const [dataCultivos, setDataCultivos] = useState([]);
+  
 
   // Solo para Productor: controla si se ve la lista o el formulario de crear
   const [vista, setVista] = useState('lista'); // 'lista' | 'crear' | 'editar'

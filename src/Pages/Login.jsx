@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Eye, EyeOff, LeafyGreen } from "lucide-react";
 import "../styles/Login.css";
 import { userAuth } from "../hooks/userAuth";
+import logo from "../assets/logo_bueno.png"
+
 export const Login = () => {
     const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
     const [email, setEmail] = useState("");
@@ -31,7 +33,7 @@ export const Login = () => {
         <main className="login-container">
             <section className="login-izq">
                 <div className="marca">
-                    <span className="marca-icon"><LeafyGreen/></span>
+                    <span className="marca-icon"><img className="LogoPrincipal" src={logo}></img></span>
                     <h2>AgroTech</h2>
                 </div>
                 <h1>Gestiona tu explotación agrícola de forma inteligente</h1>
