@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom"
 import { userAuth } from "../../hooks/userAuth";
 import "../../styles/sidebar.css";
+import { User, Leaf, MessageCircle, File, LogOut, LeafyGreen, LayoutDashboard, AlertTriangle, Bot } from 'lucide-react'
+
 import { User, Leaf, MessageCircle, File, LogOut, LeafyGreen, LayoutDashboard, AlertTriangle } from 'lucide-react'
 import logo from "../../assets/logo_bueno.png"
 
@@ -99,6 +101,14 @@ export const Sidebar = ({ }) => {
           {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/incidencias`} className="nav-item" onClick={() => setMobileOpen(false)}>
               <AlertTriangle /><span>Incidencias</span>
+            </NavLink>
+          )}
+
+          {/* ENLACE CHATBOT */}
+          {/* Es para el productor, pero de momento se lo pongo a todos*/}
+          {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
+            <NavLink to={`/${rutaBase}/chatbot`} className="nav-item" onClick={() => setMobileOpen(false)}>
+              <Bot /><span>Chatbot</span>
             </NavLink>
           )}
         </nav>
