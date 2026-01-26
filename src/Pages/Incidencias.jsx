@@ -109,6 +109,36 @@ export const Incidencias = () => {
   const puedeCambiarPrioridad = (user.rol === 'Manager' || user.rol === 'Administrador');
   const puedeCambiarEstado = (user.rol !== 'Productor'); // Manager, Admin, Asesor
 
+  const handleEliminar = async (id) => {
+    const resultado = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (resultado.isConfirmed) {
+      try {
+        // endpoint de back
+        const res = await conectar(`${urlBase}incidencia/eliminar/${id}`, 'DELETE', {}, token);
+
+        if (res.ok) {
+          Swal.fire('Eliminado', 'La incidencia ha sido borrada.', 'success');
+          fetchData(); // Recargamos la lista
+        } else {
+          Swal.fire('Error', res.msg || 'No se pudo eliminar', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'Error de conexión con el servidor', 'error');
+      }
+    }
+  };
+
   return (
     <div className="incidencias-page">
       <header className="page-header mb20">
@@ -122,7 +152,7 @@ export const Incidencias = () => {
         {user.rol === 'Productor' && (
           <button className={`tab ${vista === 'formulario' && !form.id ? 'active' : ''}`}
             onClick={() => { setForm({ id: null, titulo: '', descripcion: '', tipo: '', id_cultivo: '', prioridad: 'media', estado: 'abierta', id_productor: null }); setVista('formulario'); }}>
-            + Reportar Incidencia
+            + Crear Incidencia
           </button>
         )}
       </div>
@@ -214,9 +244,20 @@ export const Incidencias = () => {
                     <p className="mb10"><span className={`badge ${inc.prioridad}`}>Prioridad: {inc.prioridad}</span></p>
                     <p><span>Estado: <strong>{inc.estado.toUpperCase()}</strong></span></p>
                   </div>
-                  <button className="btn-primary" onClick={() => prepararEdicion(inc)}>
-                    {user.rol === 'Productor' ? 'Ver Detalles' : 'Gestionar'}
-                  </button>
+                  <div className="card-actions">
+                    <button className="btn-primary" onClick={() => prepararEdicion(inc)}>
+                      {user.rol === 'Productor' ? 'Ver Detalles' : 'Gestionar'}
+                    </button>
+                    {/* mostrar eliminar solo a Manager y admin*/}
+                    {(user.rol === 'Manager' || user.rol === 'Administrador') && (
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleEliminar(inc.id_incidencia)}
+                      >
+                        Eliminar
+                      </button>
+                    )}
+                  </div>
                 </div>
               </article>
             ))}

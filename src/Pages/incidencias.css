@@ -138,15 +138,28 @@
     color: var(--texto-gris);
 }
 
-/* Botones en la tarjeta (Gestionar / Borrar) */
+/* Botones en la tarjeta (Gestionar / eliminar) */
 .admin-actions {
     display: flex;
     gap: 12px;
     margin-top: 15px;
 }
 
-@media (min-width: 640px) {
-    .admin-actions { margin-top: 0; }
+.btn-delete {
+    background-color: white;
+    color: var(--error);
+    border: 1px solid #fee2e2;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: 0.5rem;
+}
+
+.btn-delete:hover {
+    background-color: #fef2f2;
+    border-color: var(--error);
 }
 
 .admin-actions button {
@@ -187,7 +200,6 @@
     justify-content: center; 
 }
 
-
 .search-input {
     width: 100%; 
     padding: 14px 16px; 
@@ -208,6 +220,12 @@
 .search-input::placeholder {
     color: #9ca3af;
 }
+
+
+@media (min-width: 640px) {
+    .admin-actions { margin-top: 0; }
+}
+
 
 /* Ajuste para pantallas grandes (Desktop) */
 @media (min-width: 768px) {

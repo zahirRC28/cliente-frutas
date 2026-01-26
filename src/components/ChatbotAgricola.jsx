@@ -30,7 +30,7 @@ export const ChatbotAgricola = () => {
         setCargando(true);
 
         try {
-            const urlBack = 'http://localhost:3005/api/v1/apis/chatbot';
+            const urlBack = 'http://localhost:3005/api/v1/apis/chatbot'; // llamar a la API de back
             const data = await conectar(urlBack, 'POST', { message: textoUsuario }, token);
 
             if (data && data.ok) {
