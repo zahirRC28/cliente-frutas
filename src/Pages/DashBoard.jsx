@@ -11,6 +11,7 @@ import { ManagerDashboardCharts } from "../components/dashboards/ManagerDashboar
 import { Notificaciones } from "../components/ui/Notificaciones";
 import { AsesorDashboard } from "../components/dashboards/AsesorDashboard";
 import { ProductorDashboard } from "../components/dashboards/ProductorDashboard";
+import { ChatbotAgricola } from "../components/ChatbotAgricola";
 
 export const DashBoard = () => {
   const { getRole, todosUser } = userAuth();
@@ -163,6 +164,7 @@ export const DashBoard = () => {
       {rol === 'Productor' && (
         <ProductorDashboard />
       )}
+      <ChatbotAgricola/>
     </div>
   );
 };

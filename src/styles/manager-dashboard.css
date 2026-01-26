@@ -173,7 +173,6 @@
   padding: 14px 16px 10px 16px;
   box-shadow: 0 1px 4px 0 rgba(60,60,60,0.03);
   transition: background 0.2s;
-  cursor: pointer;
 }
 .incidencia-card:hover {
   background: #f1f5f9;
@@ -206,7 +205,6 @@
   padding: 14px 16px 10px 16px;
   box-shadow: 0 1px 4px 0 rgba(60,60,60,0.03);
   transition: background 0.2s;
-  cursor: pointer;
 }
 .reporte-card:hover {
   background: #f1f5f9;

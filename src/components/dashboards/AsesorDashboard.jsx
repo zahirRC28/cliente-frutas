@@ -8,11 +8,13 @@ import { reportes } from "../../hooks/reportes";
 import { Notificaciones } from "../ui/Notificaciones";
 import { FileText as FileTextIcon, AlertTriangle, Sprout, User, Calendar } from "lucide-react";
 import { tiempoRelativo } from '../../helpers/convertirTiempo';
+import { userAuth } from '../../hooks/userAuth';
 
 export const AsesorDashboard = () => {
   const { todosLosCultivos } = cultivos();
   const { todosLosReportes } = reportes();
   const { obtenerIncidenciasPendientes } = useIncidencias();
+  const { user } = userAuth();
   // Notificaciones se muestran con el mismo componente
 
   const [cultivosData, setCultivosData] = useState([]);
@@ -56,7 +58,7 @@ export const AsesorDashboard = () => {
   return (
     <div className="manager-dashboard-root">
       <div className="manager-dashboard-header">
-        <h1>Buenos días, Asesor</h1>
+        <h1>Hola, {user.nombre}</h1>
       </div>
       <div className="manager-dashboard-grid manager-dashboard-grid-v2">
         {/* Columna Central Única: Incidencias, Cultivos por Tipo, Reportes por mes */}

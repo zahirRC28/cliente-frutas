@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { UserContext } from '../contexts/UserContext';
 import conectar from '../helpers/fetch';
-import { MessageCircle, ChevronDown } from 'lucide-react';
+import { Bot, ChevronDown } from 'lucide-react';
 
 export const ChatbotAgricola = () => {
     const { token } = useContext(UserContext);
@@ -55,7 +55,7 @@ export const ChatbotAgricola = () => {
                 className={`chatbot-launcher ${isOpen ? 'active' : ''}`} 
                 onClick={() => setIsOpen(!isOpen)}
             >
-                {isOpen ? <ChevronDown size={28} /> : <MessageCircle size={28} />}
+                {isOpen ? <ChevronDown size={28} /> : <Bot size={28} />}
             </button>
 
             {/* CONTENEDOR DEL CHAT (Solo se ve si isOpen es true) */}

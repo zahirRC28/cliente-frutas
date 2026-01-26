@@ -9,10 +9,13 @@ import { Notificaciones } from "../ui/Notificaciones";
 import { useNavigate } from 'react-router-dom';
 import { FileText as FileTextIcon, AlertTriangle, Sprout, PlusCircle, User, Calendar } from "lucide-react";
 import { tiempoRelativo } from '../../helpers/convertirTiempo';
+import { userAuth } from '../../hooks/userAuth';
+
 
 export const ProductorDashboard = () => {
   const { cultivosProductor } = cultivos();
   const { todosLosReportes } = reportes();
+  const { user } = userAuth();
   const { obtenerIncidenciasPendientes } = useIncidencias();
   const navigate = useNavigate();
 
@@ -46,7 +49,7 @@ export const ProductorDashboard = () => {
   return (
     <div className="manager-dashboard-root">
       <div className="manager-dashboard-header">
-        <h1>Buenos días, Productor</h1>
+        <h1>Hola, {user.nombre}</h1>
       </div>
       <div className="manager-dashboard-grid manager-dashboard-grid-v2">
         {/* Columna Central: Incidencias, Reportes, Botón, Gráfico */}
@@ -83,7 +86,7 @@ export const ProductorDashboard = () => {
                   <div style={{display:'flex',alignItems:'center',gap:8}}>
                     <strong>{r.titulo}</strong>
                   </div>
-                  <div className="reporte-meta"><User size={15}/> {r.nombre_productor} <Calendar size={15}/> {r.fecha_reporte}</div>
+                  <div className="reporte-meta"><User size={15}/> {r.nombre_productor} <Calendar size={15}/> {tiempoRelativo(r.fecha_reporte)}</div>
                 </li>
               ))}
             </ul>

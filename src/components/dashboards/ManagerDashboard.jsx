@@ -108,7 +108,7 @@ export const ManagerDashboard = () => {
   return (
     <div className="manager-dashboard-root">
       <div className="manager-dashboard-header">
-        <h1>Buenos días, Manager</h1>
+        <h1>Hola, {user.nombre}</h1>
       </div>
       <div className="manager-dashboard-grid manager-dashboard-grid-v2">
         {/* Columna Central Única: Incidencias, Cultivos por Tipo, Cultivos Activos */}

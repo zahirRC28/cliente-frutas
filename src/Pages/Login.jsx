@@ -36,7 +36,7 @@ export const Login = () => {
                     <span className="marca-icon"><img className="LogoPrincipal" src={logo}></img></span>
                     <h2>AgroTech</h2>
                 </div>
-                <h1>Gestiona tu explotación agrícola de forma inteligente</h1>
+                <h1>Gestiona tus cultivos agrícolas de forma inteligente</h1>
                 <p>
                     Monitoriza tus cultivos, coordina con proveedores y recibe
                     alertas en tiempo real desde una única plataforma.
