@@ -6,7 +6,11 @@ import { DataTable } from "../components/DataTable";
 import { reportes } from "../hooks/reportes";
 import { cultivos } from "../hooks/cultivos";
 import { AdminDashboardCharts } from "../components/dashboards/AdminDashboardCharts";
+import { ManagerDashboard } from "../components/dashboards/ManagerDashboard";
+import { ManagerDashboardCharts } from "../components/dashboards/ManagerDashboardCharts"
 import { Notificaciones } from "../components/ui/Notificaciones";
+import { AsesorDashboard } from "../components/dashboards/AsesorDashboard";
+import { ProductorDashboard } from "../components/dashboards/ProductorDashboard";
 
 export const DashBoard = () => {
   const { getRole, todosUser } = userAuth();
@@ -78,24 +82,9 @@ export const DashBoard = () => {
     setMostrarUsers(false);
     setMostrarCultivos(false);
     setMostrarReportes(false);
+    setMostrarIncidencias(false);
+    setMostrarGraficos(false);
   }
-  const userColumns = [
-    { key: "nombre_completo", label: "Nombre" },
-    { key: "rol_nombre", label: "Rol" },
-    { key: "correo", label: "Email" }
-  ];
-  const cultivColumns = [
-    { key: "nombre", label: "Nombre Parcela" },
-    { key: "created_at", label: "Fecha Creacion" },
-    { key: "tipo_cultivo", label: "Tipo" },
-    { key: "sistema_riego", label: "Sistema de Riego" },
-    { key: "region", label: "Region" },
-  ];
-  const reportColumns = [
-    { key: "titulo", label: "Titulo" },
-    { key: "fecha_reporte", label: "Fecha Creacion" },
-    { key: "nombre_productor", label: "Nombre Productor" }
-  ];
   if (!rolCargado || loading) {
     return (
       <div className="dashboard-loader">
@@ -164,59 +153,15 @@ export const DashBoard = () => {
 
       {/* VISTA MANAGER */}
       {rol === 'Manager' && (
-        <div>
-            <section className="cards-container">
-                <Card icono={<Sprout />} titulo="Cultivos Activos" subtitulo={2} variant="counter"/>
-                <Card icono={<Shovel />} titulo="Productores" subtitulo={2} variant="counter"/>
-                <Card icono={<ChartNoAxesCombined />} titulo="Graficos" variant="counter"/>
-            </section>
-            <div className="contenedor-Info">
-              {(!mostrarUsers && !mostrarCultivos && !mostrarReportes )&& (
-                <AdminDashboardCharts
-                  reportes={datosReporte}
-                  cultivos={datosCulti}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false
-                  }}
-                />
-              )}
-            {mostrarUsers && (
-              <DataTable
-                title="Usuarios del sistema"
-                columnas={userColumns}
-                data={datosUser}
-                limit={4}
-              />
-            )}
-            {mostrarCultivos && (
-              <DataTable
-                title="Usuarios del sistema"
-                columnas={cultivColumns}
-                data={datosCulti}
-                limit={4}
-              />
-            )}
-            {mostrarReportes && (
-              <DataTable
-                title="Usuarios del sistema"
-                columnas={reportColumns}
-                data={datosReporte}
-                limit={4}
-              />
-            )}
-            <Notificaciones/>
-          </div>
-        </div>
+        <ManagerDashboard />
+      )}
+      {/* VISTA ASESOR */}
+      {rol === 'Asesor' && (
+        <AsesorDashboard />
       )}
       {/* VISTA PRODUCTOR (Simplificada) */}
       {rol === 'Productor' && (
-        <div>
-            <p>Bienvenido a tu panel de gestión.</p>
-            <section className="cards-container">
-                <Card icono={<Sprout />} titulo="Mis Cultivos Activos" subtitulo={2} variant="counter"/>
-            </section>
-        </div>
+        <ProductorDashboard />
       )}
     </div>
   );

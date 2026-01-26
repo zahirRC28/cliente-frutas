@@ -6,8 +6,17 @@
     padding: 0;
     font-family: "Inter", sans-serif;
 }
-:root {
+/* :root {
     --verde: #2FA36B;
+    --verde-oscuro: #1E7D4D;
+    --verde-claro: #DDF4E7;
+    --texto-blanco: #FFFFFF;
+    --texto-negro: #111827;
+    --texto-gris: #6B7280;
+    --error: #B91C1C;
+} */
+:root {
+    --verde: #102018;
     --verde-oscuro: #1E7D4D;
     --verde-claro: #DDF4E7;
     --texto-blanco: #FFFFFF;

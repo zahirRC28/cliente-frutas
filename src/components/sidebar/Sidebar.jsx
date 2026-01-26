@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom"
 import { userAuth } from "../../hooks/userAuth";
 import "../../styles/sidebar.css";
 import { User, Leaf, MessageCircle, File, LogOut, LeafyGreen, LayoutDashboard, AlertTriangle } from 'lucide-react'
-
+import logo from "../../assets/logo_bueno.png"
 
 export const Sidebar = ({ }) => {
   const { logoutUser, user } = userAuth();
@@ -45,8 +45,8 @@ export const Sidebar = ({ }) => {
 
         <div className="sidebar-header">
           <button className="menu-btn" onClick={() => { if (window.innerWidth > 768) { setCollapsed(!collapsed); } }}>
-            {collapsed && <LeafyGreen className='LogoPrincipal' size={35} />}
-            {!collapsed && <LeafyGreen className='LogoPrincipal' size={40} />}
+            {collapsed && <img className="LogoPrincipal" src={logo}></img>} 
+            {!collapsed && <img className="LogoPrincipal" src={logo}></img>}
           </button>
         </div>
 

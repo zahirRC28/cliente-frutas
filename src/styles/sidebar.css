@@ -2,7 +2,7 @@
 .sidebar {
   width: 16.25rem; /* 260px */
   height: 100vh;
-  background: var(--verde-oscuro);
+  background: var(--verde);
   color: white;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
 }
 
 .LogoPrincipal {
-  color: #cbd5e1;
+  width: 50px;
 }
 
 .Logout{
@@ -56,9 +56,10 @@
   padding: 0.9rem 1.4rem;
   margin: 0 0.75rem;
   border-radius: 0.75rem;
-  color: #cbd5e1;
+  color: #476359;
   text-decoration: none;
 }
+
 
 .nav-item img {
   filter: invert(1);
@@ -66,7 +67,8 @@
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #22392E;
+  color: white;
 }
 
 /* FOOTER */
@@ -243,7 +245,7 @@
     top: 1rem;
     right: 1rem;
     z-index: 1101;
-    background: #14243b;
+    background: #102018;
     color: white;
     border: none;
     font-size: 1.8rem;

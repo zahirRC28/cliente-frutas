@@ -211,7 +211,7 @@ export const Incidencias = () => {
                     <p><strong>Productor:</strong> {inc.nombre_productor || 'N/A'}</p>
                   </div>
                   <div className="card-footer mb20">
-                    <p><span className={`badge ${inc.prioridad}`}>Prioridad: {inc.prioridad}</span></p>
+                    <p className="mb10"><span className={`badge ${inc.prioridad}`}>Prioridad: {inc.prioridad}</span></p>
                     <p><span>Estado: <strong>{inc.estado.toUpperCase()}</strong></span></p>
                   </div>
                   <button className="btn-primary" onClick={() => prepararEdicion(inc)}>

@@ -125,7 +125,7 @@
 /* Bordes de prioridad */
 .priority-alta { border-left: 6px solid var(--error); }
 .priority-media { border-left: 6px solid #f59e0b; }
-.priority-baja { border-left: 6px solid var(--verde); }
+.priority-baja { border-left: 6px solid var(--verde-oscuro); }
 
 .card-main h4 {
     margin-bottom: 8px;
