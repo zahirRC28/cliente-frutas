@@ -12,6 +12,7 @@ import Productores from '../Pages/Productores';
 import UsuariosPage from '../Pages/Usuarios'; 
 import { DetalleProductor } from '../Pages/DetalleProductor';
 import { Incidencias } from '../Pages/Incidencias';
+import { ChatbotAgricola } from '../components/ChatbotAgricola';
 
 export const AppRoutes = () => {
   return (
@@ -37,6 +38,7 @@ export const AppRoutes = () => {
           <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="users" element={<UsuariosPage/>} />
           <Route path="user" element={<Navigate to="users" replace />} />
+          <Route path="chatbot" element={<ChatbotAgricola/>} />
         </Route>
 
         {/*RUTAS DE MANAGER*/}
@@ -53,6 +55,7 @@ export const AppRoutes = () => {
           <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
+          <Route path="chatbot" element={<ChatbotAgricola/>} />
         </Route>
 
         {/*RUTAS DE ASESOR*/}
@@ -69,6 +72,7 @@ export const AppRoutes = () => {
           <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
+          <Route path="chatbot" element={<ChatbotAgricola/>} />
         </Route>
 
         {/*RUTAS DE PRODUCTOR*/}
@@ -81,6 +85,7 @@ export const AppRoutes = () => {
           <Route path="cultivos" element={<Cultivos/>} />
           <Route path="reportes" element={<Reportes/>} />
           <Route path="incidencias" element={<Incidencias/>} />
+           <Route path="chatbot" element={<ChatbotAgricola/>} />
         </Route>
       </Route>
 
