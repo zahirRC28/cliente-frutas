@@ -83,6 +83,11 @@ export const Sidebar = ({ }) => {
           )}
 
           {/* ENLACE MENSAJES */}
+          {(rol === 'Administrador' || rol === 'Productor'|| rol === 'Manager' || rol === 'Asesor') && rutaBase && (
+            <NavLink to={`/${rutaBase}/chat`} className="nav-item" onClick={() => setMobileOpen(false)}>
+              <MessageCircle/><span>Mensajes</span>
+            </NavLink>
+          )}
           {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/mensajes`} className="nav-item" onClick={() => setMobileOpen(false)}>
               <MessageCircle /><span>Mensajes</span>
