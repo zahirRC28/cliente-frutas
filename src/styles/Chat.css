@@ -1,0 +1,235 @@
+/* Layout principal */
+.chat-layout {
+  display: flex;
+  height: 45rem; /* tamaño fijo vertical */
+  width: 90rem;  /* tamaño fijo horizontal */
+  max-width: 100%;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Sidebar de conversaciones */
+.chat-sidebar {
+  width: 250px;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  background: #fff;
+  overflow-y: auto;
+}
+
+.chat-sidebar h3 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+/* Items de conversación */
+.conversaciones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.conversacion-item {
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversacion-item:hover {
+  background: #e0f2f1;
+}
+
+.conversacion-item.activo {
+  background: #4caf50;
+  color: #fff;
+}
+
+.conversacion-item strong {
+  font-size: 0.95rem;
+}
+
+.conversacion-item p {
+  font-size: 0.8rem;
+  margin: 0;
+  color: inherit;
+}
+
+/* Panel principal */
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Cabecera del chat */
+.chat-header {
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  background: #f0f0f0;
+}
+
+/* Mensajes */
+.mensajes-panel {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  scroll-behavior: smooth;
+}
+
+/* Ocultar scroll pero seguir scrollable */
+.mensajes-panel::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.mensajes-panel {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mensajes propios y de otros */
+.msg {
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  max-width: 70%;
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+.msg.propio {
+  background: #4caf50;
+  color: #fff;
+  align-self: flex-end;
+}
+
+.msg.otro {
+  background: #e0e0e0;
+  color: #000;
+  align-self: flex-start;
+}
+
+/* Input de mensaje */
+.input-mensaje {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+.input-mensaje input {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  outline: none;
+}
+
+.input-mensaje button {
+  padding: 0.5rem 1rem;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.input-mensaje button:hover {
+  background: #45a049;
+}
+
+/* Indicador de quien está escribiendo */
+.typing-indicator {
+  height: 20px;
+  font-size: 0.85rem;
+  color: #555;
+  padding-left: 10px;
+}
+
+/* Estado cuando no hay conversación */
+.chat-empty {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  color: #666;
+}
+
+.msg-hora {
+  font-size: 0.7rem;
+  color: rgba(0,0,0,0.5);
+  margin-top: 2px;
+  text-align: right;
+}
+.msg.propio .msg-hora {
+  text-align: right;
+  color: rgba(255,255,255,0.7);
+}
+.msg.otro .msg-hora {
+  text-align: left;
+  color: rgba(0,0,0,0.5);
+}
+.msg-meta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.msg-check {
+  font-size: 0.75rem;
+}
+
+.msg-check.leido {
+  color: #ffffff; /* azul tipo WhatsApp */
+}
+
+/* ===========================
+   Responsive para móviles
+=========================== */
+@media (max-width: 768px) {
+  .chat-layout {
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .chat-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+
+  .conversaciones-list {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .conversacion-item {
+    min-width: 120px;
+    padding: 0.5rem;
+    text-align: center;
+  }
+
+  .chat-main {
+    flex: 1;
+  }
+
+  .mensajes-panel {
+    padding: 0.5rem;
+  }
+}
+

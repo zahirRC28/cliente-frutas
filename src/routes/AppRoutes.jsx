@@ -11,6 +11,7 @@ import { Reportes } from '../Pages/ReportesPage';
 import Productores from '../Pages/Productores';
 import UsuariosPage from '../Pages/Usuarios'; 
 import { DetalleProductor } from '../Pages/DetalleProductor';
+import { MensajesPage } from '../Pages/MensajesPage';
 
 export const AppRoutes = () => {
   return (
@@ -35,6 +36,7 @@ export const AppRoutes = () => {
           <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="users" element={<UsuariosPage/>} />
           <Route path="user" element={<Navigate to="users" replace />} />
+          <Route path="chat" element={<MensajesPage />} />
         </Route>
 
         {/*RUTAS DE MANAGER*/}
@@ -50,6 +52,7 @@ export const AppRoutes = () => {
           <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
+          <Route path="chat" element={<MensajesPage />} />
         </Route>
 
         {/*RUTAS DE ASESOR*/}
@@ -65,6 +68,7 @@ export const AppRoutes = () => {
           <Route path="productores/:id" element={<DetalleProductor/>} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
+          <Route path="chat" element={<MensajesPage />} />
         </Route>
 
         {/*RUTAS DE PRODUCTOR*/}
@@ -76,6 +80,7 @@ export const AppRoutes = () => {
           <Route index element={<DashBoard/>} />
           <Route path="cultivos" element={<Cultivos/>} />
           <Route path="reportes" element={<Reportes/>} />
+          <Route path="chat" element={<MensajesPage />} />
         </Route>
       </Route>
 
