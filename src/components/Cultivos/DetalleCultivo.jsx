@@ -34,6 +34,17 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const [plantaDetectada, setPlantaDetectada] = useState(null);
   const [identificando, setIdentificando] = useState(false);
 
+
+  console.log (metricaActiva,"metricas Activas")
+  console.log (datosGrafico,"datos Grafico")
+  console.log(alertasMeteo,"alertas Meteo")
+
+  useEffect(() => {
+    // Cada vez que cambia el ID del cultivo, reseteamos la identificación
+    setPlantaDetectada(null);
+    setIdentificando(false);
+  }, [cultivo?.id_cultivo]);
+
   // --- CARGA DE DATOS INICIAL ---
   useEffect(() => {
     if (!cultivo?.id_cultivo) return;
@@ -41,6 +52,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     const cached = getCache(cacheKey);
 
     if (cached) {
+      setLoadingPlagas(false);
       setDatosGrafico(cached.datosGrafico);
       setAlertasMeteo(cached.alertasMeteo);
       setAlertasPlagas(cached.alertasPlagas);
@@ -48,16 +60,16 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       setInfoSuelo(cached.infoSuelo || {});
       setLoadingGrafico(false);
       setLoadingMeteo(false);
-      setLoadingPlagas(false);
       setLoadingMultimedia(false);
       return;
     }
 
     const cargarDatos = async () => {
       try {
+        setLoadingPlagas(true);
         setLoadingGrafico(true);
         setLoadingMeteo(true);
-        setLoadingPlagas(true);
+
         setLoadingMultimedia(true); 
         const body = {
           parcela_id: cultivo.id_cultivo,
@@ -65,7 +77,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
           lat: cultivo.centro[0],
           lon: cultivo.centro[1],
           inicio: "2025-01-01",
-          fin: "2025-01-15",
+          fin: "2025-01-30",
           fruta: "manzana",
           cultivo: cultivo.nombre
         };
@@ -80,17 +92,17 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
           conectar(urlMultimedia, "GET", {}, token),
           conectar(`${urlBase}apis/info-suelo`, "POST", body, token)
         ]);
-
+        if (resPlagas?.ok) setAlertasPlagas(resPlagas.alertas || []);
         if(aux?.ok) setInfoSuelo(aux.data);
         if (resGrafico?.ok) setDatosGrafico(resGrafico.data || []);
         if (resMeteo?.ok) setAlertasMeteo(resMeteo.data || []);
-        if (resPlagas?.ok) setAlertasPlagas(resPlagas.alertas || []);
+        
         if (resMultimedia?.ok) setMultimedia(resMultimedia.archivos || []);
 
         setCache(cacheKey, {
+          alertasPlagas: resPlagas?.alertas || [], 
           datosGrafico: resGrafico?.data || [],
           alertasMeteo: resMeteo?.data || [],
-          alertasPlagas: resPlagas?.alertas || [], 
           multimedia: resMultimedia?.archivos || [],
           infoSuelo: aux?.data || {}
         });
@@ -98,9 +110,9 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       } catch (err) {
         console.error("Error cargando analíticas:", err);
       } finally {
+        setLoadingPlagas(false);
         setLoadingGrafico(false);
         setLoadingMeteo(false);
-        setLoadingPlagas(false);
         setLoadingMultimedia(false);
       }
     };
@@ -159,17 +171,22 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     }
   };
 
+  
+
   // --- MARCADORES DINÁMICOS PARA 360 ---
   const marcadores360 = useMemo(() => {
     const dimensionesIA = { width: 5888, height: 2944 };
-    // Ajusta estas coordenadas a tus puntos de interés reales en la foto
+    //esto tiene que conectar con el tio 
     const puntosIA = {
-      cielo: { x: 1407, y: 638 },
-      cultivo: { x: 2238, y: 1983 },
-      suelo: { x: 4365, y: 1802 }
+      cielo: { x: 2780, y: 400 },
+      cultivo: { x: 5504, y: 1702 },
+      suelo: { x: 1979, y: 2027 }
     };
+    
 
-    console.log(plantaDetectada)
+    console.log("esto es identificando", identificando)
+    console.log('estos son los puntos ia',puntosIA)
+    
 
     return [
       // 🌤️ METEO
@@ -228,6 +245,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     const { key, name, color } = metricas[metricaActiva] || metricas.temperatura;
     return <Line type="monotone" dataKey={key} name={name} stroke={color} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />;
   }, [metricaActiva]);
+  
 
   return (
     <div className="cultivos-detalle-panel">

@@ -6,15 +6,14 @@
     padding: 0;
     font-family: "Inter", sans-serif;
 }
-/* :root {
-    --verde: #2FA36B;
-    --verde-oscuro: #1E7D4D;
-    --verde-claro: #DDF4E7;
-    --texto-blanco: #FFFFFF;
-    --texto-negro: #111827;
-    --texto-gris: #6B7280;
-    --error: #B91C1C;
-} */
+@font-face {
+    font-family: "Playfair";
+    src: url("./assets/fonts/Playfair.woff2") format("woff2");
+}
+    .nombreApp{
+        font-family:  "Playfair", serif;
+    font-size: 2.2rem;
+}
 :root {
     --verde: #102018;
     --verde-oscuro: #1E7D4D;
@@ -36,6 +35,9 @@
     align-items: flex-start;
     justify-content: center;
     gap: 3.1rem;
+}
+li{
+    list-style: none;
 }
 
 .contenedor-Info > *:first-child {

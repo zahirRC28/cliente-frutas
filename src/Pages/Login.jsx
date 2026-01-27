@@ -34,7 +34,7 @@ export const Login = () => {
             <section className="login-izq">
                 <div className="marca">
                     <span className="marca-icon"><img className="LogoPrincipal" src={logo}></img></span>
-                    <h2>AgroTech</h2>
+                    <h2 className="nombreApp">Culti Tech</h2>
                 </div>
                 <h1>Gestiona tus cultivos agrícolas de forma inteligente</h1>
                 <p>
