@@ -5,7 +5,7 @@ import { userAuth } from '../hooks/userAuth';
 import { ConversacionesList } from '../components/chat/ConversacionesList';
 import { MensajesPanel } from '../components/chat/MensajePanel';
 import { InputMensaje } from '../components/chat/InputMensaje';
-import "../styles/chat.css";
+import "../styles/Chat.css";
 
 export const MensajesPage = () => {
     const { user, token } = userAuth();
