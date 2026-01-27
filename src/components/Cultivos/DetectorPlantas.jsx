@@ -1,11 +1,11 @@
-import '../styles/detectorPlagas.css';
+import '../../styles/detectorPlagas.css';
 import React, { useState, useContext, useRef } from 'react';
-import { UserContext } from '../contexts/UserContext';
-import conectar from '../helpers/fetch';
-import { Bug, Loader2, CheckCircle2 } from 'lucide-react';
+import { UserContext } from '../../contexts/UserContext';
+import conectar from '../../helpers/fetch';
+import { Sprout, Loader2, CheckCircle2 } from 'lucide-react';
 
-export const DetectorPlagas = () => {
-    const fileInputRef = useRef(null); // Crea la referencia
+export const DetectorPlantas = () => {
+    const fileInputRef = useRef(null); //Crea la referencia
     const { token } = useContext(UserContext);
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
@@ -23,18 +23,18 @@ export const DetectorPlagas = () => {
     const enviarImagen = async () => {
         setCargando(true);
         const formData = new FormData();
-        formData.append('file', file); 
+        formData.append('image', file);
 
-        const data = await conectar(`${import.meta.env.VITE_BACKEND_URL}apis/identificar-plaga`, 'POST', formData, token);
-        
+        const data = await conectar(`${import.meta.env.VITE_BACKEND_URL}apis/identificar-planta`, 'POST', formData, token);
+
         if (data && data.ok) setResultado(data);
         setCargando(false);
     };
 
     return (
         <div className="analisis-card">
-            <h3><Bug /> Análisis de Plagas</h3>
-            {/* Input escondido con una clase simple */}
+            <h3><Sprout /> Identificar Plantas</h3>
+           {/*Input escondido con una clase simple */}
             <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -42,13 +42,12 @@ export const DetectorPlagas = () => {
                 style={{ display: 'none' }} 
             />
 
-            {/* Un botón normal que activa el de arriba */}
-            <button 
+          <button 
                 type="button"
                 className="btn-file-custom" 
                 onClick={() => fileInputRef.current.click()}
             >
-                {file ? "✅ " + file.name : "Seleccionar imagen"}
+                Seleccionar imagen
             </button>
             
             {preview && (
@@ -58,24 +57,23 @@ export const DetectorPlagas = () => {
             )}
 
             <button className="btn-analizar" onClick={enviarImagen} disabled={!file || cargando}>
-                {cargando ? <Loader2 className="spinner" /> : 'Buscar Plagas'}
+                {cargando ? <Loader2 className="spinner" /> : 'Identificar Planta'}
             </button>
 
-            {resultado && resultado.detecciones && resultado.detecciones.length > 0 && (
+            {resultado && (
                 <div className="res-box plant-result">
                     <div className="result-header">
                         <CheckCircle2 size={20} color="#22c55e" />
-                        <span>Análisis finalizado</span>
+                        <span> ¡Planta identificada con éxito!</span>
                     </div>
 
                     <div className="info-main">
-                        <p className="common-name">
-                            Plaga detectada: <strong>{resultado.detecciones[0].plaga}</strong>
-                        </p>
+                        <p className="common-name">Nombre común: <strong>{resultado.nombre_comun}</strong></p>
+                        <p className="scientific-name">Nombre científico: {resultado.nombre_cientifico}</p>
                     </div>
 
                     <div className="precision-badge">
-                        Precisión: <strong>{(resultado.detecciones[0].confianza * 100).toFixed(2)}%</strong>
+                        Precisión: <strong>{resultado.precision}</strong>
                     </div>
                 </div>
             )}

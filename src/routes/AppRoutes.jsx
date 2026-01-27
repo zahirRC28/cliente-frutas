@@ -14,9 +14,6 @@ import { DetalleProductor } from '../Pages/DetalleProductor';
 import { Incidencias } from '../Pages/Incidencias';
 import { ChatbotAgricola } from '../components/ChatbotAgricola';
 import { MensajesPage } from '../Pages/MensajesPage';
-import { DetectorPlagas } from '../components/DetectorPlagas';
-import { DetectorPlantas } from '../components/DetectorPlantas';
-
 
 export const AppRoutes = () => {
   return (
@@ -93,15 +90,9 @@ export const AppRoutes = () => {
           <Route index element={<DashBoard />} />
           <Route path="cultivos" element={<Cultivos />} />
           <Route path="reportes" element={<Reportes />} />
-
           <Route path="incidencias" element={<Incidencias />} />
           <Route path="chatbot" element={<ChatbotAgricola />} />
           <Route path="chat" element={<MensajesPage />} />
-
-          {/* NUEVA RUTA DE PRUEBA */}
-          <Route path="analisis-plaga" element={<DetectorPlagas />} />
-          <Route path="analisis-planta" element={<DetectorPlantas />} />
-
         </Route>
       </Route>
 
