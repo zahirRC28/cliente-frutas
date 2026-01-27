@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { userAuth } from '../hooks/userAuth';
 import { useProductores } from '../hooks/useProductores';
@@ -27,7 +28,7 @@ export const Productores = () => {
 
   return (
     <div className="reportes-page" style={{ padding: 16 }}>
-      <h1>Productores</h1>
+      <h1 style={{display:'flex',alignItems:'center',gap:8}}><Users size={24} /> Productores</h1>
 
       <div style={{ marginBottom: 12 }}>
         <label htmlFor="buscar">Buscar productor</label>

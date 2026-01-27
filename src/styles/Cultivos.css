@@ -1,112 +1,182 @@
+
+/* MOBILE FIRST */
 .cultivos-container {
-    padding: 20px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    font-family: Arial, sans-serif;
+        padding: 10px 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        font-family: Arial, sans-serif;
 }
 
 .cultivos-left-section {
-    flex: 2;
-    min-width: 400px;
+        width: 100%;
+        min-width: 0;
 }
 
 .cultivos-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    align-items: center;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 10px;
 }
 
 .cultivos-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        font-size: 1.1rem;
 }
 
 .cultivos-filter-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #fff;
-    padding: 5px 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+        width: 100%;
+        padding: 10px 8px;
+        font-size: 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background-color: #ffffff;
+        outline: none;
+        appearance: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        margin-top: 6px;
 }
 
 .cultivos-select {
-    border: none;
-    outline: none;
-    cursor: pointer;
-    font-weight: bold;
-    background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-weight: bold;
+        background: transparent;
+        width: 100%;
+        font-size: 1em;
 }
 
 .cultivos-map-wrapper {
-    background: white;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        background: white;
+        padding: 6px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 12px;
 }
 
 .cultivos-loader-container {
-    height: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        min-height: 220px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 }
 
 .cultivos-right-section {
-    flex: 1;
-    min-width: 300px;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    height: fit-content;
+        width: 100%;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(60, 60, 60, 0.04);
+        padding: 14px 8px 10px 8px;
+        margin-bottom: 14px;
+        min-width: 0;
+        height: fit-content;
 }
 
 .cultivos-form-title {
-    border-bottom: 2px solid #22c55e;
-    padding-bottom: 10px;
-    margin-top: 0;
+        border-bottom: 2px solid #22c55e;
+        padding-bottom: 8px;
+        margin-top: 0;
+        font-size: 1.1rem;
 }
 
 .cultivos-label {
-    font-size: 13px;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
 }
 
 .cultivos-input {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 100%;
-    margin-bottom: 10px;
+        padding: 9px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 100%;
+        margin-bottom: 8px;
+        font-size: 1em;
 }
 
 .cultivos-flex-row {
-    display: flex;
-    gap: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
 }
 
 .cultivos-btn-save {
-    width: 100%;
-    padding: 14px;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+        width: 100%;
+        padding: 12px;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 1em;
 }
 
-  .leaflet-draw-section .leaflet-draw-toolbar:not(:first-child) {
-    display: none !important;
+/* DESKTOP & TABLET */
+@media (min-width: 980px) {
+    .cultivos-container {
+        flex-direction: row;
+        gap: 20px;
+        padding: 20px;
+    }
+    .cultivos-left-section {
+        flex: 2;
+        min-width: 400px;
+    }
+    .cultivos-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+    .cultivos-title {
+        font-size: 1.3rem;
+    }
+    .cultivos-filter-container {
+        width: 250px;
+        padding: 14px 16px;
+        font-size: 16px;
+        margin-top: 0;
+    }
+    .cultivos-map-wrapper {
+        padding: 10px;
+        margin-bottom: 0;
+    }
+    .cultivos-loader-container {
+        min-height: 400px;
+    }
+    .cultivos-right-section {
+        flex: 1;
+        min-width: 300px;
+        padding: 18px 14px 14px 14px;
+        margin-bottom: 18px;
+    }
+    .cultivos-form-title {
+        font-size: 1.2rem;
+    }
+    .cultivos-label {
+        font-size: 14px;
+    }
+    .cultivos-input {
+        font-size: 1.05em;
+    }
+    .cultivos-flex-row {
+        flex-direction: row;
+        gap: 10px;
+    }
+    .cultivos-btn-save {
+        font-size: 1.05em;
+        padding: 14px;
+    }
 }

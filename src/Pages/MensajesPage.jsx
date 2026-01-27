@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { MessageCircle } from 'lucide-react';
 import { useChat } from '../hooks/useChat';
 import { userAuth } from '../hooks/userAuth';
 import { ConversacionesList } from '../components/chat/ConversacionesList';
@@ -28,7 +29,7 @@ export const MensajesPage = () => {
     <div className="chat-layout">
       {/* Lista de conversaciones */}
       <div className="chat-sidebar">
-        <h3>Conversaciones</h3>
+        <h3 style={{display:'flex',alignItems:'center',gap:8}}><MessageCircle size={20} /> Conversaciones</h3>
         <ConversacionesList
           conversaciones={conversaciones}
           onSelect={abrirConversacion}

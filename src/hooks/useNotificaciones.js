@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import conectar from "../helpers/fetch";
+import Swal from 'sweetalert2';
 import { userAuth } from "./userAuth";
 import { useSocket } from "../contexts/SocketContext";
 
@@ -69,14 +70,36 @@ export const useNotificaciones = () => {
     // Eliminar todas las notificaciones del usuario
     // ==========================
     const eliminarTodas = async () => {
-        const confirmacion = window.confirm("¿Estás seguro de eliminar todas tus notificaciones?");
-        if (!confirmacion) return;
+        const result = await Swal.fire({
+            title: '¿Seguro que quieres eliminar todas las notificaciones?',
+            text: "No podrás deshacer esta acción.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            focusCancel: true
+        });
+        if (!result.isConfirmed) return;
 
         try {
             await conectar(`${urlBase}notificacion/por-receptor/${id}`, "DELETE", {}, token);
             setNotificaciones([]);
+            Swal.fire({
+                title: 'Eliminadas',
+                text: 'Todas las notificaciones han sido eliminadas.',
+                icon: 'success',
+                timer: 1400,
+                showConfirmButton: false
+            });
         } catch (err) {
             console.error("Error eliminando todas las notificaciones:", err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudieron eliminar las notificaciones.'
+            });
         }
     };
 
