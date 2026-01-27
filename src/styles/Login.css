@@ -143,7 +143,42 @@
     .login-der {
         min-height: 100vh;
     }
+    .mobile-header-login {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 32px;
+    }
+    .mobile-logo {
+        background: var(--verde-oscuro);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .mobile-logo img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+    .mobile-appname {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #194d32;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.01em;
+    }
 }
+
+@media (min-width: 901px) {
+    .mobile-header-login {
+        display: none !important;
+    }
+}
+
 @media (max-width: 480px) {
     .login-form {
         padding: 30px 24px;

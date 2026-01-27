@@ -1,5 +1,5 @@
 // src/pages/Cultivos.jsx
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef  } from "react";
 import { Map as MapIcon, Loader, Users } from "lucide-react";
 import { userAuth } from "../hooks/userAuth"; 
 import MapDraw from "../components/map/Map"; 
@@ -10,13 +10,14 @@ import Cookies from 'js-cookie';
 import * as turf from "@turf/turf";
 import "../styles/Cultivos.css";
 
-// COMPONENTES HIJOS
 import DetalleCultivo from "../components/Cultivos/DetalleCultivo"; 
-import FormularioCultivo from "../components/Cultivos/FormularioCultivo"; // NUEVO COMPONENTE
+import FormularioCultivo from "../components/Cultivos/FormularioCultivo"; 
 
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
 export const Cultivos = () => {
+  const deleteLock = useRef(false);
+
   const auth = userAuth();
   let user = { rol: '', uid: 0 };
   if (auth) {
@@ -40,36 +41,31 @@ export const Cultivos = () => {
   const [cultivos, setCultivos] = useState([]);
   const [productores, setProductores] = useState([]); 
   const [loading, setLoading] = useState(true);
-  const [poligonoGeoJSON, setPoligonoGeoJSON] = useState(null); 
+  const [poligonoActual, setPoligonoActual] = useState([]); 
   const [cultivoSeleccionado, setCultivoSeleccionado] = useState(null); 
   const [usuarioAFiltrar, setUsuarioAFiltrar] = useState(uid);
 
-  // --- 1. CARGAR PRODUCTORES ---
+  // --- CARGA DE DATOS ---
   useEffect(() => {
     const obtenerProductores = async () => {
       if (!['manager', 'administrador', 'asesor'].includes(rol) || !token) return;
       try {
         const res = await conectar(`${urlBase}user/porUserRol`, 'POST', { nombre: 'Productor' }, token);
         if (res?.ok && res.usuarios) {
-          if (esAdmin || esAsesor) {
-            setProductores(res.usuarios);
-          } else if (esManager) {
-            setProductores(res.usuarios.filter(p => Number(p.id_manager) === uid));
-          }
+          if (esAdmin || esAsesor) setProductores(res.usuarios);
+          else if (esManager) setProductores(res.usuarios.filter(p => Number(p.id_manager) === uid));
         }
       } catch (error) { console.error("Error al obtener equipo:", error); }
     };
     obtenerProductores();
   }, [rol, uid, token]);
 
-  // --- 2. CARGAR CULTIVOS ---
   useEffect(() => {
     const cargarCultivos = async () => {
       if (!usuarioAFiltrar || !token) {
         setLoading(false);
         return;
       }
-
       setLoading(true);
       try {
         const data = await conectar(`${urlBase}cultivo/productor/${usuarioAFiltrar}`, 'GET', {}, token);
@@ -80,11 +76,10 @@ export const Cultivos = () => {
         setLoading(false);
       }
     };
-
     cargarCultivos();
   }, [usuarioAFiltrar, token]);
 
-  // --- LÓGICA DEL MAPA ---
+  // --- MAPEO DE ZONAS ---
   const zonasParaMapa = useMemo(() => {
     if (!cultivos.length) return [];
     return cultivos.map((c) => {
@@ -92,11 +87,11 @@ export const Cultivos = () => {
         let geometry = c.poligono || (c.poligono_geojson ? (typeof c.poligono_geojson === 'string' ? JSON.parse(c.poligono_geojson) : c.poligono_geojson) : null);
         if (!geometry || !geometry.coordinates) return null;
 
+        const coordsLeaflet = geometry.coordinates[0].map(point => [point[1], point[0]]); 
         const poli = turf.polygon(geometry.coordinates);
         const centroide = turf.centroid(poli);
         const [lon, lat] = centroide.geometry.coordinates;
 
-        const coordsLeaflet = geometry.coordinates[0].map(point => [point[1], point[0]]); 
         return {
           id: c.id_cultivo,
           nombre: c.nombre,
@@ -109,28 +104,52 @@ export const Cultivos = () => {
     }).filter(Boolean);
   }, [cultivos]);
 
+  
+  // 1. Crear Zona
   const handleZoneCreated = (latLngs) => {
     const coordsGeoJSON = latLngs.map(p => [p.lng, p.lat]);
     coordsGeoJSON.push(coordsGeoJSON[0]); 
-    const nuevoPoligono = turf.polygon([coordsGeoJSON]);
+    const nuevoPoligonoTurf = turf.polygon([coordsGeoJSON]);
+    const coordsVisuales = latLngs.map(p => [p.lat, p.lng]);
+
     try {
         let solapado = false;
         for (const c of cultivos) {
             let geometry = c.poligono || (c.poligono_geojson ? (typeof c.poligono_geojson === 'string' ? JSON.parse(c.poligono_geojson) : c.poligono_geojson) : null);
             if (!geometry) continue;
             const poliExistente = turf.polygon(geometry.coordinates);
-            if (turf.intersect(turf.featureCollection([nuevoPoligono, poliExistente]))) {
+            if (turf.intersect(turf.featureCollection([nuevoPoligonoTurf, poliExistente]))) {
                 solapado = true; break;
             }
         }
+        
         if (solapado) {
-            setPoligonoGeoJSON(null);
+            setPoligonoActual([]); 
             toast.error("La zona se solapa con una existente.");
         } else {
-            setPoligonoGeoJSON({ type: "Polygon", coordinates: [coordsGeoJSON] });
-            toast.success("Zona válida seleccionada.");
+            setPoligonoActual(coordsVisuales);
+            toast.success("Zona dibujada correctamente.");
         }
-    } catch (err) { toast.error("Error al procesar el área dibujada"); }
+    } catch (err) { 
+        toast.error("Error al procesar el área dibujada"); 
+    }
+  };
+
+const handleZoneDeleted = () => {
+  if (deleteLock.current) return;
+
+  deleteLock.current = true;
+  setPoligonoActual([]);
+  toast.info("Zona eliminada del mapa");
+
+  setTimeout(() => {
+    deleteLock.current = false;
+  }, 300);
+};
+
+  // 3. Input Manual
+  const handleManualCoords = (nuevasCoords) => {
+    setPoligonoActual(nuevasCoords);
   };
 
   const onCultivoClick = (id_cultivo) => {
@@ -148,7 +167,6 @@ export const Cultivos = () => {
                 <MapIcon color="#2c3e50" /> 
                 {esAdmin ? "Panel de Administración" : 
                  esManager ? "Gestión de Productores" : 
-                 esAsesor ? "Panel de Asesoría" : 
                  "Mis Cultivos"}
             </h2>
 
@@ -160,12 +178,14 @@ export const Cultivos = () => {
                   value={usuarioAFiltrar} 
                   onChange={(e) => setUsuarioAFiltrar(Number(e.target.value))}
                 >
+
                   <option value={uid}>
                     {esAdmin ? "Mis Cultivos (Admin)" : 
-                     esManager ? "Mis Cultivos (Manager)" : 
+                     esManager ? "Elige un productor..." : 
                      esAsesor ? "Mis Cultivos (Asesor)" : 
                      "Mis Cultivos"}
                   </option>
+
                   {productores.map(p => (
                     <option key={p.id_usuario} value={p.id_usuario}>
                       {p.nombre_completo || p.nombre}
@@ -186,7 +206,9 @@ export const Cultivos = () => {
                     zonasVisibles={zonasParaMapa} 
                     onZoneCreated={handleZoneCreated} 
                     onZoneClicked={onCultivoClick}
+                    onZoneDeleted={handleZoneDeleted} 
                     readOnly={!puedeCrear} 
+                    poligonoActual={poligonoActual}
                 />
             )}
         </div>
@@ -200,13 +222,13 @@ export const Cultivos = () => {
                token={token}
             />
         ) : puedeCrear ? (
-            // AQUI ESTÁ LA LLAMADA AL NUEVO COMPONENTE
             <FormularioCultivo 
-                poligono={poligonoGeoJSON} 
+                poligono={poligonoActual} 
+                setPoligonoExterno={handleManualCoords} 
                 token={token} 
                 onGuardar={(nuevoCultivo) => {
-                    setCultivos([nuevoCultivo, ...cultivos]); // Actualiza la lista
-                    setPoligonoGeoJSON(null); // Limpia el mapa
+                    setCultivos([nuevoCultivo, ...cultivos]); 
+                    setPoligonoActual([]); 
                 }}
             />
         ) : null}

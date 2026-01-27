@@ -68,7 +68,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         lat: cultivo.centro[0],
         lon: cultivo.centro[1],
         inicio: "2025-01-01",
-        fin: "2025-01-02",
+        fin: "2025-01-30",
         fruta: "manzana",
         cultivo: cultivo.nombre
       };
@@ -157,9 +157,9 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const marcadores360 = useMemo(() => {
     const dimensionesIA = { width: 5888, height: 2944 };
     const puntosIA = {
-      cielo: { x: 1822, y: 491 },
-      cultivo: { x: 2149, y: 1292 },
-      suelo: { x: 3078, y: 1900 }
+      cielo: { x: 2780, y: 400 },
+      cultivo: { x: 5504, y: 1702 },
+      suelo: { x: 1979, y: 2027 }
     };
 
     return [
@@ -267,7 +267,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
             <div className="plagas-list">
               {alertasPlagas.map((p, i) => {
                 const nivel = (p.risk_level || "").toLowerCase();
-                const color = nivel === "alto" ? "#B91C1C" : nivel === "medio" ? "#F59E0B" : "#1E7D4D";
+                const color = nivel === "alto" ? "#ef4444" : nivel === "medio" ? "#f59e0b" : "#10b981";
                 return (
                   <div key={i} className="plaga-item" style={{ borderLeft: `5px solid ${color}` }}>
                     <div className="plaga-header">

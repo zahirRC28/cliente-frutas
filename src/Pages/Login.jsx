@@ -46,7 +46,7 @@ export const Login = () => {
             <section className="login-izq">
                 <div className="marca">
                     <span className="marca-icon"><img className="LogoPrincipal" src={logo}></img></span>
-                    <h2>AgroTech</h2>
+                    <h2 className="nombreApp">culti tech</h2>
                 </div>
                 <h1>Gestiona tus cultivos agrícolas de forma inteligente</h1>
                 <p>
@@ -69,7 +69,13 @@ export const Login = () => {
                 </div>
             </section>
             <section className="login-der">
+                {/* Logo y nombre solo en móvil, encima del formulario */}
                 <form className="login-form" onSubmit={handleSubmit} noValidate>
+                    {/* Logo y nombre solo en móvil, dentro de la card */}
+                    <div className="mobile-header-login">
+                        <span className="mobile-logo"><img className="LogoPrincipal" src={logo} alt="Logo" /></span>
+                        <span className="mobile-appname">culti tech</span>
+                    </div>
                     <h2>Bienvenido de nuevo</h2>
                     <p>Ingresa tus credenciales para acceder</p>
                     {errorLogin && (
