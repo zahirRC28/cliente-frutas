@@ -1,4 +1,4 @@
-// /src/components/Panorama.jsx
+
 import { useState } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
