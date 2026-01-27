@@ -178,7 +178,14 @@ const handleZoneDeleted = () => {
                   value={usuarioAFiltrar} 
                   onChange={(e) => setUsuarioAFiltrar(Number(e.target.value))}
                 >
-                  <option value={uid}>Mis Cultivos</option>
+
+                  <option value={uid}>
+                    {esAdmin ? "Mis Cultivos (Admin)" : 
+                     esManager ? "Elige un productor..." : 
+                     esAsesor ? "Mis Cultivos (Asesor)" : 
+                     "Mis Cultivos"}
+                  </option>
+
                   {productores.map(p => (
                     <option key={p.id_usuario} value={p.id_usuario}>
                       {p.nombre_completo || p.nombre}

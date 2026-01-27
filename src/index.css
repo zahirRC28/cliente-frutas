@@ -10,8 +10,8 @@
     font-family: "Playfair";
     src: url("./assets/fonts/Playfair.woff2") format("woff2");
 }
-    .nombreApp{
-        font-family:  "Playfair", serif;
+.nombreApp{
+    font-family: 'Sansation', 'Playfair', serif;
     font-size: 2.2rem;
 }
 :root {
