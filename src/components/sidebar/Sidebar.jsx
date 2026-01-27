@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom"
 import { userAuth } from "../../hooks/userAuth";
 import "../../styles/sidebar.css";
 
-import { User, Leaf, MessageCircle, File, LogOut, LayoutDashboard, AlertTriangle, Bot } from 'lucide-react'
+import { User, Leaf, MessageCircle, File, LogOut, LayoutDashboard, AlertTriangle, Bot, ImageUp  } from 'lucide-react'
 import logo from "../../assets/logo_bueno.png"
 
 export const Sidebar = ({ }) => {
@@ -46,7 +46,7 @@ export const Sidebar = ({ }) => {
 
         <div className="sidebar-header">
           <button className="menu-btn" onClick={() => { if (window.innerWidth > 768) { setCollapsed(!collapsed); } }}>
-            {collapsed && <img className="LogoPrincipal" src={logo}></img>} 
+            {collapsed && <img className="LogoPrincipal" src={logo}></img>}
             {!collapsed && <img className="LogoPrincipal" src={logo}></img>}
           </button>
         </div>
@@ -82,9 +82,9 @@ export const Sidebar = ({ }) => {
           )}
 
           {/* ENLACE MENSAJES */}
-          {(rol === 'Administrador' || rol === 'Productor'|| rol === 'Manager' || rol === 'Asesor') && rutaBase && (
+          {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/chat`} className="nav-item" onClick={() => setMobileOpen(false)}>
-              <MessageCircle/><span>Mensajes</span>
+              <MessageCircle /><span>Mensajes</span>
             </NavLink>
           )}
 
@@ -100,6 +100,29 @@ export const Sidebar = ({ }) => {
           {(rol === 'Administrador' || rol === 'Productor' || rol === 'Manager' || rol === 'Asesor') && rutaBase && (
             <NavLink to={`/${rutaBase}/incidencias`} className="nav-item" onClick={() => setMobileOpen(false)}>
               <AlertTriangle /><span>Incidencias</span>
+            </NavLink>
+          )}
+
+          {/* ENLACE ANÁLISIS FOTOC CON IA (Solo Productor) */}
+          {rol === 'Productor' && rutaBase && (
+            <NavLink
+              to={`/${rutaBase}/analisis-plaga`}
+              className="nav-item"
+              onClick={() => setMobileOpen(false)}
+            >
+              <ImageUp />
+              <span>Análisis de Plagas</span>
+            </NavLink>
+          )}
+
+          {rol === 'Productor' && rutaBase && (
+            <NavLink
+              to={`/${rutaBase}/analisis-planta`}
+              className="nav-item"
+              onClick={() => setMobileOpen(false)}
+            >
+              <ImageUp />
+              <span>Análisis de Plantas</span>
             </NavLink>
           )}
         </nav>

@@ -1,0 +1,169 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.herramientas-diagnostico-container {
+    display: flex;
+    flex-direction: column; /* Móvil: una columna */
+    gap: 20px;
+    margin-top: 30px;
+    padding: 0 10px;
+}
+
+/* --- TARJETA BASE --- */
+.analisis-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.analisis-card h3 {
+    font-family: "Inter", sans-serif;
+    color: var(--verde);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Inputs de archivo */
+.analisis-card input[type="file"] {
+    width: 100%;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    color: var(--texto-gris);
+    cursor: pointer;
+}
+
+/* --- BOTÓN DE ACCIÓN --- */
+.btn-analizar {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--verde);
+    color: var(--texto-blanco);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.3s ease, opacity 0.3s;
+}
+
+.btn-analizar:hover:not(:disabled) {
+    background-color: var(--verde-oscuro);
+}
+
+.btn-analizar:disabled {
+    background-color: var(--texto-gris);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* --- BLOQUE DE RESULTADOS (Verde Claro) --- */
+.res-box.plant-result {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: var(--verde-claro);
+    border: 1px solid #c2e7d3;
+    border-radius: 8px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--verde-oscuro);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.info-main p {
+    color: var(--texto-negro);
+    font-size: 0.95rem;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.common-name strong {
+    color: var(--verde);
+}
+
+.scientific-name i {
+    color: var(--texto-gris);
+}
+
+/* Etiqueta de precisión */
+.precision-badge {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: var(--verde-oscuro);
+    color: var(--texto-blanco);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* --- PREVISUALIZACIÓN DE IMAGEN --- */
+.preview-container {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.preview-container img {
+    max-width: 100%;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+/* --- ANIMACIONES --- */
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- RESPONSIVE: ESCRITORIO --- */
+@media (min-width: 700px) {
+    .herramientas-diagnostico-container {
+        flex-direction: row; /* Dos columnas */
+        align-items: stretch;
+    }
+
+    .analisis-card {
+        flex: 1; /* Ancho equitativo */
+    }
+}
+
+.btn-file-custom {
+    width: 100%;
+    padding: 10px;
+    background: var(--verde-claro);
+    color: var(--verde-oscuro);
+    border: 1px solid var(--verde-oscuro);
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.btn-file-custom:hover {
+    filter: brightness(0.95);
+}

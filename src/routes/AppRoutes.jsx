@@ -9,56 +9,58 @@ import { Login } from '../Pages/Login';
 import { Cultivos } from '../Pages/Cultivos';
 import { Reportes } from '../Pages/ReportesPage';
 import Productores from '../Pages/Productores';
-import UsuariosPage from '../Pages/Usuarios'; 
+import UsuariosPage from '../Pages/Usuarios';
 import { DetalleProductor } from '../Pages/DetalleProductor';
 import { Incidencias } from '../Pages/Incidencias';
 import { ChatbotAgricola } from '../components/ChatbotAgricola';
 import { MensajesPage } from '../Pages/MensajesPage';
+import { DetectorPlagas } from '../components/DetectorPlagas';
+import { DetectorPlantas } from '../components/DetectorPlantas';
 
 
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path='/' element={<RendAni/>}>
+      <Route path='/' element={<RendAni />}>
         <Route index element={
           <PublicProtection>
-            <Login/>
+            <Login />
           </PublicProtection>
         } />
 
         {/*RUTAS DE ADMINISTRADOR*/}
         <Route path="admin" element={
           <ProtectedRoutes roles={['Administrador']}>
-            <LayoutGeneral/>
+            <LayoutGeneral />
           </ProtectedRoutes>
         }>
-          <Route index element={<DashBoard/>} />
-          <Route path="cultivos" element={<Cultivos/>} />
-          <Route path="reportes" element={<Reportes/>} />
-          <Route path="incidencias" element={<Incidencias/>} />
-          <Route path="productores" element={<Productores/>} />
-          <Route path="productores/:id" element={<DetalleProductor/>} />
-          <Route path="users" element={<UsuariosPage/>} />
+          <Route index element={<DashBoard />} />
+          <Route path="cultivos" element={<Cultivos />} />
+          <Route path="reportes" element={<Reportes />} />
+          <Route path="incidencias" element={<Incidencias />} />
+          <Route path="productores" element={<Productores />} />
+          <Route path="productores/:id" element={<DetalleProductor />} />
+          <Route path="users" element={<UsuariosPage />} />
           <Route path="user" element={<Navigate to="users" replace />} />
-          <Route path="chatbot" element={<ChatbotAgricola/>} />
+          <Route path="chatbot" element={<ChatbotAgricola />} />
           <Route path="chat" element={<MensajesPage />} />
         </Route>
 
         {/*RUTAS DE MANAGER*/}
         <Route path="manager" element={
           <ProtectedRoutes roles={['Manager', 'Administrador']}>
-            <LayoutGeneral/>
+            <LayoutGeneral />
           </ProtectedRoutes>
         }>
-          <Route index element={<DashBoard/>} />
-          <Route path="cultivos" element={<Cultivos/>} />
-          <Route path="reportes" element={<Reportes/>} />
-          <Route path="incidencias" element={<Incidencias/>} /> 
-          <Route path="productores" element={<Productores/>} />
-          <Route path="productores/:id" element={<DetalleProductor/>} />
+          <Route index element={<DashBoard />} />
+          <Route path="cultivos" element={<Cultivos />} />
+          <Route path="reportes" element={<Reportes />} />
+          <Route path="incidencias" element={<Incidencias />} />
+          <Route path="productores" element={<Productores />} />
+          <Route path="productores/:id" element={<DetalleProductor />} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
-          <Route path="chatbot" element={<ChatbotAgricola/>} />
+          <Route path="chatbot" element={<ChatbotAgricola />} />
           <Route path="chat" element={<MensajesPage />} />
 
         </Route>
@@ -66,18 +68,18 @@ export const AppRoutes = () => {
         {/*RUTAS DE ASESOR*/}
         <Route path="asesor" element={
           <ProtectedRoutes roles={['Asesor', 'Administrador']}>
-            <LayoutGeneral/>
+            <LayoutGeneral />
           </ProtectedRoutes>
         }>
-          <Route index element={<DashBoard/>} />
-          <Route path="cultivos" element={<Cultivos/>} />
-          <Route path="reportes" element={<Reportes/>} />
-          <Route path="incidencias" element={<Incidencias/>} />
-          <Route path="productores" element={<Productores/>} />
-          <Route path="productores/:id" element={<DetalleProductor/>} />
+          <Route index element={<DashBoard />} />
+          <Route path="cultivos" element={<Cultivos />} />
+          <Route path="reportes" element={<Reportes />} />
+          <Route path="incidencias" element={<Incidencias />} />
+          <Route path="productores" element={<Productores />} />
+          <Route path="productores/:id" element={<DetalleProductor />} />
           <Route path="user" element={<Navigate to="productores" replace />} />
           <Route path="users" element={<Navigate to="productores" replace />} />
-          <Route path="chatbot" element={<ChatbotAgricola/>} />
+          <Route path="chatbot" element={<ChatbotAgricola />} />
           <Route path="chat" element={<MensajesPage />} />
 
         </Route>
@@ -85,16 +87,21 @@ export const AppRoutes = () => {
         {/*RUTAS DE PRODUCTOR*/}
         <Route path="productor" element={
           <ProtectedRoutes roles={['Productor', 'Administrador']}>
-            <LayoutGeneral/>
+            <LayoutGeneral />
           </ProtectedRoutes>
         }>
-          <Route index element={<DashBoard/>} />
-          <Route path="cultivos" element={<Cultivos/>} />
-          <Route path="reportes" element={<Reportes/>} />
+          <Route index element={<DashBoard />} />
+          <Route path="cultivos" element={<Cultivos />} />
+          <Route path="reportes" element={<Reportes />} />
 
-          <Route path="incidencias" element={<Incidencias/>} />
-          <Route path="chatbot" element={<ChatbotAgricola/>} />
+          <Route path="incidencias" element={<Incidencias />} />
+          <Route path="chatbot" element={<ChatbotAgricola />} />
           <Route path="chat" element={<MensajesPage />} />
+
+          {/* NUEVA RUTA DE PRUEBA */}
+          <Route path="analisis-plaga" element={<DetectorPlagas />} />
+          <Route path="analisis-planta" element={<DetectorPlantas />} />
+
         </Route>
       </Route>
 
