@@ -2,7 +2,7 @@ import '../../styles/manager-dashboard.css';
 import { useEffect, useState } from "react";
 import { ManagerDashboardCharts } from "./ManagerDashboardCharts";
 import { useIncidencias } from "../../hooks/incidencias";
-import { useNotificaciones } from "../../hooks/notificaciones";
+import { useNotificaciones } from "../../hooks/useNotificaciones";
 import { cultivos } from "../../hooks/cultivos";
 import { reportes } from "../../hooks/reportes";
 import { Notificaciones } from "../ui/Notificaciones";
