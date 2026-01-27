@@ -1,8 +1,16 @@
-import { useState, useEffect, useMemo, cache } from "react";
-import { X, TrendingUp, Loader, AlertTriangle, Image } from "lucide-react"; // Añadido icono 'Image'
+import { useState, useEffect, useMemo } from "react";
+import { X, TrendingUp, Loader, AlertTriangle, Image, View } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
+
+// Iconos para el visor 360
+import sky from "../../assets/sky.png";
+import soil from "../../assets/soil.png";
+import crop from "../../assets/crop.png";
+
+import Panorama from "../Panorama"; 
+import { apiPointToPosition } from "../../helpers/coords";
 import conectar from "../../helpers/fetch";
 import "./DetallesCultivo.css";
 import { getCache, setCache } from "../../helpers/cache";
@@ -13,74 +21,71 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const [datosGrafico, setDatosGrafico] = useState([]);
   const [alertasMeteo, setAlertasMeteo] = useState([]);
   const [alertasPlagas, setAlertasPlagas] = useState([]);
-  
   const [multimedia, setMultimedia] = useState([]);
-  const [loadingMultimedia, setLoadingMultimedia] = useState(true);
+  const [infoSuelo, setInfoSuelo] = useState({});
 
+  const [loadingMultimedia, setLoadingMultimedia] = useState(true);
   const [loadingGrafico, setLoadingGrafico] = useState(true);
   const [loadingMeteo, setLoadingMeteo] = useState(true);
   const [loadingPlagas, setLoadingPlagas] = useState(true);
-  const [metricaActiva, setMetricaActiva] = useState("temperatura");
-  const [infoSuelo, setInfoSuelo] = useState({})
 
+  const [metricaActiva, setMetricaActiva] = useState("temperatura");
+  const [mostrar360, setMostrar360] = useState(false);
+  const [plantaDetectada, setPlantaDetectada] = useState(null);
+  const [identificando, setIdentificando] = useState(false);
+
+  // --- CARGA DE DATOS INICIAL ---
   useEffect(() => {
     if (!cultivo?.id_cultivo) return;
     const cacheKey = `detalle-${cultivo.id_cultivo}`;
     const cached = getCache(cacheKey);
+
     if (cached) {
       setDatosGrafico(cached.datosGrafico);
       setAlertasMeteo(cached.alertasMeteo);
       setAlertasPlagas(cached.alertasPlagas);
+      setMultimedia(cached.multimedia || []);
+      setInfoSuelo(cached.infoSuelo || {});
       setLoadingGrafico(false);
       setLoadingMeteo(false);
       setLoadingPlagas(false);
-      setLoadingMultimedia(false)
-      setMultimedia(cached.multimedia || []);
+      setLoadingMultimedia(false);
       return;
     }
+
     const cargarDatos = async () => {
       try {
         setLoadingGrafico(true);
         setLoadingMeteo(true);
         setLoadingPlagas(true);
         setLoadingMultimedia(true); 
-
         const body = {
           parcela_id: cultivo.id_cultivo,
           id: cultivo.id_cultivo,
-          cultivo: "patata",
           lat: cultivo.centro[0],
           lon: cultivo.centro[1],
           inicio: "2025-01-01",
           fin: "2025-01-15",
-          fruta: "manzana"
+          fruta: "manzana",
+          cultivo: cultivo.nombre
         };
       
-         const urlPlagas = `https://aanearana-deteccion-plagas.hf.space/plagas?lat=${body.lat}&lon=${body.lon}&fruta=${body.fruta}`;
-         
-
-        // 2. AÑADIMOS LA LLAMADA A TU RUTA DE MULTIMEDIA
+        const urlPlagas = `https://aanearana-deteccion-plagas.hf.space/plagas?lat=${body.lat}&lon=${body.lon}&fruta=${body.fruta}`;
         const urlMultimedia = `${urlBase}multimedia/cultivo/${cultivo.id_cultivo}`;
 
         const [resGrafico, resMeteo, resPlagas, resMultimedia, aux] = await Promise.all([
           conectar(`${urlBase}apis/historico`, "POST", body, token),
           conectar(`${urlBase}apis/alerta-meteo`, "POST", body, token),
-          conectar(`${urlPlagas}`, "GET", {}, token),
-          conectar(urlMultimedia, "GET", {}, token), // Obtenemos las imágenes
+          conectar(urlPlagas, "GET", {}, token),
+          conectar(urlMultimedia, "GET", {}, token),
           conectar(`${urlBase}apis/info-suelo`, "POST", body, token)
-          
-        ])
+        ]);
 
-     
-        
-        
-        if(aux?.ok)setInfoSuelo(aux.data);
+        if(aux?.ok) setInfoSuelo(aux.data);
         if (resGrafico?.ok) setDatosGrafico(resGrafico.data || []);
         if (resMeteo?.ok) setAlertasMeteo(resMeteo.data || []);
         if (resPlagas?.ok) setAlertasPlagas(resPlagas.alertas || []);
-
         if (resMultimedia?.ok) setMultimedia(resMultimedia.archivos || []);
-
 
         setCache(cacheKey, {
           datosGrafico: resGrafico?.data || [],
@@ -88,21 +93,130 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
           alertasPlagas: resPlagas?.alertas || [], 
           multimedia: resMultimedia?.archivos || [],
           infoSuelo: aux?.data || {}
-
         });
 
       } catch (err) {
-        if (err.name !== "AbortError") console.error("Error cargando analíticas:", err);
+        console.error("Error cargando analíticas:", err);
       } finally {
         setLoadingGrafico(false);
         setLoadingMeteo(false);
         setLoadingPlagas(false);
-        setLoadingMultimedia(false); 
+        setLoadingMultimedia(false);
       }
     };
     
     cargarDatos();
   }, [cultivo, token]);
+  
+  // --- URL DE LA IMAGEN PANORÁMICA ---
+  const cloudinaryUrl = useMemo(() => {
+    if (cultivo.url_archivo) return cultivo.url_archivo;
+    if (cultivo.url) return cultivo.url;
+    const imgEnGaleria = multimedia.find(item => 
+      item.tipo?.toLowerCase().includes("image") || 
+      item.tipo_archivo?.toLowerCase().includes("image")
+    );
+    return imgEnGaleria ? (imgEnGaleria.url_archivo || imgEnGaleria.url) : null;
+  }, [cultivo, multimedia]);
+
+
+  // --- AUTO-IDENTIFICACIÓN AL ABRIR EL 360 ---
+  useEffect(() => {
+    if (mostrar360 && cloudinaryUrl && !plantaDetectada && !identificando) {
+      identificarAutomaticamente();
+    }
+  }, [mostrar360, cloudinaryUrl]);
+
+  const identificarAutomaticamente = async () => {
+    setIdentificando(true);
+    try {
+      // 1. Convertimos la URL de Cloudinary en un archivo (Blob)
+      const responseImg = await fetch(cloudinaryUrl, { mode: 'cors' });
+      const blob = await responseImg.blob();
+      const file = new File([blob], "panorama_auto.jpg", { type: blob.type });
+
+      // 2. Preparamos el FormData
+      const formData = new FormData();
+      formData.append("image", file);
+
+      // 3. Enviamos a tu Backend (Proxy)
+      const response = await fetch(`${urlBase}apis/identificar-planta`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await response.json();
+      
+      if (data.ok) {
+        // Ajusta aquí si tu backend devuelve { data: {...} } o directamente {...}
+        setPlantaDetectada(data.resultado || data.data || data); 
+      }
+    } catch (error) {
+      console.error("Error al identificar planta automáticamente:", error);
+    } finally {
+      setIdentificando(false);
+    }
+  };
+
+  // --- MARCADORES DINÁMICOS PARA 360 ---
+  const marcadores360 = useMemo(() => {
+    const dimensionesIA = { width: 5888, height: 2944 };
+    // Ajusta estas coordenadas a tus puntos de interés reales en la foto
+    const puntosIA = {
+      cielo: { x: 1407, y: 638 },
+      cultivo: { x: 2238, y: 1983 },
+      suelo: { x: 4365, y: 1802 }
+    };
+
+    console.log(plantaDetectada)
+
+    return [
+      // 🌤️ METEO
+      {
+        label: "Predicción Climática (7 días)",
+        position: apiPointToPosition(puntosIA.cielo, dimensionesIA),
+        icon: sky,
+        type: "meteo_list",
+        data: alertasMeteo
+      },
+
+      // 🌱 IA / CULTIVO (Automático)
+      {
+        label: identificando 
+          ? "⏳ Analizando cultivo ..." 
+          : plantaDetectada
+            ? `✅ Tipo de cultivo: ${plantaDetectada.nombre_comun || "Identificado"}` + (plantaDetectada.precision ? ` (precision: ${plantaDetectada.precision})` : "")  
+            : "⚠️ No se pudo identificar",
+        position: apiPointToPosition(puntosIA.cultivo, dimensionesIA),
+        icon: crop,
+        confidence: plantaDetectada?.precision,
+        extraInfo: plantaDetectada ? {
+           "Científico": plantaDetectada.nombre_cientifico,
+           "Otros": plantaDetectada.otros_nombres?.slice(0, 20) + "..."
+        } : null
+      },
+
+      // 🌍 SUELO
+      {
+        label: "Info Suelo (NDVI)",
+        position: apiPointToPosition(puntosIA.suelo, dimensionesIA),
+        icon: soil,
+        type: "chart",
+        data: infoSuelo?.productividad_ndvi
+          ? Object.entries(infoSuelo.productividad_ndvi).map(([año, val]) => ({
+              time: año,
+              value: val
+            }))
+          : [],
+        extraInfo: {
+          pH: infoSuelo?.suelo?.ph_superficie || "N/D",
+          "M. Orgánica": `${infoSuelo?.suelo?.materia_organica_gkg || 0} g/kg`
+        }
+      }
+    ];
+  }, [alertasMeteo, infoSuelo, plantaDetectada, identificando]);
+
 
   const lineaGrafico = useMemo(() => {
     const metricas = {
@@ -111,21 +225,8 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       evapotranspiracion: { key: "evapotranspiracion", name: "Evapotranspiración (mm)", color: "#10b981" },
       precipitacion: { key: "precipitacion", name: "Precipitación (mm)", color: "#8b5cf6" },
     };
-
     const { key, name, color } = metricas[metricaActiva] || metricas.temperatura;
-    
-    return (
-      <Line
-        type="monotone"
-        dataKey={key}
-        name={name}
-        stroke={color}
-        strokeWidth={3}
-        dot={{ r: 4 }}
-        activeDot={{ r: 6 }}
-        animationDuration={500}
-      />
-    );
+    return <Line type="monotone" dataKey={key} name={name} stroke={color} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />;
   }, [metricaActiva]);
 
   return (
@@ -133,47 +234,34 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       <div className="cultivos-flex-row">
         <div>
           <h3 className="cultivos-form-title">{cultivo.nombre}</h3>
-          <span className="cultivos-zona-info">
-            {cultivo.zona_cultivo || "Zona no especificada"}
-          </span>
+          <button onClick={() => setMostrar360(true)} className="btn-abrir-360" style={{marginTop: '10px'}}>
+            <View size={18} /> Explorar Parcela 360°
+          </button>
         </div>
-        <button onClick={onCerrar} className="btn-close">
-          <X size={20} />
-        </button>
+        <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
       </div>
-
-      <p className="cultivos-label">
-        <strong>Tipo:</strong> {cultivo.tipo_cultivo} |{" "}
-        <strong>Riego:</strong> {cultivo.sistema_riego}
-      </p>
 
       <hr className="cultivos-divider" />
 
       <div className="dashboard-grid">
-        {/* --- Gráfico Histórico --- */}
+        {/* Histórico */}
         <div className="card-base card-grafico">
           <div className="chart-header">
-            <h4 className="card-title"><TrendingUp size={16} /> Histórico de Condiciones</h4>
+            <h4 className="card-title"><TrendingUp size={16} /> Histórico</h4>
             <div className="chart-controls">
               {["temperatura", "humedad_suelo", "evapotranspiracion", "precipitacion"].map((m) => (
                 <button
                   key={m}
-                  className={`chart-btn ${metricaActiva === m ? `active ${m.split("_")[0]}` : ""}`}
+                  className={`chart-btn ${metricaActiva === m ? `active ${m}` : ""}`}
                   onClick={() => setMetricaActiva(m)}
                 >
-                  {m === "temperatura" && "Temperatura"}
-                  {m === "humedad_suelo" && "Hum. Suelo"}
-                  {m === "evapotranspiracion" && "Evapotransp."}
-                  {m === "precipitacion" && "Precipitación"}
+                  {m.replace('_', ' ')}
                 </button>
               ))}
             </div>
           </div>
-
           <div className="chart-container">
-            {loadingGrafico ? (
-              <Loader className="animate-spin" />
-            ) : (
+            {loadingGrafico ? <Loader className="animate-spin" /> : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={datosGrafico}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -187,8 +275,8 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
             )}
           </div>
         </div>
-
-        {/* --- Plagas --- */}
+        
+        {/* Plagas */}
         <div className="card-base card-plagas">
           <h4 className="card-title danger"><AlertTriangle size={16} /> Alertas Plagas</h4>
           {loadingPlagas ? <Loader /> : alertasPlagas.length ? (
@@ -214,58 +302,48 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
           ) : <p className="plagas-empty">No hay alertas activas.</p>}
         </div>
 
-        {/* --- Meteorología --- */}
-        <div className="card-base card-meteo">
-          <h4 className="card-title"><AlertTriangle size={16} /> Predicción Climática (7 días)</h4>
-          {loadingMeteo ? <Loader /> : alertasMeteo.length ? (
-            <div className="meteo-list">
-              {alertasMeteo.map((d, i) => (
-                <div key={i} className="meteo-item">
-                  <strong>
-                    {new Date(d.date).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short"})}
-                  </strong>
-                  <p>{d.estado}</p>
-                  <small>🌡️ {d.t_min}° / {d.t_max}° | 💧 {d.hr_min}% | 💨 {d.viento_max} km/h</small>
-                </div>
-              ))}
-            </div>
-          ) : <p className="plagas-empty">Sin alertas meteorológicas.</p>}
-        </div>
-
-        {/* --- 4. NUEVA SECCIÓN: GALERÍA MULTIMEDIA --- */}
+        {/* Galería */}
         <div className="card-base card-multimedia" style={{ gridColumn: '1 / -1' }}>
-          <h4 className="card-title"><Image size={16} /> Galería de la Parcela</h4>
-          {loadingMultimedia ? (
-            <Loader className="animate-spin" />
-          ) : multimedia.length > 0 ? (
-<div className="multimedia-grid">
-  {multimedia.map((item) => (
-    <div key={item.id_multimedia} className="multimedia-item">
-      {/* Cambiamos 'item.tipo_archivo' por 'item.tipo' 
-         Asegúrate de que 'url_archivo' es el nombre correcto de tu URL en la BD
-      */}
-      {item.tipo.includes("video") ? (
-        <video controls src={item.url_archivo || item.url} className="multimedia-content" />
-      ) : item.tipo.includes("image") ? (
-        <img src={item.url_archivo || item.url} alt="Foto cultivo" className="multimedia-content" />
-      ) : (
-        <a href={item.url_archivo || item.url} target="_blank" rel="noreferrer" className="multimedia-link">
-          📄 Ver archivo
-        </a>
-      )}
-      <small className="multimedia-date">
-        {/* Si la fecha también tiene otro nombre en la BD, cámbialo aquí */}
-        {item.fecha_subida ? new Date(item.fecha_subida).toLocaleDateString("es-ES") : "Sin fecha"}
-      </small>
-    </div>
-  ))}
-</div>
+          <h4 className="card-title"><Image size={16} /> Galería Multimedia</h4>
+          <div className="multimedia-grid">
+            {multimedia.map((item) => (
+              <div key={item.id_multimedia} className="multimedia-item">
+                <img src={item.url_archivo || item.url} className="multimedia-content" alt="Vista" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* VISOR 360 MODAL */}
+      {mostrar360 && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999, background: '#000' }}>
+          <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 10, display: 'flex', gap: '15px' }}>
+            <button 
+              onClick={() => setMostrar360(false)} 
+              style={{ padding: '12px 20px', background: 'white', borderRadius: '8px', cursor: 'pointer', border: 'none', fontWeight: 'bold' }}
+            >
+              Cerrar Vista 360
+            </button>
+            
+            {/* Indicador de estado de la IA */}
+            {identificando && (
+               <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.6)', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                 <Loader className="animate-spin" size={16}/> Analizando parcela...
+               </div>
+            )}
+          </div>
+
+          {cloudinaryUrl ? (
+            <Panorama imageUrl={cloudinaryUrl} markers={marcadores360} />
           ) : (
-            <p className="plagas-empty">Aún no se han subido imágenes para esta parcela.</p>
+            <div style={{ color: 'white', textAlign: 'center', paddingTop: '20%' }}>
+              <AlertTriangle size={48} style={{ margin: '0 auto 20px' }} color="#f59e0b" />
+              <h3>Imagen 360 no disponible</h3>
+            </div>
           )}
         </div>
-
-      </div>
+      )}
     </div>
   );
 }
