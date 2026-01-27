@@ -53,7 +53,7 @@ export const DetalleProductor = () => {
             {/* DATOS PERSONALES */}
             <div className="reporte-card detalle-card">
                 <div className="seccion-header-bloque">
-                    <User size={20} className="icon-seccion" />
+                    <User size={20} className="icon-seccion " />
                     <h3>Datos personales</h3>
                 </div>
                 <div className="info-perfil">
@@ -126,7 +126,7 @@ export const DetalleProductor = () => {
 const Seccion = ({ titulo, Icono, items, render, vacio }) => (
     <div className="reporte-card detalle-card">
         <div className="seccion-header-bloque">
-            <Icono size={20} className="icon-seccion" />
+            <Icono size={20} className="icon-seccion blue" />
             <h3>{titulo}</h3>
         </div>
         <div className="seccion-contenido-bloque">

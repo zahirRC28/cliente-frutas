@@ -162,7 +162,7 @@ export const Cultivos = () => {
                 >
                   <option value={uid}>
                     {esAdmin ? "Mis Cultivos (Admin)" : 
-                     esManager ? "Mis Cultivos (Manager)" : 
+                     esManager ? "Elige un productor..." : 
                      esAsesor ? "Mis Cultivos (Asesor)" : 
                      "Mis Cultivos"}
                   </option>

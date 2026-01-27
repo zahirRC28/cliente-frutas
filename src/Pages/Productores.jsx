@@ -56,7 +56,7 @@ export const Productores = () => {
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button
-                className="btn btn-cancelar"
+                className="btn btn-guardar"
                 onClick={() => {
                   // Si rol es 'Administrador', ruta -> '/admin'
                   // Si rol es 'Manager', ruta -> '/manager'
