@@ -15,7 +15,7 @@ import { useEffect } from 'react';
  */
 
 export const ProtectedRoutes = ({ children, roles }) => {
-  const { getRole, token, logoutUser } = userAuth();
+  const { getRole, token, logoutUser, nuevoUser } = userAuth();
 
     const userRol = getRole();
     // Asegura que los hooks se llamen SIEMPRE antes de cualquier return
@@ -27,6 +27,7 @@ export const ProtectedRoutes = ({ children, roles }) => {
 
     if(!token) return <Navigate to="/" replace />;
     if(!userRol) return <Navigate to="/" replace />;
+    if(nuevoUser) return <Navigate to="/primer-login" replace />;
 
     const roleToRoute = {
       Administrador: "/admin",
