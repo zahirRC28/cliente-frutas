@@ -14,10 +14,13 @@ import { userAuth } from "../../hooks/userAuth";
  */
 
 export const PublicProtection = ({ children }) => {
-  const { token, getRole } = userAuth();
-
+  const { token, getRole, nuevoUser } = userAuth();
+  console.log(nuevoUser);
   
   if (token) {
+    if (nuevoUser) {
+      return <Navigate to="/primer-login" replace />;
+    }
     const role = getRole();
     //console.log(role);
     const roleToRoute = {

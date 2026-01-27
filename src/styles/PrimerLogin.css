@@ -1,0 +1,50 @@
+/* PrimerLogin.css */
+
+.primer-login-container {
+    padding: 16px;
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.primer-login-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.primer-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.primer-login-form input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.primer-login-form input:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+.primer-login-form button {
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.primer-login-form button:hover {
+    background-color: #45a049;
+}

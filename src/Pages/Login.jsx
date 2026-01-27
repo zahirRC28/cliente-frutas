@@ -3,6 +3,7 @@ import { Eye, EyeOff, LeafyGreen } from "lucide-react";
 import "../styles/Login.css";
 import { userAuth } from "../hooks/userAuth";
 import logo from "../assets/logo_bueno.png"
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
     const [mostrarContrasenia, setMostrarContrasenia] = useState(false);
@@ -10,6 +11,7 @@ export const Login = () => {
     const [password, setPassword] = useState("");
     const [errorLogin, setErrorLogin] = useState("");
     const { loginUser, error } = userAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -21,10 +23,20 @@ export const Login = () => {
             return;
         }
         const datos = { "correo": correo, "contrasenia": contra };
-        await loginUser(datos);
-        //console.log(error.contrasenia.msg);
-        if(error){
+
+
+        const info = await loginUser(datos);
+        console.log(info);
+        if(info.ok !== true){
             setErrorLogin("Email o contraseña incorrectos");
+            return;
+        }
+
+        // Redirigir según si es primer login o no
+        if(info.primer_login){
+            navigate('/primer-login'); // Nueva ruta para cambiar contraseña
+        } else {
+            navigate('/', { replace: true }) // Ruta normal después de login
         }
         
 

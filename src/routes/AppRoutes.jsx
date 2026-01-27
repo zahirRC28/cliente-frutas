@@ -14,6 +14,8 @@ import { DetalleProductor } from '../Pages/DetalleProductor';
 import { Incidencias } from '../Pages/Incidencias';
 import { ChatbotAgricola } from '../components/ChatbotAgricola';
 import { MensajesPage } from '../Pages/MensajesPage';
+import { PrimerLogin } from '../Pages/PrimerLogin';
+import { PrimerLoginProtection } from '../components/protections/PrimerLoginProtection';
 
 
 export const AppRoutes = () => {
@@ -25,7 +27,15 @@ export const AppRoutes = () => {
             <Login/>
           </PublicProtection>
         } />
-
+        {/* PRIMER LOGIN (SOLO nuevos usuarios) */}
+        <Route
+          path="primer-login"
+          element={
+            <PrimerLoginProtection>
+              <PrimerLogin />
+            </PrimerLoginProtection>
+          }
+        />
         {/*RUTAS DE ADMINISTRADOR*/}
         <Route path="admin" element={
           <ProtectedRoutes roles={['Administrador']}>

@@ -11,9 +11,10 @@ const urlBase = import.meta.env.VITE_BACKEND_URL;
  */
 export const userAuth = () => {
 
-    const { login, logout, user, token } = useContext(UserContext);
+    const { login, logout, user, token, nuevoUser, actualizarPrimer } = useContext(UserContext);
     const [error, setError] = useState(null);
     const [mensaje, setMensaje] = useState(null);
+    
 
      // ---------------- LOGIN ---------------- //
      /**
@@ -24,13 +25,34 @@ export const userAuth = () => {
         //console.log(datos);
         const info = await conectar(`${urlBase}auth/login`, 'POST',datos);
         //console.log(info);
-        const { user, token, ok} = info
+        const { user, token, ok, primer_login} = info
         if(ok === true){
-            login(user,token);
+            login(user,token, primer_login);
         }else{
             const errors = info.errors || info
             setError(errors)
             //console.log(errors);
+        }
+        console.log(primer_login);
+        return info;
+    }
+
+    const primerLogin = async(datos) =>{
+        try {
+            //console.log(datos);
+            const primer_login = false;
+            const info = await conectar(`${urlBase}user/cambiarContrasenia`, 'PUT', datos, token);
+            if(!info.ok){
+                setError(info.msg || 'Error al cambiar contraseña');
+            } else {
+                setError(null); // limpio errores
+                actualizarPrimer(primer_login);// actualizar estado de primer login
+            }
+            //console.log(info);
+            return info;
+        } catch(err) {
+            setError('Error del servidor');
+            return null;
         }
     }
 
@@ -221,6 +243,9 @@ const eliminarUser = async(idUser, email) => {
     mensaje,
     estadoUser,
     limpiarMensaje,
-    userPoRole
+    userPoRole,
+    primerLogin,
+    renewToken,
+    nuevoUser
     }
 }

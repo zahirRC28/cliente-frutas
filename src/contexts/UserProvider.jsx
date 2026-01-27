@@ -33,6 +33,11 @@ export const UserProvider = ({ children }) => {
      * @type {string|null}
      */
     const [token, setToken] = useState( Cookies.get('miToken') || null);
+    const [nuevoUser, setNuevoUser] = useState(() => {
+      const cookie = Cookies.get('primerLogin');
+      return cookie ? JSON.parse(cookie) : null; // parsea "true"/"false" a boolean
+    });
+    //console.log(nuevoUser);
     /**
      * Función para iniciar sesión
      *
@@ -43,15 +48,21 @@ export const UserProvider = ({ children }) => {
      * @example
      * login({ nombre: "Juan", rol: "Administrador" }, "token123")
      */
-    const login = (userDatos, token) =>{
+    const login = (userDatos, token, primer_login) =>{
       //console.log(userDatos)
       //console.log(token)
       setUser(userDatos);
       setToken(token);
+      setNuevoUser(primer_login);
       //localStorage.setItem("token", token);
       Cookies.set('miToken', token, { expires: 1, path: '/' });
       Cookies.set('userData', JSON.stringify(userDatos), { expires: 1, path: '/' });
+      Cookies.set('primerLogin', JSON.stringify(primer_login), { expires: 1, path: '/' });
     };
+    const actualizarPrimer = (primer_login) =>{
+      setNuevoUser(primer_login);
+      Cookies.set('primerLogin', JSON.stringify(primer_login), { expires: 1, path: '/' });
+    }
     /**
      * Función para cerrar sesión
      *
@@ -68,11 +79,12 @@ export const UserProvider = ({ children }) => {
       // Las cookies se setearon con path '/'; usa el mismo para borrarlas
       Cookies.remove('miToken', { path: '/' });
       Cookies.remove('userData', { path: '/' });
+      Cookies.remove('primerLogin', { path: '/' });
     }
 
   return (
     
-    <UserContext.Provider value={{user, token, login, logout}}>
+    <UserContext.Provider value={{user, token, login, logout, nuevoUser, actualizarPrimer}}>
         {children}
     </UserContext.Provider>
   )

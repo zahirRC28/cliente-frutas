@@ -5,7 +5,7 @@ import { userAuth } from '../hooks/userAuth';
 import './reportes.css';
 
 const UsuariosPage = () => {
-  const { user, token, todosUser, crearUsuario, actualizarUser, eliminarUser, todosRoles } = userAuth();
+  const { user, todosUser, crearUsuario, actualizarUser, eliminarUser, todosRoles } = userAuth();
 
   const [usuarios, setUsuarios] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -63,15 +63,14 @@ const UsuariosPage = () => {
     ev.preventDefault();
     const nombre = ev.target.nombre?.value?.trim();
     const correo = ev.target.correo?.value?.trim();
-    const contrasenia = ev.target.contrasenia?.value;
     const rol = ev.target.rol?.value;
     const id_manager = ev.target.id_manager?.value || null;
 
-    if (!nombre || !correo || !contrasenia || !rol) {
+    if (!nombre || !correo || !rol) {
       Swal.fire({
         icon: 'error',
         title: 'Faltan datos',
-        text: 'Rellena nombre, correo, contraseña y rol'
+        text: 'Rellena nombre, correo y rol'
       });
       return;
     }
@@ -80,7 +79,6 @@ const UsuariosPage = () => {
       const res = await crearUsuario({
         nombre,
         correo,
-        contrasenia,
         rol,
         id_manager: id_manager || null
       });
@@ -282,9 +280,9 @@ const UsuariosPage = () => {
             <div>
               <input name="correo" placeholder="Correo" />
             </div>
-            <div>
+            {/* <div>
               <input name="contrasenia" placeholder="Contraseña" />
-            </div>
+            </div> */}
             <div>
               <label>Rol</label>
               <select name="rol" defaultValue="">
@@ -356,6 +354,9 @@ const UsuariosPage = () => {
                 <div>
                   <strong>{u.nombre_completo}</strong>
                   <div style={{ color: 'var(--texto-gris)' }}>{u.correo} • <small>{u.rol_nombre}</small> {u.id_manager ? `• manager:${u.id_manager}` : ''}</div>
+                </div>
+                <div style={{ color: 'red', fontWeight: 'bold' }}>
+                  {u.primer_login ? 'Debe cambiar contraseña' : ''}
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button className="btn btn-cancelar" onClick={() => prepararEditar(u)}>Editar</button>
