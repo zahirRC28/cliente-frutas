@@ -22,7 +22,7 @@
 
 .tab.active {
     color: var(--verde);
-    border-bottom: 3px solid var(--verde);
+    border-bottom: 3px solid var(--verde-oscuro);
 }
 
 /* Formulario */
@@ -72,32 +72,61 @@
     margin-top: 25px; 
 }
 
+
+/* Botón base para acciones principales */
+.btn-primary, .btn-secondary, .btn-delete {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.97rem;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+}
+
+/* Botón guardar cambios y ver detalle: igual que editar (borde y texto verde, fondo blanco) */
 .btn-primary {
-    background-color: var(--verde);
-    color: var(--texto-blanco);
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
+    background: #fff;
+    color: var(--verde-oscuro);
+    border: 1.5px solid var(--verde-oscuro);
+    font-weight: 700;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+}
+.btn-primary:hover {
+    background: var(--verde-claro);
+    color: var(--verde-oscuro);
+    border-color: var(--verde);
 }
 
-.btn-primary:hover { background-color: var(--verde-oscuro); }
-
-/* Estilo botón Cancelar */
+/* Botón cancelar y volver: igual que borrar (borde y texto rojo, fondo #fef2f2) */
 .btn-secondary {
-    background-color: #f3f4f6;
-    color: var(--texto-negro);
-    border: 1px solid #d1d5db;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
+    background: #fef2f2;
+    color: var(--error);
+    border: 1.5px solid var(--error);
+    font-weight: 700;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+}
+.btn-secondary:hover {
+    background: #fff;
+    color: var(--error);
+    border-color: var(--error);
 }
 
-.btn-secondary:hover { background-color: #e5e7eb; }
-
-/* Tarjetas de la Lista */
+/* Botón borrar/eliminar */
+.btn-delete {
+    background: #fff;
+    color: var(--error);
+    border: 1.5px solid var(--error);
+    padding: 0.6rem 1.1rem;
+}
+.btn-delete:hover {
+    background: #fef2f2;
+    color: var(--error);
+}
 .incidencias-list {
     display: flex;
     flex-direction: column;
@@ -130,6 +159,11 @@
 .card-main h4 {
     margin-bottom: 8px;
     color: var(--texto-negro);
+    line-height: 24px;
+}
+.card-main p{
+    line-height: 22px;
+    margin-bottom: 15px;
 }
 
 .card-main small {

@@ -1,6 +1,5 @@
 /* MANAGER DASHBOARD LAYOUT - MOBILE FIRST */
 .manager-dashboard-root {
-  background: #fafafa;
   min-height: 100vh;
   font-family: 'Inter', 'Geist', 'sans-serif';
   padding: 16px 0 0 0;
@@ -182,9 +181,9 @@
   font-weight: 500;
   margin-left: 8px;
 }
-.incidencia-card .alta { color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 6px; }
-.incidencia-card .media { color: #facc15; background: #fef9c3; padding: 2px 8px; border-radius: 6px; }
-.incidencia-card .baja { color: #6b7280; background: #f3f4f6; padding: 2px 8px; border-radius: 6px; }
+.incidencia-card .alta { color: #860f0f; background: #fee2e2; padding: 2px 8px; border-radius: 6px; }
+.incidencia-card .media { color: #652d08; background: #fef7c3; padding: 2px 8px; border-radius: 6px; }
+.incidencia-card .baja { color: #1e6711; background: #b8f2bd; padding: 2px 8px; border-radius: 6px; }
 .inc-meta {
   color: #6b7280;
   font-size: 0.97em;

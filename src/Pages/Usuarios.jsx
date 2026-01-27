@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { User } from 'lucide-react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { userAuth } from '../hooks/userAuth';
@@ -259,7 +260,7 @@ const UsuariosPage = () => {
 
   return (
     <div className="reportes-page" style={{ padding: 16 }}>
-      <h1>Gestión de Usuarios</h1>
+      <h1 style={{display:'flex',alignItems:'center',gap:8}}><User size={24} /> Gestión de Usuarios</h1>
 
       <div className="user-info" style={{ marginBottom: 12 }}>
         <strong>Usuario:</strong> {user?.nombre || '—'} ({user?.rol || '—'})

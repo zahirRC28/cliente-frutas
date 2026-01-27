@@ -22,6 +22,25 @@
   color: #64748b;
 }
 
+.btn-abrir-360{
+    display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.97rem;
+  box-sizing: border-box;
+  border: 1.5px solid transparent;
+  background: #fff;
+  color: var(--verde-oscuro);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+}
+
+
+
 .btn-close {
   background: none;
   border: none;
@@ -207,7 +226,19 @@
   padding: 5px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
-  width: fit-content;
+  flex-wrap: wrap;
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  justify-content: space-around;
+}
+
+@media (max-width: 600px) {
+  .chart-controls {
+    width: 100%;
+    gap: 6px;
+    padding: 4px 2px;
+  }
 }
 
 .chart-btn {

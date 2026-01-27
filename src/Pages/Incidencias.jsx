@@ -1,5 +1,6 @@
 import "./incidencias.css";
 import React, { useEffect, useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { userAuth } from '../hooks/userAuth';
 import conectar from '../helpers/fetch';
@@ -142,7 +143,7 @@ export const Incidencias = () => {
   return (
     <div className="incidencias-page">
       <header className="page-header mb20">
-        <h1>Gestión de Incidencias</h1>
+        <h1 style={{display:'flex',alignItems:'center',gap:8}}><AlertTriangle size={24} /> Gestión de Incidencias</h1>
       </header>
 
       <div className="tab-container">
@@ -168,26 +169,22 @@ export const Incidencias = () => {
             )}
 
             <div className="full-width">
-              <label>Título</label>
-              <input disabled={readonlyParaTodos} value={form.titulo} onChange={e => setForm({ ...form, titulo: e.target.value })} required />
+              <input placeholder="Título" disabled={readonlyParaTodos} value={form.titulo} onChange={e => setForm({ ...form, titulo: e.target.value })} required />
             </div>
 
             <div>
-              <label>Tipo</label>
-              <input disabled={readonlyParaTodos} value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })} required />
+              <input placeholder="Tipo" disabled={readonlyParaTodos} value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })} required />
             </div>
 
             <div>
-              <label>Cultivo</label>
               <select disabled={!!form.id || user.rol === 'Asesor'} value={form.id_cultivo} onChange={e => setForm({ ...form, id_cultivo: e.target.value })} required>
-                <option value="">Seleccionar...</option>
+                <option value="">Selecciona un cultivo</option>
                 {dataCultivos.map(c => <option key={c.id_cultivo} value={c.id_cultivo}>{c.nombre || c.id_cultivo}</option>)}
               </select>
             </div>
 
             <div className="full-width">
-              <label>Descripción</label>
-              <textarea disabled={readonlyParaTodos} value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })} required />
+              <textarea placeholder="Descripción" disabled={readonlyParaTodos} value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })} required />
             </div>
 
             <div className="control-group">
@@ -235,7 +232,7 @@ export const Incidencias = () => {
                 <div className="card-main">
                   <h4>{inc.titulo} {inc.estado === 'cerrada' && <span className="closed-tag">(CERRADA)</span>}</h4>
                   <p>{inc.descripcion}</p>
-                  <div className="info-metadata mb10">
+                  <div className="info-metadata mb20">
                     <p><strong>ID Cultivo:</strong> {inc.id_cultivo}</p>
                     <p><strong>ID Productor:</strong> {inc.id_productor}</p>
                     <p><strong>Productor:</strong> {inc.nombre_productor || 'N/A'}</p>

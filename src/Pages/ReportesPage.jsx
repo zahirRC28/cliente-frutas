@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FileText } from 'lucide-react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import conectar from '../helpers/fetch';
@@ -268,23 +269,7 @@ export const Reportes = () => {
 
   const listaFinal = filtrarReportes();
 
-  const tabBase = {
-    padding: '10px 14px',
-    borderRadius: 10,
-    border: '1.6px solid rgba(0,0,0,0.08)',
-    background: '#fff',
-    color: 'var(--texto-negro)',
-    cursor: 'pointer',
-    fontWeight: 600,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-  };
-  const tabActive = {
-    ...tabBase,
-    background: 'linear-gradient(180deg, var(--verde) 0%, var(--verde-oscuro) 100%)',
-    color: 'var(--texto-blanco)',
-    borderColor: 'transparent',
-    boxShadow: '0 8px 20px rgba(46,139,87,0.12)',
-  };
+  // El tabbar ahora usará la misma estructura y clases que Incidencias
 
   const prepararEdicion = (r) => {
     setEditId(r.id_reporte);
@@ -298,54 +283,57 @@ export const Reportes = () => {
 
   return (
     <div className="reportes-page">
-      <h1>Reportes</h1>
+      <h1 style={{display:'flex',alignItems:'center',gap:8}}><FileText size={24} /> Reportes</h1>
 
       <div className="user-info">
         <strong>Usuario:</strong> {user?.nombre || '—'} ({user?.rol || '—'})
       </div>
 
+      {/* Nuevo tabbar estilo incidencias */}
       {user?.rol === 'Productor' ? (
-        <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+        <div className="tab-container">
           <button
-            type="button"
-            style={vista === 'lista' ? tabActive : tabBase}
+            className={`tab${vista === 'lista' ? ' active' : ''}`}
             onClick={() => setVista('lista')}
           >
-            Lista Reportes
+            Lista de Reportes
           </button>
           <button
-            type="button"
-            style={vista === 'crear' ? tabActive : tabBase}
+            className={`tab${vista === 'crear' ? ' active' : ''}`}
             onClick={() => setVista('crear')}
           >
             + Nuevo Reporte
           </button>
         </div>
       ) : (
-        <div className="filtros" style={{ marginBottom: 12 }}>
-          {user?.rol !== 'Productor' && (
-            <div className="filtro-productor">
-              <label>Filtrar por productor</label>
-              <select value={selectedProductor} onChange={e => setSelectedProductor(e.target.value)}>
-                <option value="todos">Todos</option>
-                {productores.map(p => (
-                  <option key={p.id_usuario} value={p.id_usuario}>{p.nombre_completo}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="filtro-titulo" style={{ marginTop: user?.rol !== 'Productor' ? 0 : undefined }}>
-            <label>Buscar por título</label>
-            <input value={filtroTitulo} onChange={e => setFiltroTitulo(e.target.value)} placeholder="Título..." />
+        <>
+          <div className="tab-container" style={{ marginBottom: 12 }}>
+            <div className="tab active" style={{ cursor: 'default' }}>Lista de Reportes</div>
           </div>
-        </div>
+          <div className="filtros">
+            {user?.rol !== 'Productor' && (
+              <div className="filtro-productor">
+                <label>Filtrar por productor</label>
+                <select value={selectedProductor} onChange={e => setSelectedProductor(e.target.value)}>
+                  <option value="todos">Todos</option>
+                  {productores.map(p => (
+                    <option key={p.id_usuario} value={p.id_usuario}>{p.nombre_completo}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="filtro-titulo" style={{ marginTop: user?.rol !== 'Productor' ? 0 : undefined }}>
+              <label>Buscar por título</label>
+              <input value={filtroTitulo} onChange={e => setFiltroTitulo(e.target.value)} placeholder="Título..." />
+            </div>
+          </div>
+        </>
       )}
 
       {/* Vista crear */}
       {user?.rol === 'Productor' && vista === 'crear' && (
         <section className="crear-section">
-          <h3>Crear reporte</h3>
           <form onSubmit={handleCrear} className="form-crear">
             <div>
               <input name="titulo" placeholder="Título" />
@@ -354,8 +342,7 @@ export const Reportes = () => {
               <textarea name="descripcion" placeholder="Descripción" />
             </div>
             <div>
-              <label htmlFor="idcultivo">Cultivo</label>
-              <select name="idcultivo" id="idcultivo" defaultValue="">
+                <select name="idcultivo" id="idcultivo" defaultValue="">
                 <option value="" disabled>Selecciona un cultivo</option>
                 {dataCultivos.map(c => (
                   <option key={c.id_cultivo || c.id} value={c.id_cultivo || c.id}>
@@ -433,7 +420,7 @@ export const Reportes = () => {
                   <div className="acciones">
                     {(user?.rol === 'Productor' && Number(user.uid) === Number(r.id_productor)) && (
                       <>
-                        <button className="btn btn-cancelar" onClick={() => prepararEdicion(r)}>Editar</button>
+                        <button className="btn btn-guardar" onClick={() => prepararEdicion(r)}>Editar</button>
                         <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
                       </>
                     )}
