@@ -5,6 +5,8 @@ import { UserContext } from '../contexts/UserContext';
 import conectar from '../helpers/fetch';
 import { Bot, ChevronDown } from 'lucide-react';
 
+const UrlBase = import.meta.env.VITE_BACKEND_URL
+
 export const ChatbotAgricola = () => {
     const { token } = useContext(UserContext);
     
@@ -30,7 +32,7 @@ export const ChatbotAgricola = () => {
         setCargando(true);
 
         try {
-            const urlBack = 'http://localhost:3005/api/v1/apis/chatbot'; // llamar a la API de back
+            const urlBack = `${UrlBase}apis/chatbot`; 
             const data = await conectar(urlBack, 'POST', { message: textoUsuario }, token);
 
             if (data && data.ok) {

@@ -130,12 +130,14 @@ export const Cultivos = () => {
         toast.error("La zona se solapa con una existente.");
       } else {
         setPoligonoActual(coordsVisuales);
-        toast.success("Zona dibujada correctamente.");
+        setCultivoSeleccionado(null)
       }
     } catch (err) {
       toast.error("Error al procesar el área dibujada");
     }
   };
+
+
 
   const handleZoneDeleted = () => {
     if (deleteLock.current) return;
