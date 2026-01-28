@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, LeafyGreen } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import "../styles/Login.css";
 import { userAuth } from "../hooks/userAuth";
 import logo from "../assets/logo_bueno.png"
@@ -53,20 +53,20 @@ export const Login = () => {
                     Monitoriza tus cultivos, coordina con proveedores y recibe
                     alertas en tiempo real desde una única plataforma.
                 </p>
-                <div className="stats-login">
+                {/* <div className="stats-login">
                     <div>
-                        <strong>+2,500</strong>
+                        <strong>+2. 500</strong>
                         <span>Hectáreas gestionadas</span>
                     </div>
                     <div>
                         <strong>98%</strong>
-                        <span>Precisión alertas</span>
+                        <span>Predicción de plagas</span>
                     </div>
                     <div>
                         <strong>24/7</strong>
                         <span>Monitorización</span>
                     </div>
-                </div>
+                </div> */}
             </section>
             <section className="login-der">
                 {/* Logo y nombre solo en móvil, encima del formulario */}

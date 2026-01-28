@@ -2,7 +2,6 @@
     padding: 20px;
 }
 
-/* Tabs */
 .tab-container {
     display: flex;
     gap: 10px;
@@ -30,24 +29,27 @@
     background: white;
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .grid-form {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px; /* Espacio entre inputs */
+    gap: 20px;
 }
 
 @media (min-width: 768px) {
     .grid-form {
         grid-template-columns: 1fr 1fr;
     }
-    .full-width { grid-column: span 2; }
+
+    .full-width {
+        grid-column: span 2;
+    }
 }
 
-.grid-form input, 
-.grid-form select, 
+.grid-form input,
+.grid-form select,
 .grid-form textarea {
     width: 100%;
     padding: 14px;
@@ -57,7 +59,7 @@
 }
 
 /* Estado deshabilitado */
-.grid-form select:disabled, 
+.grid-form select:disabled,
 .grid-form input:disabled {
     background-color: #f9fafb;
     color: var(--texto-gris);
@@ -65,236 +67,220 @@
     border-color: #f3f4f6;
 }
 
-/* Botonera con márgenes corregidos */
+/* Botonera */
 .form-actions {
     display: flex;
     gap: 15px;
-    margin-top: 25px; 
+    margin-top: 25px;
 }
 
-
-/* Botón base para acciones principales */
-.btn-primary, .btn-secondary, .btn-delete, .btn-tres {
+.btn-primary,
+.btn-secondary,
+.btn-delete,
+.btn-tres {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     gap: 0.4rem;
     padding: 0.38rem 0.75rem;
     border-radius: 7px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.89rem;
     box-sizing: border-box;
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border 0.15s;
+    margin-right: 0.5rem;
+    margin-top: 0.6rem;
 }
 
-/* Botón guardar cambios y ver detalle: igual que editar (borde y texto verde, fondo blanco) */
 .btn-primary {
     background: #fff;
-    color: var(--verde-oscuro);
-    border: 1.5px solid var(--verde-oscuro);
-    font-weight: 700;
-    transition: background 0.15s, color 0.15s, border 0.15s;
+    border: 1.5px solid;
 }
+
 .btn-primary:hover {
-    background: var(--verde-claro);
-    color: var(--verde-oscuro);
+    background: rgb(232, 228, 228);
     border-color: var(--verde);
 }
 
-
-.btn-tres {
-    margin-left: 10px;
-  background: #fff;
-  color: rgb(37, 93, 184);
-  border: 1.5px solid rgb(37, 93, 184) ;
-  padding: 0.6rem 1.1rem;
-}
-.btn-tres:hover {
-    background: rgb(215, 230, 255);
-    color: rgb(37, 93, 184);
-    border-color: rgb(37, 93, 184);
-}
-
-/* Botón cancelar y volver: igual que borrar (borde y texto rojo, fondo #fef2f2) */
 .btn-secondary {
     background: #fef2f2;
     color: var(--error);
     border: 1.5px solid var(--error);
-    font-weight: 700;
-    transition: background 0.15s, color 0.15s, border 0.15s;
 }
+
 .btn-secondary:hover {
-    background: #fff;
+    background-color: #fff;
     color: var(--error);
-    border-color: var(--error);
 }
+
+.btn-delete {
+    background: #fff;
+}
+
+.btn-delete:hover {
+    background: rgb(255, 208, 208);
+
+}
+
 .btn-tres {
     background: #ffffff;
     color: rgb(39, 126, 226);
     border: 1.5px solid rgb(114, 180, 255);
     font-weight: 700;
-    margin-left: 10px;
-    transition: background 0.15s, color 0.15s, border 0.15s;
-}
-.btn-tres:hover {
-    background: #f2fbfe;
-    color: rgb(39, 126, 226);
-    border: 1.5px solid rgb(114, 180, 255);
 }
 
-/* Botón borrar/eliminar */
-.btn-delete {
-    background: #fff;
-    color: var(--error);
-    border: 1.5px solid var(--error);
-    padding: 0.38rem 0.75rem;
+.btn-tres:hover {
+    background: #f2fbfe;
 }
-.btn-delete:hover {
-    background: #fef2f2;
-    color: var(--error);
-}
+
+/* --- LISTADO DE INCIDENCIAS --- */
 .incidencias-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
 }
 
 .incidencia-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-@media (min-width: 640px) {
-    .incidencia-card {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
+    gap: 0.45rem;
+    padding: 0.85rem;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid rgba(34, 197, 94, 0.06);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.03);
+    position: relative;
+    overflow: hidden;
 }
 
 /* Bordes de prioridad */
-.priority-alta { border-left: 6px solid var(--error); }
-.priority-media { border-left: 6px solid #f59e0b; }
-.priority-baja { border-left: 6px solid var(--verde-oscuro); }
+.priority-alta,
+.priority-media,
+.priority-baja {
+    border-left: 5px solid transparent !important;
 
-.card-main h4 {
-    margin-bottom: 8px;
-    color: var(--texto-negro);
-    line-height: 24px;
 }
-.card-main p{
-    line-height: 22px;
-    margin-bottom: 15px;
+
+.priority-alta {
+    border-left-color: var(--error) !important;
+}
+
+.priority-media {
+    border-left-color: #f59e0b !important;
+}
+
+.priority-baja {
+    border-left-color: var(--verde-oscuro) !important;
+}
+
+/* Contenido interno */
+.card-main h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    color: var(--texto-negro);
+}
+
+.card-main p {
+    margin: 0;
+    color: #243225;
+    line-height: 1.35;
+    font-size: 0.95rem;
 }
 
 .card-main small {
     display: block;
-    margin-top: 10px; 
+    margin-top: 8px;
+    font-size: 0.85rem;
     color: var(--texto-gris);
 }
 
-/* Botones en la tarjeta (Gestionar / eliminar) */
+.info-metadata p {
+    margin: 3px 0 !important;
+    font-size: 0.85rem;
+    color: var(--texto-gris);
+}
+
+/* Botones dentro de la tarjeta */
 .admin-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 15px;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
-.btn-delete {
-    background-color: white;
-    color: var(--error);
-    border: 1px solid #fee2e2;
-    padding: 0.38rem 0.75rem;
-    border-radius: 7px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-    margin: 0.5rem;
+/* Ajustes Desktop */
+@media (min-width: 700px) {
+    .incidencias-list {
+        grid-template-columns: 1fr 1fr;
+        /* 2 columnas */
+        gap: 1.2rem;
+    }
+
+    .incidencia-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    .card-main {
+        flex: 1;
+        padding-left: 10px;
+    }
+
+    .admin-actions {
+        margin-left: 12px;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-top: 0;
+    }
 }
 
-.btn-delete:hover {
-    background-color: #fef2f2;
-    border-color: var(--error);
-}
-
-.admin-actions button {
-    padding: 0.38rem 0.75rem;
-    border-radius: 7px;
-    border: 1px solid #e5e7eb;
-    background: white;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.admin-actions .del {
-    color: var(--error);
-    border-color: #fee2e2;
-}
-
-.admin-actions .del:hover {
-    background-color: #fef2f2;
-}
-
-.incidencia-card.is-closed {
-    opacity: 0.7;
-    filter: grayscale(0.9); 
-    background-color: #f9f9f9;
-    border-left: 5px solid #999 !important; 
-}
-
-.info-metadata p {
-    margin: 5px 0 !important;
-    font-size: 0.9rem;
-    line-height: 1.2;
-}
-/* Contenedor del filtro */
+/* Filtro */
 .filter-container {
     width: 100%;
     margin: 1rem 0;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
 }
 
 .search-input {
-    width: 100%; 
-    padding: 14px 16px; 
-    font-size: 16px; 
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     background-color: #ffffff;
-    outline: none;
-    appearance: none; 
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s;
 }
 
 .search-input:focus {
-    border-color: #10b981; 
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
 }
 
-.search-input::placeholder {
-    color: #9ca3af;
-}
-
-
-@media (min-width: 640px) {
-    .admin-actions { margin-top: 0; }
-}
-
-
-/* Ajuste para pantallas grandes (Desktop) */
 @media (min-width: 768px) {
     .filter-container {
-        justify-content: flex-start; 
+        justify-content: flex-start;
     }
-    
+
     .search-input {
-        max-width: 400px; 
+        max-width: 400px;
     }
+}
+
+/* Estado cerrada */
+.incidencia-card.is-closed {
+    opacity: 0.7;
+    filter: grayscale(0.9);
+    background-color: #f9f9f9;
+    border-left: 5px solid #999 !important;
+}
+
+/* --- SEPARACIÓN DE PRIORIDAD --- */
+.card-footer .badge {
+    display: inline-block;
+    margin: 1px 0 10px 0;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
