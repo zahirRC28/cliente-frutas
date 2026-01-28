@@ -251,7 +251,7 @@ export const Incidencias = () => {
                     </button>
                     {/* mostrar eliminar solo a Manager y admin*/}
                     <button
-                      className="btn-secondary"
+                      className="btn-tres"
                       onClick={() => generarPdfIncidencia(inc.id_incidencia)}
                     >
                       Descargar PDF

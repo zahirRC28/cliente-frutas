@@ -113,6 +113,13 @@
   padding: 0.6rem 1.1rem;
 }
 
+.reportes-page .btn-info{
+  background: #fff;
+  color: rgb(37, 93, 184);
+  border: 1.5px solid rgb(37, 93, 184) ;
+  padding: 0.6rem 1.1rem;
+}
+
 .reportes-page .btn-cancelar,
 .reportes-page .btn-borrar:hover {
   background: #fef2f2;

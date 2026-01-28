@@ -74,7 +74,7 @@
 
 
 /* Botón base para acciones principales */
-.btn-primary, .btn-secondary, .btn-delete {
+.btn-primary, .btn-secondary, .btn-delete, .btn-tres {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -100,6 +100,20 @@
     background: var(--verde-claro);
     color: var(--verde-oscuro);
     border-color: var(--verde);
+}
+
+
+.btn-tres {
+    margin-left: 10px;
+  background: #fff;
+  color: rgb(37, 93, 184);
+  border: 1.5px solid rgb(37, 93, 184) ;
+  padding: 0.6rem 1.1rem;
+}
+.btn-tres:hover {
+    background: rgb(215, 230, 255);
+    color: rgb(37, 93, 184);
+    border-color: rgb(37, 93, 184);
 }
 
 /* Botón cancelar y volver: igual que borrar (borde y texto rojo, fondo #fef2f2) */
