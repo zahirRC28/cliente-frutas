@@ -4,9 +4,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
 
-import sky from "../../assets/sky.png";
-import soil from "../../assets/soil.png";
-import crop from "../../assets/crop.png";
+import datos from "../../assets/icono-datos.png";
+import { ToastContainer, toast } from 'react-toastify';
 
 import Panorama from "../Panorama"; 
 import { apiPointToPosition } from "../../helpers/coords";
@@ -185,6 +184,10 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     return imgEnGaleria ? (imgEnGaleria.url_archivo || imgEnGaleria.url) : null;
   }, [cultivo, multimedia]);
 
+  const canShow360 = useMemo(() => {
+  return cloudinaryUrl || multimedia.length > 0;
+}, [cloudinaryUrl, multimedia]);
+
   // --- Identificación automática ---
   useEffect(() => {
     if (mostrar360 && cloudinaryUrl && !plantaDetectada && !identificando) {
@@ -219,51 +222,57 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   };
 
   // --- Marcadores 360 ---
-  const marcadores360 = useMemo(() => {
-    const dimensionesIA = { width: 5888, height: 2944 };
-    const puntosIA = {
-      cielo: { x: 1822, y: 491 },
-      cultivo: { x: 2149, y: 1292 },
-      suelo: { x: 3078, y: 1900 }
-    };
+// --- Marcadores 360 ---
+const marcadores360 = useMemo(() => {
+  const dimensionesIA = { width: 5888, height: 2944 };
+  const puntosIA = {
+    cielo: { x: 1822, y: 491 },
+    cultivo: { x: 2149, y: 1292 },
+    suelo: { x: 3078, y: 1900 }
+  };
 
-    return [
-      {
-        label: "Predicción Climática (7 días)",
-        position: apiPointToPosition(puntosIA.cielo, dimensionesIA),
-        icon: sky,
-        type: "meteo_list",
-        data: alertasMeteo
-      },
-      {
-        label: identificando
-          ? "⏳ Analizando cultivo ..."
-          : plantaDetectada
-            ? `✅ Tipo de cultivo: ${plantaDetectada.nombre_comun || "Identificado"}` + (plantaDetectada.precision ? ` (precision: ${plantaDetectada.precision})` : "")
-            : "⚠️ No se pudo identificar",
-        position: apiPointToPosition(puntosIA.cultivo, dimensionesIA),
-        icon: crop,
-        confidence: plantaDetectada?.precision,
-        extraInfo: plantaDetectada ? {
-          "Científico": plantaDetectada.nombre_cientifico,
-          "Otros": plantaDetectada.otros_nombres?.slice(0, 20) + "..."
-        } : null
-      },
-      {
-        label: "Info Suelo (NDVI)",
-        position: apiPointToPosition(puntosIA.suelo, dimensionesIA),
-        icon: soil,
-        type: "chart",
-        data: infoSuelo?.productividad_ndvi
-          ? Object.entries(infoSuelo.productividad_ndvi).map(([año, val]) => ({ time: año, value: val }))
-          : [],
-        extraInfo: {
-          pH: infoSuelo?.suelo?.ph_superficie || "N/D",
-          "M. Orgánica": `${infoSuelo?.suelo?.materia_organica_gkg || 0} g/kg`
-        }
+  return [
+    {
+      label: "Predicción Climática (7 días)",
+      position: apiPointToPosition(puntosIA.cielo, dimensionesIA),
+      icon: datos,
+      type: "meteo_list",
+      data: alertasMeteo,
+      // Añadimos esta bandera para que el componente Panorama sepa 
+      // que no debe mostrarlo hasta el click
+      trigger: "click" 
+    },
+    {
+      label: identificando
+        ? "⏳ Analizando cultivo ..."
+        : plantaDetectada
+          ? `✅ Tipo de cultivo: ${plantaDetectada.nombre_comun || "Identificado"}` + (plantaDetectada.precision ? ` (precision: ${plantaDetectada.precision})` : "")
+          : "⚠️ No se pudo identificar",
+      position: apiPointToPosition(puntosIA.cultivo, dimensionesIA),
+      icon: datos,
+      trigger: "click", // Cambiado de hover a click
+      confidence: plantaDetectada?.precision,
+      extraInfo: plantaDetectada ? {
+        "Científico": plantaDetectada.nombre_cientifico,
+        "Otros": plantaDetectada.otros_nombres?.slice(0, 20) + "..."
+      } : null
+    },
+    {
+      label: "Info Suelo (NDVI)",
+      position: apiPointToPosition(puntosIA.suelo, dimensionesIA),
+      icon: datos,
+      type: "chart",
+      trigger: "click", // Cambiado de hover a click
+      data: infoSuelo?.productividad_ndvi
+        ? Object.entries(infoSuelo.productividad_ndvi).map(([año, val]) => ({ time: año, value: val }))
+        : [],
+      extraInfo: {
+        pH: infoSuelo?.suelo?.ph_superficie || "N/D",
+        "M. Orgánica": `${infoSuelo?.suelo?.materia_organica_gkg || 0} g/kg`
       }
-    ];
-  }, [alertasMeteo, infoSuelo, plantaDetectada, identificando]);
+    }
+  ];
+}, [alertasMeteo, infoSuelo, plantaDetectada, identificando]);
 
   // --- CORRECCIÓN CLAVE: Preparación segura de datos para el gráfico ---
   const datosParaMostrar = useMemo(() => {
@@ -292,7 +301,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         stroke={config.color} 
         strokeWidth={3} 
         dot={modoHistorico ? { r: 1 } : { r: 4 }} 
-        activeDot={{ r: 6 }} 
+        activeDot={{ r: 10, strokeWidth: 2 }} 
       />
     );
   }, [metricaActiva, modoHistorico]);
@@ -331,18 +340,32 @@ const manejarNuevaMedicion = async () => {
   // --- JSX ---
   return (
     <div className="cultivos-detalle-panel">
-      <div className="cultivos-flex-row">
-        <div>
-          <h3 className="cultivos-form-title">{cultivo.nombre}</h3>
-          <button onClick={() => setMostrar360(true)} className="btn-abrir-360" style={{ marginTop: '10px' }}>
-            <View size={18} /> Explorar Parcela 360°
-          </button>
-          <button className="btn-abrir-360" onClick={()=>generarPdfCultivo(cultivo.id_cultivo)} style={{ marginTop: '10px' }}>
-            Descarga pdf
-          </button>
-        </div>
-        <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
-      </div>
+<div className="cultivos-flex-row">
+  <div>
+    <h3 className="cultivos-form-title">{cultivo.nombre}</h3>
+    
+    {/* SOLUCIÓN SIMPLE Y LIMPIA */}
+    {canShow360 && (
+      <button 
+        onClick={() => setMostrar360(true)} 
+        className="btn-abrir-360" 
+        style={{ marginTop: '10px' }}
+      >
+        <View size={18} /> Explorar Parcela 360°
+      </button>
+    )}
+    
+    {/* Botón PDF siempre visible */}
+    <button 
+      className="btn-abrir-360" 
+      onClick={() => generarPdfCultivo(cultivo.id_cultivo)} 
+      style={{ marginTop: '10px' }}
+    >
+      Descargar PDF
+    </button>
+  </div>
+  <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
+</div>
 
       <hr className="cultivos-divider" />
 
@@ -412,7 +435,7 @@ const manejarNuevaMedicion = async () => {
                   />
                   <YAxis domain={["auto", "auto"]} />
                   <Tooltip 
-                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
+                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" ,padding: "12px"}}
                   />
                   <Legend />
                   {lineaGrafico}
