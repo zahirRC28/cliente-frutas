@@ -19,7 +19,8 @@ export const MensajesPage = () => {
         enviarMensaje,
         startTyping,
         stopTyping,
-        typingUsers
+        typingUsers,
+        cerrarConversacion
     } = useChat(user, token);
     //console.log(conversacionActiva);
     useEffect(() => {
@@ -42,6 +43,12 @@ export const MensajesPage = () => {
         {conversacionActiva ? (
           <>
             <div className="chat-header">
+              <button
+                className="chat-back-btn"
+                onClick={cerrarConversacion}
+              >
+                ←
+              </button>
                 <h4>{conversacionActiva.nombre_completo}</h4>
                     {typingUsers.length > 0 && (
                     <small>

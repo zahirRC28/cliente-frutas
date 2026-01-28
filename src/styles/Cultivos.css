@@ -1,182 +1,273 @@
-
-/* MOBILE FIRST */
 .cultivos-container {
-        padding: 10px 4px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        font-family: Arial, sans-serif;
+    padding: 10px 4px;
+    display: flex;
+    flex-direction: column; /* SIEMPRE COLUMNA */
+    gap: 20px;
+    font-family: Arial, sans-serif;
+    width: 100%;
 }
 
 .cultivos-left-section {
-        width: 100%;
-        min-width: 0;
+    width: 100%;
+    min-width: 0;
 }
 
 .cultivos-header {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .cultivos-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin: 0;
-        font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.1rem;
 }
 
 .cultivos-filter-container {
-        width: 100%;
-        padding: 10px 8px;
-        font-size: 15px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        background-color: #ffffff;
-        outline: none;
-        appearance: none;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        margin-top: 6px;
+    width: 100%;
+    padding: 10px 8px;
+    font-size: 15px;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    outline: none;
+    appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .cultivos-select {
-        border: none;
-        outline: none;
-        cursor: pointer;
-        font-weight: bold;
-        background: transparent;
-        width: 100%;
-        font-size: 1em;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-weight: bold;
+    background: transparent;
+    width: 100%;
+    font-size: 1em;
 }
 
 .cultivos-map-wrapper {
-        background: white;
-        padding: 6px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 12px;
+    width: 100%;
+    background: white;
+    padding: 6px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .cultivos-loader-container {
-        min-height: 220px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    min-height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .cultivos-right-section {
-        width: 100%;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px 0 rgba(60, 60, 60, 0.04);
-        padding: 14px 8px 10px 8px;
-        margin-bottom: 14px;
-        min-width: 0;
-        height: fit-content;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(60, 60, 60, 0.04);
+    padding: 14px 10px;
+    min-width: 0;
+    height: fit-content;
 }
 
 .cultivos-form-title {
-        border-bottom: 2px solid #22c55e;
-        padding-bottom: 8px;
-        margin-top: 0;
-        font-size: 1.1rem;
+    border-bottom: 2px solid #22C55E;
+    padding-bottom: 8px;
+    margin-top: 0;
+    font-size: 1.1rem;
 }
 
 .cultivos-label {
-        font-size: 13px;
-        font-weight: bold;
-        display: block;
-        margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
 }
 
 .cultivos-input {
-        padding: 9px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        width: 100%;
-        margin-bottom: 8px;
-        font-size: 1em;
+    padding: 9px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    margin-bottom: 8px;
+    font-size: 1em;
 }
 
 .cultivos-flex-row {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .cultivos-btn-save {
-        width: 100%;
-        padding: 12px;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        font-size: 1em;
+    width: 100%;
+    padding: 12px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1em;
 }
 
-/* DESKTOP & TABLET */
+.herramientas-diagnostico-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 10px 20px 10px;
+}
+
 @media (min-width: 980px) {
+
     .cultivos-container {
-        flex-direction: row;
-        gap: 20px;
         padding: 20px;
+        gap: 28px;
+        max-width: 1400px;
+        margin: 0 auto;
     }
-    .cultivos-left-section {
-        flex: 2;
-        min-width: 400px;
-    }
+
     .cultivos-header {
-        display: flex;
         flex-direction: row;
         justify-content: space-between;
-        margin-bottom: 10px;
         align-items: center;
     }
+
     .cultivos-title {
         font-size: 1.3rem;
     }
+
     .cultivos-filter-container {
-        width: 250px;
+        width: 280px;
         padding: 14px 16px;
         font-size: 16px;
         margin-top: 0;
     }
+
     .cultivos-map-wrapper {
         padding: 10px;
-        margin-bottom: 0;
     }
+
     .cultivos-loader-container {
-        min-height: 400px;
+        min-height: 420px;
     }
+
     .cultivos-right-section {
-        flex: 1;
-        min-width: 300px;
-        padding: 18px 14px 14px 14px;
-        margin-bottom: 18px;
+        padding: 20px 18px;
     }
+
     .cultivos-form-title {
         font-size: 1.2rem;
     }
+
     .cultivos-label {
         font-size: 14px;
     }
+
     .cultivos-input {
         font-size: 1.05em;
     }
+
     .cultivos-flex-row {
         flex-direction: row;
         gap: 10px;
     }
+
     .cultivos-btn-save {
         font-size: 1.05em;
         padding: 14px;
     }
+
+    .herramientas-diagnostico-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px 30px 20px;
+    }
+}
+
+/* --- ESTILOS DEL VISOR 360 --- */
+.visor-360-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: #000;
+}
+
+.visor-360-controls {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 15px;
+}
+
+.btn-cerrar-360 {
+  padding: 12px 20px;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.btn-cerrar-360:hover {
+  background: #f1f5f9;
+}
+
+.analisis-badge {
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+/* --- ESTADOS DE CARGA Y ERRORES --- */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  color: #64748b;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  color: #ef4444;
+  text-align: center;
+}
+
+.no-data-msg {
+  text-align: center;
+  padding: 20px;
+  color: #94a3b8;
+  font-style: italic;
 }

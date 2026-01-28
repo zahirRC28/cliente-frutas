@@ -174,6 +174,15 @@ export const useChat = (user, token) => {
         }
     };
 
+    const cerrarConversacion = () => {
+        if (conversacionActiva?.id_conversacion) {
+            socket?.emit('leave_conversation', conversacionActiva.id_conversacion);
+        }
+        setConversacionActiva(null);
+        setMensajes([]);
+        setTypingUsers([]);
+    };
+
   return {
     conversaciones,
     mensajes,
@@ -185,7 +194,8 @@ export const useChat = (user, token) => {
     setConversacionActiva,
     startTyping,
     stopTyping,
-    typingUsers
+    typingUsers,
+    cerrarConversacion
   };
 };
 

@@ -1,18 +1,16 @@
-/* Layout principal */
 .chat-layout {
   display: flex;
-  height: 45rem; /* tamaño fijo vertical */
-  width: 90rem;  /* tamaño fijo horizontal */
+  height: 45rem;
+  width: 90rem;
   max-width: 100%;
-  background: #f5f5f5;
+  background: #F5F5F5;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
-/* Sidebar de conversaciones */
 .chat-sidebar {
-  width: 250px;
+  width: 260px;
   border-right: 1px solid #ddd;
   padding: 1rem;
   background: #fff;
@@ -22,30 +20,33 @@
 .chat-sidebar h3 {
   margin-bottom: 1rem;
   font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Items de conversación */
 .conversaciones-list {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.4rem;
 }
 
 .conversacion-item {
-  padding: 0.5rem 0.8rem;
+  padding: 0.6rem 0.8rem;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.2s;
   display: flex;
   flex-direction: column;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.241);
 }
 
 .conversacion-item:hover {
-  background: #e0f2f1;
+  background: #E0F2F1;
 }
 
 .conversacion-item.activo {
-  background: #4caf50;
+  background: #4CAF50;
   color: #fff;
 }
 
@@ -56,10 +57,9 @@
 .conversacion-item p {
   font-size: 0.8rem;
   margin: 0;
-  color: inherit;
+  opacity: 0.8;
 }
 
-/* Panel principal */
 .chat-main {
   flex: 1;
   display: flex;
@@ -67,14 +67,16 @@
   position: relative;
 }
 
-/* Cabecera del chat */
 .chat-header {
-  padding: 1rem;
+  padding: 0.8rem 1rem;
   border-bottom: 1px solid #ddd;
-  background: #f0f0f0;
+  background: #F0F0F0;
 }
 
-/* Mensajes */
+.chat-header h4 {
+  margin: 0;
+}
+
 .mensajes-panel {
   flex: 1;
   padding: 1rem;
@@ -85,74 +87,69 @@
   scroll-behavior: smooth;
 }
 
-/* Ocultar scroll pero seguir scrollable */
 .mensajes-panel::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
+  width: 0;
 }
-
 .mensajes-panel {
-  -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-/* Mensajes propios y de otros */
 .msg {
   padding: 0.5rem 1rem;
-  border-radius: 15px;
+  border-radius: 16px;
   max-width: 70%;
   word-break: break-word;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  transition: all 0.2s;
 }
 
 .msg.propio {
-  background: #4caf50;
+  background: #4CAF50;
   color: #fff;
   align-self: flex-end;
 }
 
 .msg.otro {
-  background: #e0e0e0;
+  background: #E0E0E0;
   color: #000;
   align-self: flex-start;
 }
 
-/* Input de mensaje */
+.msg-hora {
+  font-size: 0.7rem;
+  margin-top: 2px;
+  opacity: 0.7;
+  text-align: right;
+}
+
+.msg.otro .msg-hora {
+  text-align: left;
+}
+
 .input-mensaje {
   display: flex;
   border-top: 1px solid #ddd;
+  background: #fff;
 }
 
 .input-mensaje input {
   flex: 1;
-  padding: 0.5rem;
+  padding: 0.7rem;
   border: none;
   outline: none;
 }
 
 .input-mensaje button {
-  padding: 0.5rem 1rem;
-  background: #4caf50;
+  padding: 0.7rem 1.2rem;
+  background: #4CAF50;
   color: #fff;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .input-mensaje button:hover {
-  background: #45a049;
+  background: #45A049;
 }
 
-/* Indicador de quien está escribiendo */
-.typing-indicator {
-  height: 20px;
-  font-size: 0.85rem;
-  color: #555;
-  padding-left: 10px;
-}
-
-/* Estado cuando no hay conversación */
 .chat-empty {
   flex: 1;
   display: flex;
@@ -160,76 +157,74 @@
   align-items: center;
   font-size: 1rem;
   color: #666;
+  text-align: center;
+  padding: 1rem;
 }
 
-.msg-hora {
-  font-size: 0.7rem;
-  color: rgba(0,0,0,0.5);
-  margin-top: 2px;
-  text-align: right;
-}
-.msg.propio .msg-hora {
-  text-align: right;
-  color: rgba(255,255,255,0.7);
-}
-.msg.otro .msg-hora {
-  text-align: left;
-  color: rgba(0,0,0,0.5);
-}
-.msg-meta {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.7rem;
-  opacity: 0.7;
-  margin-top: 4px;
-}
-
-.msg-check {
-  font-size: 0.75rem;
-}
-
-.msg-check.leido {
-  color: #ffffff; /* azul tipo WhatsApp */
-}
-
-/* ===========================
-   Responsive para móviles
-=========================== */
 @media (max-width: 768px) {
+
   .chat-layout {
     flex-direction: column;
-    height: 100vh;
+    height: 100dvh;
     width: 100%;
+    border-radius: 0;
   }
 
   .chat-sidebar {
     width: 100%;
+    height: 100%;
     border-right: none;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    overflow-x: auto;
-    padding: 0.5rem;
+    padding: 1rem;
   }
 
-  .conversaciones-list {
-    flex-direction: row;
-    gap: 0.5rem;
-  }
-
-  .conversacion-item {
-    min-width: 120px;
-    padding: 0.5rem;
-    text-align: center;
+  .chat-layout:has(.chat-header) .chat-sidebar {
+    display: none;
   }
 
   .chat-main {
     flex: 1;
+    height: 100%;
   }
 
   .mensajes-panel {
-    padding: 0.5rem;
+    padding: 0.8rem;
+  }
+
+  .msg {
+    max-width: 85%;
+  }
+
+  .chat-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .input-mensaje {
+    position: sticky;
+    bottom: 0;
   }
 }
 
+.chat-back-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .chat-back-btn {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

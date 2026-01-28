@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, use } from "react";
-import { X, TrendingUp, Loader, AlertTriangle, Image, View } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
@@ -16,6 +16,31 @@ import "./DetallesCultivo.css";
 
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
+// --- Configuración de las 7 Variables ---
+const configMetricas = {
+  temperatura: { 
+    label: "Temperatura", color: "#f59e0b", unit: "°C", key15: "temperatura", keyHist: "temp" 
+  },
+  humedad_suelo: { 
+    label: "Hum. Suelo", color: "#3b82f6", unit: "%", key15: "humedad_suelo", keyHist: "hum_suelo" 
+  },
+  evapotranspiracion: { 
+    label: "Evapotranspiración", color: "#10b981", unit: "mm", key15: "evapotranspiracion", keyHist: "evapo" 
+  },
+  precipitacion: { 
+    label: "Precipitación", color: "#8b5cf6", unit: "mm", key15: "precipitacion", keyHist: "precip" 
+  },
+  humedad_relativa: { 
+    label: "Hum. Relativa", color: "#0ea5e9", unit: "%", key15: "humedad_relativa", keyHist: "hum_rel" 
+  },
+  viento_vel: { 
+    label: "Vel. Viento", color: "#64748b", unit: "km/h", key15: "velocidad_viento", keyHist: "viento_vel" 
+  },
+  viento_dir: { 
+    label: "Dir. Viento", color: "#94a3b8", unit: "°", key15: "direccion_viento", keyHist: "viento_dir" 
+  }
+};
+
 export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   // --- Estados ---
   const [datosGrafico, setDatosGrafico] = useState([]);
@@ -23,7 +48,10 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const [alertasPlagas, setAlertasPlagas] = useState([]);
   const [multimedia, setMultimedia] = useState([]);
   const [infoSuelo, setInfoSuelo] = useState({});
-  const [historico, setHistorico] = useState([])
+  const [historico, setHistorico] = useState([]);
+
+  // Estado para alternar entre 15 Días y Histórico
+  const [modoHistorico, setModoHistorico] = useState(false);
 
   const [loading, setLoading] = useState({
     grafico: true,
@@ -38,11 +66,11 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const [plantaDetectada, setPlantaDetectada] = useState(null);
   const [identificando, setIdentificando] = useState(false);
 
-
   // --- Reset al cambiar de cultivo ---
   useEffect(() => {
     setPlantaDetectada(null);
     setIdentificando(false);
+    setModoHistorico(false);
   }, [cultivo?.id_cultivo]);
 
   // --- Cargar datos del cultivo ---
@@ -58,6 +86,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       setAlertasPlagas(cached.alertasPlagas || []);
       setMultimedia(cached.multimedia || []);
       setInfoSuelo(cached.infoSuelo || {});
+      setHistorico(cached.historico || []);
       setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
       return;
     }
@@ -70,15 +99,16 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         lat: cultivo.centro[0],
         lon: cultivo.centro[1],
         inicio: "2025-01-01",
-        fin: "2025-01-02",
+        fin: "2025-01-15",
         fruta: "manzana",
         cultivo: cultivo.nombre
       };
+      
       const historicoUrl = `${urlBase}apis/historico?lat=${body.lat}&lon=${body.lon}`;
       const urlPlagas = `https://aanearana-deteccion-plagas.hf.space/plagas?lat=${body.lat}&lon=${body.lon}&fruta=${body.fruta}`;
       const urlMultimedia = `${urlBase}multimedia/cultivo/${cultivo.id_cultivo}`;
 
-      const [resGrafico, resMeteo, resPlagas, resMultimedia, resSuelo,resHistorico] = await Promise.all([
+      const [resGrafico, resMeteo, resPlagas, resMultimedia, resSuelo, resHistorico] = await Promise.all([
         conectar(`${urlBase}apis/historico`, "POST", body, token),
         conectar(`${urlBase}apis/alerta-meteo`, "POST", body, token),
         conectar(urlPlagas, "GET", {}, token),
@@ -87,13 +117,14 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         conectar(historicoUrl, "GET", {}, token)
       ]);
 
-      setHistorico(resHistorico?.data || []);
-      setAlertasPlagas(resPlagas?.alertas || []);
       setDatosGrafico(resGrafico?.data || []);
       setAlertasMeteo(resMeteo?.data || []);
+      setAlertasPlagas(resPlagas?.alertas || []);
       setMultimedia(resMultimedia?.archivos || []);
       setInfoSuelo(resSuelo?.data || {});
-
+      
+      // Aquí guardamos el historico tal cual viene, lo procesamos en el useMemo
+      setHistorico(resHistorico?.data || resHistorico || []);
 
       setCache(cacheKey, {
         alertasPlagas: resPlagas?.alertas || [],
@@ -101,17 +132,15 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         alertasMeteo: resMeteo?.data || [],
         multimedia: resMultimedia?.archivos || [],
         infoSuelo: resSuelo?.data || {},
-        historico: resHistorico?.data || []
+        historico: resHistorico?.data || resHistorico || []
       });
 
     } catch (err) {
       console.error("Error cargando analíticas:", err);
     } finally {
-      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false , historico: false});
+      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
     }
   }, [cultivo, token]);
-  
-console.log("HISTORICO:",historico);
 
   useEffect(() => {
     cargarDatos();
@@ -208,17 +237,37 @@ console.log("HISTORICO:",historico);
     ];
   }, [alertasMeteo, infoSuelo, plantaDetectada, identificando]);
 
+  // --- CORRECCIÓN CLAVE: Preparación segura de datos para el gráfico ---
+  const datosParaMostrar = useMemo(() => {
+    if (modoHistorico) {
+      // Intentamos extraer el array si viene dentro de un objeto
+      if (Array.isArray(historico)) return historico;
+      if (historico && Array.isArray(historico.data)) return historico.data;
+      return []; // Fallback seguro para evitar error .slice
+    } else {
+      if (Array.isArray(datosGrafico)) return datosGrafico;
+      if (datosGrafico && Array.isArray(datosGrafico.data)) return datosGrafico.data;
+      return [];
+    }
+  }, [modoHistorico, historico, datosGrafico]);
+
   // --- Línea de gráfico ---
   const lineaGrafico = useMemo(() => {
-    const metricas = {
-      temperatura: { key: "temperatura", name: "Temp. (°C)", color: "#f59e0b" },
-      humedad_suelo: { key: "humedad_suelo", name: "Hum. Suelo (%)", color: "#3b82f6" },
-      evapotranspiracion: { key: "evapotranspiracion", name: "Evapotranspiración (mm)", color: "#10b981" },
-      precipitacion: { key: "precipitacion", name: "Precipitación (mm)", color: "#8b5cf6" },
-    };
-    const { key, name, color } = metricas[metricaActiva] || metricas.temperatura;
-    return <Line type="monotone" dataKey={key} name={name} stroke={color} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />;
-  }, [metricaActiva]);
+    const config = configMetricas[metricaActiva] || configMetricas.temperatura;
+    const dataKey = modoHistorico ? config.keyHist : config.key15;
+
+    return (
+      <Line 
+        type="monotone" 
+        dataKey={dataKey} 
+        name={`${config.label} (${config.unit})`}
+        stroke={config.color} 
+        strokeWidth={3} 
+        dot={modoHistorico ? { r: 1 } : { r: 4 }} 
+        activeDot={{ r: 6 }} 
+      />
+    );
+  }, [metricaActiva, modoHistorico]);
 
   // --- JSX ---
   return (
@@ -236,30 +285,73 @@ console.log("HISTORICO:",historico);
       <hr className="cultivos-divider" />
 
       <div className="dashboard-grid">
-        {/* Histórico */}
+        {/* Gráfico */}
         <div className="card-base card-grafico">
-          <div className="chart-header">
-            <h4 className="card-title"><TrendingUp size={16} /> Histórico</h4>
-            <div className="chart-controls">
-              {["temperatura", "humedad_suelo", "evapotranspiracion", "precipitacion"].map(m => (
-                <button
-                  key={m}
-                  className={`chart-btn ${metricaActiva === m ? `active ${m}` : ""}`}
-                  onClick={() => setMetricaActiva(m)}
+          <div className="chart-header" style={{flexDirection: 'column', alignItems: 'flex-start', gap: '10px'}}>
+            
+            <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
+                <h4 className="card-title" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                    {modoHistorico ? <History size={18} /> : <TrendingUp size={18} />}
+                    {modoHistorico ? "HISTÓRICO 5 AÑOS" : "ÚLTIMOS 15 DÍAS"}
+                </h4>
+                
+                <button 
+                    onClick={() => setModoHistorico(!modoHistorico)}
+                    className="btn-toggle-mode"
+                    style={{
+                        padding: '6px 12px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #ddd', 
+                        background: '#f8f9fa', 
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                    }}
                 >
-                  {m.replace('_', ' ')}
+                   {modoHistorico ? <Calendar size={14}/> : <History size={14}/>}
+                   {modoHistorico ? "Ver 15 Días" : "Ver Histórico"}
+                </button>
+            </div>
+
+            <div className="chart-controls" style={{flexWrap: 'wrap', gap: '6px'}}>
+              {Object.keys(configMetricas).map(key => (
+                <button
+                  key={key}
+                  className={`chart-btn ${metricaActiva === key ? "active" : ""}`}
+                  style={{
+                    borderColor: metricaActiva === key ? configMetricas[key].color : '#e5e7eb',
+                    backgroundColor: metricaActiva === key ? configMetricas[key].color : 'transparent',
+                    color: metricaActiva === key ? '#fff' : '#374151'
+                  }}
+                  onClick={() => setMetricaActiva(key)}
+                >
+                  {configMetricas[key].label}
                 </button>
               ))}
             </div>
           </div>
+
           <div className="chart-container">
             {loading.grafico ? <Loader className="animate-spin" /> : (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={datosGrafico}>
+                {/* AQUI SE USA LA VARIABLE SEGURA 'datosParaMostrar' */}
+                <LineChart data={datosParaMostrar}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="fecha" />
+                  <XAxis 
+                    dataKey={modoHistorico ? "date" : "fecha"} 
+                    tickFormatter={(val) => {
+                        // Formato simple para fechas largas si es necesario
+                        if (modoHistorico && typeof val === 'string' && val.length > 7) return val.substring(0, 7);
+                        return val;
+                    }}
+                  />
                   <YAxis domain={["auto", "auto"]} />
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
+                  />
                   <Legend />
                   {lineaGrafico}
                 </LineChart>
@@ -308,32 +400,32 @@ console.log("HISTORICO:",historico);
 
       {/* Visor 360 */}
       {mostrar360 && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999, background: '#000' }}>
-          <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 10, display: 'flex', gap: '15px' }}>
-            <button 
-              onClick={() => setMostrar360(false)} 
-              style={{ padding: '12px 20px', background: 'white', borderRadius: '8px', cursor: 'pointer', border: 'none', fontWeight: 'bold' }}
-            >
-              Cerrar Vista 360
-            </button>
+  <div className="visor-360-overlay">
+    <div className="visor-360-controls">
+      <button 
+        onClick={() => setMostrar360(false)} 
+        className="btn-cerrar-360"
+      >
+        Cerrar Vista 360
+      </button>
 
-            {identificando && (
-              <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.6)', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Loader className="animate-spin" size={16}/> Analizando parcela...
-              </div>
-            )}
-          </div>
-
-          {cloudinaryUrl ? (
-            <Panorama imageUrl={cloudinaryUrl} markers={marcadores360} />
-          ) : (
-            <div style={{ color: 'white', textAlign: 'center', paddingTop: '20%' }}>
-              <AlertTriangle size={48} style={{ margin: '0 auto 20px' }} color="#f59e0b" />
-              <h3>Imagen 360 no disponible</h3>
-            </div>
-          )}
+      {identificando && (
+        <div className="analisis-badge">
+          <Loader className="animate-spin" size={16}/> Analizando parcela...
         </div>
       )}
+    </div>
+
+    {cloudinaryUrl ? (
+      <Panorama imageUrl={cloudinaryUrl} markers={marcadores360} />
+    ) : (
+      <div className="loading-container">
+        <Loader className="animate-spin" size={40} />
+        <p>Cargando entorno virtual...</p>
+      </div>
+    )}
+  </div>
+)}
     </div>
   );
 }
