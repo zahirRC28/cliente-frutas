@@ -223,7 +223,11 @@ export const Cultivos = () => {
           {cultivoSeleccionado ? (
             <DetalleCultivo
               cultivo={cultivoSeleccionado}
-              onCerrar={() => setCultivoSeleccionado(null)}
+              onCerrar={() => {
+              setCultivoSeleccionado(null);
+              const listaActualizada = cultivos.filter(c => c.id_cultivo !== cultivoSeleccionado.id_cultivo);
+              setCultivos(listaActualizada); 
+            }}
               token={token}
             />
           ) : puedeCrear ? (

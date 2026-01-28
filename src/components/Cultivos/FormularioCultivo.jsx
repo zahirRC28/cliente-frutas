@@ -227,13 +227,11 @@ const guardarCultivo = async () => {
       <button 
         className="cultivos-btn-save"
         onClick={guardarCultivo} 
-        // Deshabilitado si el formulario es inválido O si ya está guardando
+
         disabled={!esFormularioValido || guardando}
         style={{ 
           marginTop: '15px', 
-          // Color verde si es válido, gris si falta algo
           background: esFormularioValido && !guardando ? '#22c55e' : '#cbd5e1', 
-          // Cursor normal si es válido, bloqueado si no
           cursor: esFormularioValido && !guardando ? 'pointer' : 'not-allowed', 
           display: 'flex', 
           justifyContent: 'center', 

@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History, Download } from "lucide-react";
+import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History, Download, Trash   } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
 
 import datos from "../../assets/icono-datos.png";
-import { ToastContainer, toast } from 'react-toastify';
 
 import Panorama from "../Panorama"; 
 import { apiPointToPosition } from "../../helpers/coords";
@@ -42,11 +41,13 @@ const configMetricas = {
 
 export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   // --- Estados ---
+
   const [datosGrafico, setDatosGrafico] = useState([]);
   const [alertasMeteo, setAlertasMeteo] = useState([]);
   const [alertasPlagas, setAlertasPlagas] = useState([]);
   const [multimedia, setMultimedia] = useState([]);
   const [infoSuelo, setInfoSuelo] = useState({});
+  const [eliminar, setEliminar] = useState(false)
 
   const [historico, setHistorico] = useState([]);
   const [resultadoMedicion, setResultadoMedicion] = useState(null);
@@ -181,12 +182,50 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   return cloudinaryUrl || multimedia.length > 0;
 }, [cloudinaryUrl, multimedia]);
 
-  // --- Identificación automática ---
   useEffect(() => {
     if (mostrar360 && cloudinaryUrl && !plantaDetectada && !identificando) {
       identificarAutomaticamente();
     }
   }, [mostrar360, cloudinaryUrl]);
+
+  useEffect(() => {
+    eliminarCultivo()
+  
+  }, [eliminar])
+  
+  
+const eliminarCultivo = async () => {
+  if (!eliminar) return; 
+
+  try {
+    const url = `${urlBase}cultivo/eliminar/${cultivo.id_cultivo}`;
+
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: { 
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json" 
+      }
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      console.log("Eliminado con éxito:", data);
+      // Aquí podrías actualizar tu estado local para quitar el cultivo de la lista
+    } else {
+      console.error("Error al eliminar:", data.msg);
+    }
+
+  } catch (error) {
+    console.log("Error de red:", error);
+  } finally {
+    onCerrar()
+    setEliminar(false);
+  }
+};
+
+
 
   const identificarAutomaticamente = async () => {
     setIdentificando(true);
@@ -214,8 +253,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     }
   };
 
-  // --- Marcadores 360 ---
-// --- Marcadores 360 ---
+
 const marcadores360 = useMemo(() => {
   const dimensionesIA = { width: 5888, height: 2944 };
   const puntosIA = {
@@ -267,10 +305,8 @@ const marcadores360 = useMemo(() => {
   ];
 }, [alertasMeteo, infoSuelo, plantaDetectada, identificando]);
 
-  // --- CORRECCIÓN CLAVE: Preparación segura de datos para el gráfico ---
   const datosParaMostrar = useMemo(() => {
     if (modoHistorico) {
-      // Intentamos extraer el array si viene dentro de un objeto
       if (Array.isArray(historico)) return historico;
       if (historico && Array.isArray(historico.data)) return historico.data;
       return []; // Fallback seguro para evitar error .slice
@@ -354,6 +390,14 @@ const manejarNuevaMedicion = async () => {
       
     >
       <Download size={18} /> Descargar PDF
+    </button>
+
+      <button 
+      className="btn-abrir-360" 
+      onClick={() => setEliminar(true)} 
+      
+    >
+      <Trash size={18} /> Eliminar Cultivo
     </button>
   </div>
   <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
