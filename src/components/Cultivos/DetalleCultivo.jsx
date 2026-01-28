@@ -16,7 +16,6 @@ import { usepdfs } from "../../hooks/usepdfs";
 
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
-// --- Configuración de las 7 Variables ---
 const configMetricas = {
   temperatura: { 
     label: "Temperatura", color: "#f59e0b", unit: "°C", key15: "temperatura", keyHist: "temp" 
@@ -132,15 +131,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       humedad_relativa: item.humidity_mean,
       velocidad_viento: item.wind_speed,
       direccion_viento: item.wind_direction,
-      
-      // Datos originales por si los necesitas
-      date: item.date,
-      temp_mean: item.temp_mean,
-      humidity_mean: item.humidity_mean,
-      evapotranspiration: item.evapotranspiration,
-      precip_prob: item.precip_prob,
-      wind_speed: item.wind_speed,
-      wind_direction: item.wind_direction
+
     }));
 
     setDatosGrafico(datosTransformados);
@@ -155,7 +146,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
 
     setCache(cacheKey, {
       alertasPlagas: resPlagas?.alertas || [],
-      datosGrafico: datosTransformados, // Guardar datos transformados
+      datosGrafico: datosTransformados, 
       alertasMeteo: resMeteo?.data || [],
       multimedia: resMultimedia?.archivos || [],
       infoSuelo: resSuelo?.data || {},
@@ -169,7 +160,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   }
 }, [cultivo, token]);
 
-console.log(alertasMeteo,"--------------------------")
+
 
   useEffect(() => {
     cargarDatos();
@@ -315,7 +306,7 @@ const [ejecutandoMedicion, setEjecutandoMedicion] = useState(false);
 
 const manejarNuevaMedicion = async () => {
   setEjecutandoMedicion(true);
-  setResultadoMedicion(null); // Limpiamos resultados previos
+  setResultadoMedicion(null); 
   try {
     const body = {
       parcela_id: cultivo.id_cultivo,
@@ -328,7 +319,7 @@ const manejarNuevaMedicion = async () => {
     
     if (res && res.data) {
       setResultadoMedicion(res.data);
-      console.log(res.data)
+      console.log(res.data,"estos son los datos --------------------------")
       cargarDatos(); 
     }
   } catch (err) {
@@ -527,7 +518,7 @@ const manejarNuevaMedicion = async () => {
             <span className="dato-valor">
               {data.valor} 
               <small style={{ marginLeft: '2px', color: '#64748b' }}>
-                {configMetricas[key]?.unit || ''}
+                {configMetricas[key]?.unit || 'km/h '}
               </small>
             </span>
           </div>
