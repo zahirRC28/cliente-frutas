@@ -60,8 +60,18 @@ const _onDeleted = (e) => {
 
     return (
         <div style={{ height: '500px', width: '100%' }}>
-            <MapContainer center={SPAIN_CENTER} zoom={6} style={{ height: '100%', width: '100%' }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <MapContainer 
+                center={SPAIN_CENTER} 
+                zoom={6} 
+                minZoom={3} 
+                maxBounds={[
+                    [-90, -180],
+                    [90, 180]
+                ]} 
+                maxBoundsViscosity={1.0}
+                style={{ height: '100%', width: '100%' }}
+>                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" noWrap={true} />
+                
                 
                 <RecenterMap coords={poligonoActual} />
 

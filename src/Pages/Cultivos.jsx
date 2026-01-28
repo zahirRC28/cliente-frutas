@@ -10,9 +10,8 @@ import Cookies from 'js-cookie';
 import * as turf from "@turf/turf";
 import { DetectorPlantas } from "../components/Cultivos/DetectorPlantas";
 import { DetectorPlagas } from "../components/Cultivos/DetectorPlagas";
-// COMPONENTES HIJOS
 import DetalleCultivo from "../components/Cultivos/DetalleCultivo";
-import FormularioCultivo from "../components/Cultivos/FormularioCultivo"; // NUEVO COMPONENTE
+import FormularioCultivo from "../components/Cultivos/FormularioCultivo"; 
 import "../styles/Cultivos.css";
 import "../styles/detectorPlagas.css";
 

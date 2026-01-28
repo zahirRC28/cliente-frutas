@@ -75,72 +75,109 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
 
   // --- Cargar datos del cultivo ---
   const cargarDatos = useCallback(async () => {
-    if (!cultivo?.id_cultivo) return;
+  if (!cultivo?.id_cultivo) return;
 
-    const cacheKey = `detalle-${cultivo.id_cultivo}`;
-    const cached = getCache(cacheKey);
+  const cacheKey = `detalle-${cultivo.id_cultivo}`;
+  const cached = getCache(cacheKey);
 
-    if (cached) {
-      setDatosGrafico(cached.datosGrafico || []);
-      setAlertasMeteo(cached.alertasMeteo || []);
-      setAlertasPlagas(cached.alertasPlagas || []);
-      setMultimedia(cached.multimedia || []);
-      setInfoSuelo(cached.infoSuelo || {});
-      setHistorico(cached.historico || []);
-      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
-      return;
-    }
+  if (cached) {
+    setDatosGrafico(cached.datosGrafico || []);
+    setAlertasMeteo(cached.alertasMeteo || []);
+    setAlertasPlagas(cached.alertasPlagas || []);
+    setMultimedia(cached.multimedia || []);
+    setInfoSuelo(cached.infoSuelo || {});
+    setHistorico(cached.historico || []);
+    setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
+    return;
+  }
 
-    setLoading({ grafico: true, meteo: true, plagas: true, multimedia: true, historico: true });
-    try {
-      const body = {
-        parcela_id: cultivo.id_cultivo,
-        id: cultivo.id_cultivo,
-        lat: cultivo.centro[0],
-        lon: cultivo.centro[1],
-        inicio: "2025-01-01",
-        fin: "2025-01-15",
-        fruta: "manzana",
-        cultivo: cultivo.nombre
-      };
+  setLoading({ grafico: true, meteo: true, plagas: true, multimedia: true, historico: true });
+  try {
+    const body = {
+      parcela_id: cultivo.id_cultivo,
+      id: cultivo.id_cultivo,
+      lat: cultivo.centro[0],
+      lon: cultivo.centro[1],
+      inicio: "2025-01-01",
+      fin: "2025-01-15",
+      fruta: "manzana",
+      days:'15',
+      cultivo: cultivo.nombre
+    };
+    const urlAnalisisClimatico = `${urlBase}apis/analisis-climatico?lat=${body.lat}&lon=${body.lon}&days=${body.days}`;
+    const historicoUrl = `${urlBase}apis/historico?lat=${body.lat}&lon=${body.lon}`;
+    const urlPlagas = `https://aanearana-deteccion-plagas.hf.space/plagas?lat=${body.lat}&lon=${body.lon}&fruta=${body.fruta}`;
+    const urlMultimedia = `${urlBase}multimedia/cultivo/${cultivo.id_cultivo}`;
+
+    const [resGrafico, resMeteo, resPlagas, resMultimedia, resSuelo, resHistorico] = await Promise.all([
+      conectar(urlAnalisisClimatico, "GET", null, token),
+      conectar(`${urlBase}apis/alerta-meteo`, "POST", body, token),
+      conectar(urlPlagas, "GET", null, token),
+      conectar(urlMultimedia, "GET", null, token),
+      conectar(`${urlBase}apis/info-suelo`, "POST", body, token),
+      conectar(historicoUrl, "GET", null, token)
+    ]);
+
+    // TRANSFORMAR LOS DATOS DE 15 DÍAS para que coincidan con tu configuración
+    const datosTransformados = (resGrafico?.data || []).map(item => ({
+      fecha: item.date, // Mantener fecha
+      // Temperatura (temp_mean → temperatura)
+      temperatura: item.temp_mean,
       
-      const historicoUrl = `${urlBase}apis/historico?lat=${body.lat}&lon=${body.lon}`;
-      const urlPlagas = `https://aanearana-deteccion-plagas.hf.space/plagas?lat=${body.lat}&lon=${body.lon}&fruta=${body.fruta}`;
-      const urlMultimedia = `${urlBase}multimedia/cultivo/${cultivo.id_cultivo}`;
-
-      const [resGrafico, resMeteo, resPlagas, resMultimedia, resSuelo, resHistorico] = await Promise.all([
-        conectar(`${urlBase}apis/historico`, "POST", body, token),
-        conectar(`${urlBase}apis/alerta-meteo`, "POST", body, token),
-        conectar(urlPlagas, "GET", {}, token),
-        conectar(urlMultimedia, "GET", {}, token),
-        conectar(`${urlBase}apis/info-suelo`, "POST", body, token),
-        conectar(historicoUrl, "GET", {}, token)
-      ]);
-
-      setDatosGrafico(resGrafico?.data || []);
-      setAlertasMeteo(resMeteo?.data || []);
-      setAlertasPlagas(resPlagas?.alertas || []);
-      setMultimedia(resMultimedia?.archivos || []);
-      setInfoSuelo(resSuelo?.data || {});
+      // Humedad del suelo - la API no proporciona esto, podrías usar humidity_mean como aproximación
+      // o dejarlo como 0 si no está disponible
+      humedad_suelo: item.humidity_mean || 0,
       
-      // Aquí guardamos el historico tal cual viene, lo procesamos en el useMemo
-      setHistorico(resHistorico?.data || resHistorico || []);
+      // Evapotranspiración (evapotranspiration → evapotranspiracion)
+      evapotranspiracion: item.evapotranspiration,
+      
+      // Precipitación - la API da precip_prob (probabilidad), no mm
+      // Si necesitas mm, podrías calcularlo o usar otro valor
+      precipitacion: item.precip_prob || 0, // Esto es probabilidad, no mm
+      
+      // Humedad relativa (humidity_mean → humedad_relativa)
+      humedad_relativa: item.humidity_mean,
+      
+      // Velocidad del viento (wind_speed → velocidad_viento)
+      velocidad_viento: item.wind_speed,
+      
+      // Dirección del viento (wind_direction → direccion_viento)
+      direccion_viento: item.wind_direction,
+      
+      // Datos originales por si los necesitas
+      date: item.date,
+      temp_mean: item.temp_mean,
+      humidity_mean: item.humidity_mean,
+      evapotranspiration: item.evapotranspiration,
+      precip_prob: item.precip_prob,
+      wind_speed: item.wind_speed,
+      wind_direction: item.wind_direction
+    }));
 
-      setCache(cacheKey, {
-        alertasPlagas: resPlagas?.alertas || [],
-        datosGrafico: resGrafico?.data || [],
-        alertasMeteo: resMeteo?.data || [],
-        multimedia: resMultimedia?.archivos || [],
-        infoSuelo: resSuelo?.data || {},
-        historico: resHistorico?.data || resHistorico || []
-      });
+    setDatosGrafico(datosTransformados);
+    setAlertasMeteo(resMeteo?.data || []);
+    setAlertasPlagas(resPlagas?.alertas || []);
+    setMultimedia(resMultimedia?.archivos || []);
+    setInfoSuelo(resSuelo?.data || {});
+    setHistorico(resHistorico?.data || resHistorico || []);
 
-    } catch (err) {
-      console.error("Error cargando analíticas:", err);
-    } finally {
-      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
-    }
-  }, [cultivo, token]);
+    console.log("Datos transformados:", datosTransformados);
+
+    setCache(cacheKey, {
+      alertasPlagas: resPlagas?.alertas || [],
+      datosGrafico: datosTransformados, // Guardar datos transformados
+      alertasMeteo: resMeteo?.data || [],
+      multimedia: resMultimedia?.archivos || [],
+      infoSuelo: resSuelo?.data || {},
+      historico: resHistorico?.data || resHistorico || []
+    });
+
+  } catch (err) {
+    console.error("Error cargando analíticas:", err);
+  } finally {
+    setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
+  }
+}, [cultivo, token]);
 
   useEffect(() => {
     cargarDatos();
