@@ -471,11 +471,9 @@ export const Reportes = () => {
                         <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
                       </>
                     )}
-                    {/* Descargar PDF solo en el modal de detalle */}
-                    {user?.rol === 'Administrador' && (
+                    {(user?.rol === 'Asesor' || user?.rol === 'Productor'|| user?.rol === 'Manager'|| user?.rol === 'Administrador')&& (
                       <>
-                        <button className="btn btn-cancelar" onClick={() => prepararEdicion(r)}>Editar</button>
-                        <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
+                        <button className="btn btn-info"onClick={()=> generarPdfReporte(r.id_reporte)} >Descargar PDF</button>
                       </>
                     )}
                   </div>

@@ -246,9 +246,11 @@ export const Incidencias = () => {
 
 
                   <div className="card-actions">
-                    <button className="btn-primary" onClick={() => prepararEdicion(inc)}>
-                      {user.rol === 'Productor' ? 'Ver Detalles' : 'Gestionar'}
-                    </button>
+                    { (user.rol !== 'Administrador')&& ( 
+                      <button className="btn-primary" onClick={() => prepararEdicion(inc)}>
+                        {user.rol === 'Productor' ? 'Ver Detalles' : 'Gestionar'}
+                      </button>
+                    )}
                     {/* mostrar eliminar solo a Manager y admin*/}
                     <button
                       className="btn-tres"
@@ -256,7 +258,7 @@ export const Incidencias = () => {
                     >
                       Descargar PDF
                     </button>
-                    {(user.rol === 'Manager' || user.rol === 'Administrador') && (
+                    {(user.rol === 'Manager') && (
                       <button
                         className="btn-delete"
                         onClick={() => handleEliminar(inc.id_incidencia)}
