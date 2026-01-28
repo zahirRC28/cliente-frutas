@@ -431,12 +431,6 @@ export const Reportes = () => {
                         <button className="btn btn-info"onClick={()=> generarPdfReporte(r.id_reporte)} >Descargar PDF</button>
                       </>
                     )}
-                    {user?.rol === 'Administrador' && (
-                      <>
-                        <button className="btn btn-cancelar" onClick={() => prepararEdicion(r)}>Editar</button>
-                        <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
-                      </>
-                    )}
                   </div>
                 </article>
               ))}
