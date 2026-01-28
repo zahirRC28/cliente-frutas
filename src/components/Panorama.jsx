@@ -92,7 +92,7 @@ const Marker = ({ position, icon, label, data, extraInfo, type }) => {
                     </strong> 
                     <div style={{ marginBottom: "4px", fontWeight: "500" }}>{d.estado}</div>
                     <div style={{ color: "#475569", fontSize: "11px" }}>
-                      🌡 {d.temp_min}°/{d.temp_max}° · 💧 {d.hr_min}%–{d.hr_max}%
+                      🌡 {d.t_min}° / {d.t_max}° · 💧 {d.hr_min}%
                     </div>
                   </div>
                 ))}

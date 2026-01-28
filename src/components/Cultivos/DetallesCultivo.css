@@ -51,7 +51,7 @@
   color: var(--verde-oscuro);
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-right: 8px;
+  margin: 15px 8px 0 0;
 }
 
 .btn-abrir-360:hover {

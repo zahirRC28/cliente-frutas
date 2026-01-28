@@ -11,8 +11,8 @@ export default function FormularioCultivo({ poligono, onGuardar, token, setPolig
     nombre: "", 
     zona_cultivo: "Zona Norte", 
     tipo_cultivo: "Fruta",      
-    region: "Galicia", 
-    pais: "ES", 
+    region: "", 
+    pais: "", 
     sistema_riego: "Goteo" 
   });
 
@@ -60,12 +60,12 @@ export default function FormularioCultivo({ poligono, onGuardar, token, setPolig
     }
   };
 
-const esFormularioValido = 
-  formulario.nombre.trim().length >= 3 && 
-  formulario.region.trim().length > 0 &&
-  formulario.pais.trim().length === 2 &&
-  (poligono && poligono.length >= 3) &&
-  archivo !== null;
+        const esFormularioValido = 
+          formulario.nombre.trim().length >= 3 && 
+          formulario.region.trim().length > 0 &&
+          formulario.pais.trim().length === 2 &&
+          (poligono && poligono.length >= 3) &&
+          archivo !== null;
 
 const guardarCultivo = async () => {
     if (!poligono || poligono.length < 3) {
@@ -85,6 +85,7 @@ const guardarCultivo = async () => {
     if (pais.length !== 2) {
         return toast.error("El código de país debe tener 2 letras (ej: ES)");
     }
+
 
     setGuardando(true);
     try {
@@ -152,6 +153,25 @@ const guardarCultivo = async () => {
         className="cultivos-input" 
         placeholder="Ej: Finca Norte" 
       />
+      <label className="cultivos-label">Region:</label>
+          <input 
+        name="region" 
+        value={formulario.region} 
+        onChange={handleInputChange} 
+        className="cultivos-input" 
+        placeholder="Ej: Galicia" 
+      />
+
+          <label className="cultivos-label">Pais:</label>
+          <input 
+        name="pais" 
+        value={formulario.pais} 
+        onChange={handleInputChange} 
+        className="cultivos-input" 
+        placeholder="Solo las iniciales: ES "  
+      />
+
+
       
       {/* SECCIÓN MANUAL */}
       <div style={{ marginTop: '15px', padding: '10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
@@ -198,6 +218,7 @@ const guardarCultivo = async () => {
             <option value="Manual">Manual</option>
         </select>
       </div>
+
       
       <label className="cultivos-label">Imagen (Opcional):</label>
       <input type="file" onChange={handleFileChange} className="cultivos-input" />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History } from "lucide-react";
+import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History, Download } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
@@ -168,6 +168,8 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
   }
 }, [cultivo, token]);
+
+console.log(alertasMeteo,"--------------------------")
 
   useEffect(() => {
     cargarDatos();
@@ -349,7 +351,6 @@ const manejarNuevaMedicion = async () => {
       <button 
         onClick={() => setMostrar360(true)} 
         className="btn-abrir-360" 
-        style={{ marginTop: '10px' }}
       >
         <View size={18} /> Explorar Parcela 360°
       </button>
@@ -359,9 +360,9 @@ const manejarNuevaMedicion = async () => {
     <button 
       className="btn-abrir-360" 
       onClick={() => generarPdfCultivo(cultivo.id_cultivo)} 
-      style={{ marginTop: '10px' }}
+      
     >
-      Descargar PDF
+      <Download size={18} /> Descargar PDF
     </button>
   </div>
   <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
