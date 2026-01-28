@@ -6,7 +6,6 @@ import { Bug, Loader2, CheckCircle2 } from 'lucide-react';
 
 export const DetectorPlagas = () => {
     const fileInputRef = useRef(null);
-
     const { token } = useContext(UserContext);
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
@@ -25,10 +24,8 @@ export const DetectorPlagas = () => {
         setCargando(true);
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('file', file);
 
         const data = await conectar(`${import.meta.env.VITE_BACKEND_URL}apis/identificar-plaga`, 'POST', formData, token);
-
 
         if (data && data.ok) setResultado(data);
         setCargando(false);
@@ -43,24 +40,16 @@ export const DetectorPlagas = () => {
                 ref={fileInputRef}
                 onChange={handleFile}
                 style={{ display: 'none' }}
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFile}
-                style={{ display: 'none' }}
             />
 
             {/* Un botón normal que activa el de arriba */}
             <button
-            <button
                 type="button"
-                className="btn-file-custom"
                 className="btn-file-custom"
                 onClick={() => fileInputRef.current.click()}
             >
-                Subir Imagen
+                Seleccionar imagen
             </button>
-
 
             {preview && (
                 <div className="preview-container mb10">
@@ -69,7 +58,7 @@ export const DetectorPlagas = () => {
             )}
 
             <button className="btn-analizar" onClick={enviarImagen} disabled={!file || cargando}>
-                {cargando ? <Loader2 className="spinner" /> : 'Enviar Imagen'}
+                {cargando ? <Loader2 className="spinner" /> : 'Buscar Plagas'}
             </button>
 
             {resultado && (
@@ -87,25 +76,7 @@ export const DetectorPlagas = () => {
                                     Plaga detectada: <strong>{resultado.detecciones[0].plaga}</strong>
                                 </p>
                             </div>
-                            <div className="info-main">
-                                <p className="common-name">
-                                    Plaga detectada: <strong>{resultado.detecciones[0].plaga}</strong>
-                                </p>
-                            </div>
 
-                            <div className="precision-badge">
-                                Precisión: <strong>{(resultado.detecciones[0].confianza * 100).toFixed(2)}%</strong>
-                            </div>
-                        </div>
-                    ) : (
-                        /* Si el total es 0, mostramos que no hay plagas */
-                        <div className="res-box plant-result">
-                            <p className="info-text">
-                                No se ha podido reconocer la plaga.
-                            </p>
-                        </div>
-                    )}
-                </>
                             <div className="precision-badge">
                                 Precisión: <strong>{(resultado.detecciones[0].confianza * 100).toFixed(2)}%</strong>
                             </div>
