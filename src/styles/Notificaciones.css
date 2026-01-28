@@ -1,6 +1,8 @@
 .notifications-panel {
-    width: 320px;
-    height: 520px;
+    width: 100%;
+    min-width: 0;
+    max-width: 420px;
+    align-self: center;
     background: #FFFFFF;
     border-radius: 12px;
     padding: 16px;
