@@ -78,11 +78,11 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.1rem;
-    border-radius: 8px;
+    gap: 0.4rem;
+    padding: 0.38rem 0.75rem;
+    border-radius: 7px;
     font-weight: 700;
-    font-size: 0.97rem;
+    font-size: 0.89rem;
     box-sizing: border-box;
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border 0.15s;
@@ -129,13 +129,26 @@
     color: var(--error);
     border-color: var(--error);
 }
+.btn-tres {
+    background: #ffffff;
+    color: rgb(39, 126, 226);
+    border: 1.5px solid rgb(114, 180, 255);
+    font-weight: 700;
+    margin-left: 10px;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+}
+.btn-tres:hover {
+    background: #f2fbfe;
+    color: rgb(39, 126, 226);
+    border: 1.5px solid rgb(114, 180, 255);
+}
 
 /* Botón borrar/eliminar */
 .btn-delete {
     background: #fff;
     color: var(--error);
     border: 1.5px solid var(--error);
-    padding: 0.6rem 1.1rem;
+    padding: 0.38rem 0.75rem;
 }
 .btn-delete:hover {
     background: #fef2f2;
@@ -197,8 +210,8 @@
     background-color: white;
     color: var(--error);
     border: 1px solid #fee2e2;
-    padding: 10px 18px;
-    border-radius: 8px;
+    padding: 0.38rem 0.75rem;
+    border-radius: 7px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
@@ -211,8 +224,8 @@
 }
 
 .admin-actions button {
-    padding: 10px 18px;
-    border-radius: 8px;
+    padding: 0.38rem 0.75rem;
+    border-radius: 7px;
     border: 1px solid #e5e7eb;
     background: white;
     font-weight: 600;

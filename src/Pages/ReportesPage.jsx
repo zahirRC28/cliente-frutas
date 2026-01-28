@@ -1,5 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { FileText } from 'lucide-react';
+// Modal simple para mostrar detalles
+function ModalDetalleReporte({ open, onClose, reporte, onDescargarPdf }) {
+  if (!open || !reporte) return null;
+  return (
+    <div className="modal-detalle-reporte-bg">
+      <div className="modal-detalle-reporte">
+        <button onClick={onClose} className="modal-cerrar" title="Cerrar">×</button>
+        <h2 className="modal-titulo">Detalle del Reporte</h2>
+        <div className="modal-campo"><strong>Título:</strong> {reporte.titulo}</div>
+        <div className="modal-campo"><strong>Descripción:</strong>
+          <div style={{whiteSpace:'pre-line', color:'#243225'}}>{reporte.descripcion}</div>
+        </div>
+        <div className="modal-campo"><strong>Productor:</strong> {reporte.nombre_productor || reporte.id_productor}</div>
+        <div className="modal-campo"><strong>Cultivo:</strong> {reporte.nombre_cultivo || '—'}</div>
+        <div className="modal-campo"><strong>Fecha:</strong> {reporte.fecha_reporte ? new Date(reporte.fecha_reporte).toLocaleString() : ''}</div>
+        <div style={{marginTop:24, display:'flex', justifyContent:'flex-end', gap:12}}>
+          <button className="btn-tres" onClick={() => onDescargarPdf(reporte.id_reporte)}>
+            Descargar PDF
+          </button>
+          <button className="btn btn-cancelar" onClick={onClose}>Cerrar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+import { FileText, Eye } from 'lucide-react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import conectar from '../helpers/fetch';
@@ -271,6 +296,18 @@ export const Reportes = () => {
 
   const listaFinal = filtrarReportes();
 
+  // Estado para modal de detalle
+  const [detalleOpen, setDetalleOpen] = useState(false);
+  const [detalleReporte, setDetalleReporte] = useState(null);
+  const abrirDetalle = (reporte) => {
+    setDetalleReporte(reporte);
+    setDetalleOpen(true);
+  };
+  const cerrarDetalle = () => {
+    setDetalleOpen(false);
+    setDetalleReporte(null);
+  };
+
   // El tabbar ahora usará la misma estructura y clases que Incidencias
 
   const prepararEdicion = (r) => {
@@ -420,17 +457,21 @@ export const Reportes = () => {
                   </div>
 
                   <div className="acciones">
+                    <button
+                      className="btn"
+                      title="Ver detalle"
+                      style={{ background: '#f6f6f6', color: 'var(--verde-oscuro)', border: '1.2px solid #d1d5db', padding: '0.5rem 0.7rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      onClick={() => abrirDetalle(r)}
+                    >
+                      <Eye size={20} style={{ margin: 0 }} />
+                    </button>
                     {(user?.rol === 'Productor' && Number(user.uid) === Number(r.id_productor)) && (
                       <>
                         <button className="btn btn-guardar" onClick={() => prepararEdicion(r)}>Editar</button>
                         <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
                       </>
                     )}
-                    {(user?.rol === 'Asesor' || user?.rol === 'Productor'|| user?.rol === 'Manager'|| user?.rol === 'Administrador')&& (
-                      <>
-                        <button className="btn btn-info"onClick={()=> generarPdfReporte(r.id_reporte)} >Descargar PDF</button>
-                      </>
-                    )}
+                    {/* Descargar PDF solo en el modal de detalle */}
                     {user?.rol === 'Administrador' && (
                       <>
                         <button className="btn btn-cancelar" onClick={() => prepararEdicion(r)}>Editar</button>
@@ -441,6 +482,7 @@ export const Reportes = () => {
                 </article>
               ))}
             </div>
+            <ModalDetalleReporte open={detalleOpen} onClose={cerrarDetalle} reporte={detalleReporte} onDescargarPdf={generarPdfReporte} />
           </div>
         </>
       )}
@@ -448,3 +490,5 @@ export const Reportes = () => {
     </div>
   );
 };
+
+export default Reportes;
