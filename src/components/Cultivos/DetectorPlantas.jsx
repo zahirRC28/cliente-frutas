@@ -51,7 +51,7 @@ export const DetectorPlantas = () => {
                 className="btn-file-custom"
                 onClick={() => fileInputRef.current.click()}
             >
-                Seleccionar imagen
+                Subir Imagen
             </button>
 
             {preview && (
@@ -65,7 +65,7 @@ export const DetectorPlantas = () => {
                 onClick={enviarImagen}
                 disabled={!file || cargando}
             >
-                {cargando ? <Loader2 className="spinner" /> : 'Identificar Planta'}
+                {cargando ? <Loader2 className="spinner" /> : 'Enviar Imagen'}
             </button>
 
             {resultado && (
