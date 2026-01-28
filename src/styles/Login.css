@@ -14,24 +14,34 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
+    margin-top: 30px;
 }
 .marca-icon {
     font-size: 24px;
     padding: 8px;
     border-radius: 8px;
+    margin-top: 30px;
 }
+
+.nombreApp {
+
+margin-top: 25px;
+
+}
+
 .login-izq h1 {
     font-size: 40px;
     line-height: 1.2;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 .login-izq p {
     max-width: 520px;
-    font-size: 18px;
+    font-size: 19px;
     opacity: 0.9;
+    line-height: 1.7rem;
 }
-.stats-login {
+/* .stats-login {
     display: flex;
     gap: 40px;
     margin-top: auto;
@@ -46,7 +56,7 @@
 .stats-login span {
     font-size: 14px;
     opacity: 0.85;
-}
+} */
 .login-der {
     flex: 1;
     background: #F8F9F6;

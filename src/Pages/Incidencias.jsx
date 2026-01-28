@@ -145,7 +145,7 @@ export const Incidencias = () => {
   return (
     <div className="incidencias-page">
       <header className="page-header mb20">
-        <h1 style={{display:'flex',alignItems:'center',gap:8}}><AlertTriangle size={24} /> Gestión de Incidencias</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 8 }}><AlertTriangle size={24} /> Gestión de Incidencias</h1>
       </header>
 
       <div className="tab-container">
@@ -233,7 +233,6 @@ export const Incidencias = () => {
               <article key={inc.id_incidencia} className={`incidencia-card priority-${inc.prioridad} ${inc.estado === 'cerrada' ? 'is-closed' : ''}`}>
                 <div className="card-main">
                   <h4>{inc.titulo} {inc.estado === 'cerrada' && <span className="closed-tag">(CERRADA)</span>}</h4>
-                  <p>{inc.descripcion}</p>
                   <div className="info-metadata mb20">
                     <p><strong>ID Cultivo:</strong> {inc.id_cultivo}</p>
                     <p><strong>ID Productor:</strong> {inc.id_productor}</p>
@@ -246,19 +245,12 @@ export const Incidencias = () => {
 
 
                   <div className="card-actions">
-                    { (user.rol !== 'Administrador')&& ( 
-                      <button className="btn-primary" onClick={() => prepararEdicion(inc)}>
-                        {user.rol === 'Productor' ? 'Ver Detalles' : 'Gestionar'}
-                      </button>
-                    )}
-                    {/* mostrar eliminar solo a Manager y admin*/}
-                    <button
-                      className="btn-tres"
-                      onClick={() => generarPdfIncidencia(inc.id_incidencia)}
-                    >
-                      Descargar PDF
+                    <button className="btn-primary" onClick={() => prepararEdicion(inc)}>
+                      {user.rol === 'Productor' ? 'Ver Detalles' : 'Gestionar'}
                     </button>
-                    {(user.rol === 'Manager') && (
+
+                    {/* mostrar eliminar solo a Manager y admin*/}
+                    {(user.rol === 'Manager' || user.rol === 'Administrador') && (
                       <button
                         className="btn-delete"
                         onClick={() => handleEliminar(inc.id_incidencia)}
@@ -266,6 +258,11 @@ export const Incidencias = () => {
                         Eliminar
                       </button>
                     )}
+
+                    <button
+                      className="btn-tres" onClick={() => generarPdfIncidencia(inc.id_incidencia)}>
+                      Descargar PDF
+                    </button>
                   </div>
                 </div>
               </article>

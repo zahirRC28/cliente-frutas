@@ -82,15 +82,17 @@
 .cultivos-form-title {
     border-bottom: 2px solid #22C55E;
     padding-bottom: 8px;
+    margin-bottom: 10px;
     margin-top: 0;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 .cultivos-label {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: bold;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .cultivos-input {
