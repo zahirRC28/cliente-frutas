@@ -13,6 +13,7 @@ import { apiPointToPosition } from "../../helpers/coords";
 import conectar from "../../helpers/fetch";
 import { getCache, setCache } from "../../helpers/cache";
 import "./DetallesCultivo.css";
+import { usepdfs } from "../../hooks/usepdfs";
 
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
@@ -48,10 +49,12 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const [alertasPlagas, setAlertasPlagas] = useState([]);
   const [multimedia, setMultimedia] = useState([]);
   const [infoSuelo, setInfoSuelo] = useState({});
+
   const [historico, setHistorico] = useState([]);
 
   // Estado para alternar entre 15 Días y Histórico
   const [modoHistorico, setModoHistorico] = useState(false);
+  const { generarPdfCultivo } = usepdfs();
 
   const [loading, setLoading] = useState({
     grafico: true,
@@ -314,6 +317,9 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
           <h3 className="cultivos-form-title">{cultivo.nombre}</h3>
           <button onClick={() => setMostrar360(true)} className="btn-abrir-360" style={{ marginTop: '10px' }}>
             <View size={18} /> Explorar Parcela 360°
+          </button>
+          <button className="btn-abrir-360" onClick={()=>generarPdfCultivo(cultivo.id_cultivo)} style={{ marginTop: '10px' }}>
+            Descarga pdf
           </button>
         </div>
         <button onClick={onCerrar} className="btn-close"><X size={20} /></button>

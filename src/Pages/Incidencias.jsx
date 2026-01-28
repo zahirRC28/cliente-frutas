@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { userAuth } from '../hooks/userAuth';
 import conectar from '../helpers/fetch';
 import { cultivos } from '../hooks/cultivos';
+import { usepdfs } from "../hooks/usepdfs";
 
 const urlBase = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/+$/, '') + '/';
 
@@ -17,6 +18,7 @@ export const Incidencias = () => {
   const [cargando, setCargando] = useState(false);
   const [vista, setVista] = useState('lista');
   const [filtroProductor, setFiltroProductor] = useState('');
+  const { generarPdfIncidencia } = usepdfs();
 
   const [form, setForm] = useState({
     id: null, titulo: '', descripcion: '', tipo: '', id_cultivo: '',
@@ -241,11 +243,19 @@ export const Incidencias = () => {
                     <p className="mb10"><span className={`badge ${inc.prioridad}`}>Prioridad: {inc.prioridad}</span></p>
                     <p><span>Estado: <strong>{inc.estado.toUpperCase()}</strong></span></p>
                   </div>
+
+
                   <div className="card-actions">
                     <button className="btn-primary" onClick={() => prepararEdicion(inc)}>
                       {user.rol === 'Productor' ? 'Ver Detalles' : 'Gestionar'}
                     </button>
                     {/* mostrar eliminar solo a Manager y admin*/}
+                    <button
+                      className="btn-secondary"
+                      onClick={() => generarPdfIncidencia(inc.id_incidencia)}
+                    >
+                      Descargar PDF
+                    </button>
                     {(user.rol === 'Manager' || user.rol === 'Administrador') && (
                       <button
                         className="btn-delete"

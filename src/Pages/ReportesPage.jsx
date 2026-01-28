@@ -7,6 +7,7 @@ import { userAuth } from '../hooks/userAuth';
 import "./reportes.css";
 import { useReportes } from '../hooks/useReportes';
 import { cultivos } from '../hooks/cultivos';
+import { usepdfs } from '../hooks/usepdfs';
 //hoola
 const urlBase = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/+$/, '') + '/';
 
@@ -20,6 +21,7 @@ export const Reportes = () => {
   const [selectedProductor, setSelectedProductor] = useState('todos');
   const [filtroTitulo, setFiltroTitulo] = useState('');
   const [dataCultivos, setDataCultivos] = useState([]);
+  const { generarPdfReporte } = usepdfs();
   
 
   // Solo para Productor: controla si se ve la lista o el formulario de crear
@@ -424,7 +426,11 @@ export const Reportes = () => {
                         <button className="btn btn-borrar" onClick={() => handleEliminar(r.id_reporte)}>Borrar</button>
                       </>
                     )}
-
+                    {(user?.rol === 'Asesor' || user?.rol === 'Productor'|| user?.rol === 'Manager'|| user?.rol === 'Administrador')&& (
+                      <>
+                        <button className="btn btn-guardar"onClick={()=> generarPdfReporte(r.id_reporte)} >Descargar PDF</button>
+                      </>
+                    )}
                     {user?.rol === 'Administrador' && (
                       <>
                         <button className="btn btn-cancelar" onClick={() => prepararEdicion(r)}>Editar</button>
