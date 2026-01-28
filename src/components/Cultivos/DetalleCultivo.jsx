@@ -51,6 +51,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const [infoSuelo, setInfoSuelo] = useState({});
 
   const [historico, setHistorico] = useState([]);
+  const [resultadoMedicion, setResultadoMedicion] = useState(null);
 
   // Estado para alternar entre 15 Días y Histórico
   const [modoHistorico, setModoHistorico] = useState(false);
@@ -105,7 +106,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       fin: "2025-01-15",
       fruta: "manzana",
       days:'15',
-      cultivo: cultivo.nombre
+      cultivo: cultivo.nombre 
     };
     const urlAnalisisClimatico = `${urlBase}apis/analisis-climatico?lat=${body.lat}&lon=${body.lon}&days=${body.days}`;
     const historicoUrl = `${urlBase}apis/historico?lat=${body.lat}&lon=${body.lon}`;
@@ -118,33 +119,19 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       conectar(urlPlagas, "GET", null, token),
       conectar(urlMultimedia, "GET", null, token),
       conectar(`${urlBase}apis/info-suelo`, "POST", body, token),
-      conectar(historicoUrl, "GET", null, token)
+      conectar(historicoUrl, "GET", null, token),
+
     ]);
 
-    // TRANSFORMAR LOS DATOS DE 15 DÍAS para que coincidan con tu configuración
     const datosTransformados = (resGrafico?.data || []).map(item => ({
-      fecha: item.date, // Mantener fecha
-      // Temperatura (temp_mean → temperatura)
+      fecha: item.date, 
+
       temperatura: item.temp_mean,
-      
-      // Humedad del suelo - la API no proporciona esto, podrías usar humidity_mean como aproximación
-      // o dejarlo como 0 si no está disponible
       humedad_suelo: item.humidity_mean || 0,
-      
-      // Evapotranspiración (evapotranspiration → evapotranspiracion)
       evapotranspiracion: item.evapotranspiration,
-      
-      // Precipitación - la API da precip_prob (probabilidad), no mm
-      // Si necesitas mm, podrías calcularlo o usar otro valor
-      precipitacion: item.precip_prob || 0, // Esto es probabilidad, no mm
-      
-      // Humedad relativa (humidity_mean → humedad_relativa)
+      precipitacion: item.precip_prob || 0,
       humedad_relativa: item.humidity_mean,
-      
-      // Velocidad del viento (wind_speed → velocidad_viento)
       velocidad_viento: item.wind_speed,
-      
-      // Dirección del viento (wind_direction → direccion_viento)
       direccion_viento: item.wind_direction,
       
       // Datos originales por si los necesitas
@@ -164,7 +151,8 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     setInfoSuelo(resSuelo?.data || {});
     setHistorico(resHistorico?.data || resHistorico || []);
 
-    console.log("Datos transformados:", datosTransformados);
+  
+
 
     setCache(cacheKey, {
       alertasPlagas: resPlagas?.alertas || [],
@@ -309,6 +297,37 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     );
   }, [metricaActiva, modoHistorico]);
 
+
+
+  // Dentro de DetalleCultivo, antes del return:
+const [ejecutandoMedicion, setEjecutandoMedicion] = useState(false);
+
+const manejarNuevaMedicion = async () => {
+  setEjecutandoMedicion(true);
+  setResultadoMedicion(null); // Limpiamos resultados previos
+  try {
+    const body = {
+      parcela_id: cultivo.id_cultivo,
+      lat: cultivo.centro[0],
+      lon: cultivo.centro[1],
+      cultivo: cultivo.nombre 
+    };
+    
+    const res = await conectar(`${urlBase}apis/mediciones/general`, "POST", body, token);
+    
+    if (res && res.data) {
+      setResultadoMedicion(res.data);
+      console.log(res.data)
+      cargarDatos(); 
+    }
+  } catch (err) {
+    console.error("Error al solicitar medición:", err);
+    alert("No se pudo conectar con el sensor remoto.");
+  } finally {
+    setEjecutandoMedicion(false);
+  }
+};
+
   // --- JSX ---
   return (
     <div className="cultivos-detalle-panel">
@@ -441,24 +460,66 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         </div>
       </div>
 
-      {/* Visor 360 */}
-      {mostrar360 && (
+{/* Visor 360 */}
+{mostrar360 && (
   <div className="visor-360-overlay">
     <div className="visor-360-controls">
       <button 
-        onClick={() => setMostrar360(false)} 
-        className="btn-cerrar-360"
-      >
-        Cerrar Vista 360
-      </button>
+      onClick={() => { 
+        setMostrar360(false); 
+        setResultadoMedicion(null); 
+      }} 
+      className="btn-cerrar-360"
+    >
+      Cerrar Vista 360
+    </button>
 
-      {identificando && (
-        <div className="analisis-badge">
-          <Loader className="animate-spin" size={16}/> Analizando parcela...
-        </div>
-      )}
+      <button 
+        onClick={manejarNuevaMedicion} 
+        disabled={ejecutandoMedicion}
+        className="btn-nueva-medicion-360"
+      >
+        {ejecutandoMedicion ? <Loader className="animate-spin" size={16} /> : <TrendingUp size={16} />}
+        {ejecutandoMedicion ? "Sincronizando..." : "Sincronizar Medición Real"}
+      </button>
     </div>
 
+{/* PANEL DE DATOS DE RESPUESTA */}
+{resultadoMedicion && (
+  <div className="panel-resultado-api">
+    <div className="resultado-header">
+      <span><TrendingUp size={14} /> Sincronización Real</span>
+      <button onClick={() => setResultadoMedicion(null)} className="btn-close-mini">×</button>
+    </div>
+    <div className="resultado-content">
+      {/* Mapeamos el objeto de resultados, filtrando las llaves que no son métricas */}
+      {Object.entries(resultadoMedicion)
+        .filter(([key]) => typeof resultadoMedicion[key] === 'object' && resultadoMedicion[key].valor !== undefined)
+        .map(([key, data]) => (
+          <div className="dato-fila" key={key}>
+            <span className="dato-label">
+              {key.replace('_', ' ').toUpperCase()}:
+            </span>
+            <span className="dato-valor">
+              {data.valor} 
+              <small style={{ marginLeft: '2px', color: '#64748b' }}>
+                {configMetricas[key]?.unit || ''}
+              </small>
+            </span>
+          </div>
+        ))
+      }
+
+      <div className="status-badge-api">
+        {resultadoMedicion.temperatura?.status || "Sincronizado"}
+      </div>
+      
+      <p className="dato-timestamp">
+        Parcela ID: {resultadoMedicion.temperatura?.parcela?.parcela_id} • {new Date().toLocaleTimeString()}
+      </p>
+    </div>
+  </div>
+)}
     {cloudinaryUrl ? (
       <Panorama imageUrl={cloudinaryUrl} markers={marcadores360} />
     ) : (

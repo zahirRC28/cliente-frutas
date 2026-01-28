@@ -346,3 +346,102 @@
   font-size: 12px;
   display: block;
 }
+
+.btn-nueva-medicion-360 {
+  background-color: #10b981; /* Verde esmeralda */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  pointer-events: auto; /* Asegura que sea clickeable sobre el visor */
+}
+
+.btn-nueva-medicion-360:hover {
+  background-color: #059669;
+  transform: scale(1.05);
+}
+
+.btn-nueva-medicion-360:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Ajuste para que los controles no tapen todo el centro */
+.visor-360-controls {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  z-index: 2000;
+  padding: 0 20px;
+}
+
+.panel-resultado-api {
+  position: absolute;
+  top: 80px; /* Debajo de los botones de control */
+  right: 20px;
+  width: 240px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 3000;
+  border: 1px solid #e2e8f0;
+  animation: fadeInRight 0.3s ease;
+}
+
+.resultado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #1e293b;
+  color: white;
+  border-radius: 12px 12px 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.btn-close-mini {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.resultado-content {
+  padding: 12px 15px;
+}
+
+.dato-fila {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.dato-timestamp {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 10px;
+  text-align: right;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 5px;
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
