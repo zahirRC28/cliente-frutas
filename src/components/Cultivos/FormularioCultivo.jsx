@@ -11,8 +11,8 @@ export default function FormularioCultivo({ poligono, onGuardar, token, setPolig
     nombre: "", 
     zona_cultivo: "Zona Norte", 
     tipo_cultivo: "Fruta",      
-    region: "Galicia", 
-    pais: "ES", 
+    region: "", 
+    pais: "", 
     sistema_riego: "Goteo" 
   });
 
@@ -36,10 +36,8 @@ export default function FormularioCultivo({ poligono, onGuardar, token, setPolig
     if (isNaN(lat) || isNaN(lng)) return toast.warning("Valores numéricos inválidos");
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return toast.warning("Coordenadas fuera de rango");
     
-    // Añadir al array existente o crear uno nuevo
     const nuevoPoligono = [...(poligono || []), [lat, lng]];
     
-    // Actualizar el mapa
     if (setPoligonoExterno) setPoligonoExterno(nuevoPoligono);
     
     setTempCoord({ lat: "", lng: "" }); 
@@ -62,9 +60,32 @@ export default function FormularioCultivo({ poligono, onGuardar, token, setPolig
     }
   };
 
-  const guardarCultivo = async () => {
-    if (!poligono || poligono.length < 3) return toast.warning("Dibuja una zona válida (mínimo 3 puntos)");
-    if (formulario.nombre.length < 3) return toast.error("El nombre debe tener al menos 3 letras");
+        const esFormularioValido = 
+          formulario.nombre.trim().length >= 3 && 
+          formulario.region.trim().length > 0 &&
+          formulario.pais.trim().length === 2 &&
+          (poligono && poligono.length >= 3) &&
+          archivo !== null;
+
+const guardarCultivo = async () => {
+    if (!poligono || poligono.length < 3) {
+        return toast.warning("Dibuja una zona válida (mínimo 3 puntos)");
+    }
+
+    const { nombre, zona_cultivo, tipo_cultivo, region, pais, sistema_riego } = formulario;
+    
+    if (!nombre.trim() || !zona_cultivo.trim() || !region.trim() || !pais.trim()) {
+        return toast.error("Por favor, rellena todos los campos obligatorios");
+    }
+
+    if (nombre.length < 3) {
+        return toast.error("El nombre debe tener al menos 3 letras");
+    }
+
+    if (pais.length !== 2) {
+        return toast.error("El código de país debe tener 2 letras (ej: ES)");
+    }
+
 
     setGuardando(true);
     try {
@@ -121,11 +142,36 @@ export default function FormularioCultivo({ poligono, onGuardar, token, setPolig
   };
 
   return (
-    <div className="cultivos-form-wrapper">
+   <div className="cultivos-form-wrapper">
       <h3 className="cultivos-form-title">Registrar Parcela</h3>
       
       <label className="cultivos-label">Nombre Parcela:</label>
-      <input name="nombre" value={formulario.nombre} onChange={handleInputChange} className="cultivos-input" placeholder="Ej: Finca Norte" />
+      <input 
+        name="nombre" 
+        value={formulario.nombre} 
+        onChange={handleInputChange} 
+        className="cultivos-input" 
+        placeholder="Ej: Finca Norte" 
+      />
+      <label className="cultivos-label">Region:</label>
+          <input 
+        name="region" 
+        value={formulario.region} 
+        onChange={handleInputChange} 
+        className="cultivos-input" 
+        placeholder="Ej: Galicia" 
+      />
+
+          <label className="cultivos-label">Pais:</label>
+          <input 
+        name="pais" 
+        value={formulario.pais} 
+        onChange={handleInputChange} 
+        className="cultivos-input" 
+        placeholder="Solo las iniciales: ES "  
+      />
+
+
       
       {/* SECCIÓN MANUAL */}
       <div style={{ marginTop: '15px', padding: '10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
@@ -172,19 +218,42 @@ export default function FormularioCultivo({ poligono, onGuardar, token, setPolig
             <option value="Manual">Manual</option>
         </select>
       </div>
+
       
       <label className="cultivos-label">Imagen (Opcional):</label>
       <input type="file" onChange={handleFileChange} className="cultivos-input" />
 
+      {/* BOTÓN CON BLOQUEO TOTAL SI FALTA INFO */}
       <button 
         className="cultivos-btn-save"
         onClick={guardarCultivo} 
-        disabled={!poligono || poligono.length < 3 || guardando}
-        style={{ marginTop: '15px', background: (poligono && poligono.length >= 3) ? '#22c55e' : '#cbd5e1', cursor: (poligono && poligono.length >= 3) ? 'pointer' : 'not-allowed', display: 'flex', justifyContent: 'center', gap: '5px', padding: '10px', width: '100%', border: 'none', borderRadius: '6px', color: 'white' }}
+
+        disabled={!esFormularioValido || guardando}
+        style={{ 
+          marginTop: '15px', 
+          background: esFormularioValido && !guardando ? '#22c55e' : '#cbd5e1', 
+          cursor: esFormularioValido && !guardando ? 'pointer' : 'not-allowed', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: '5px', 
+          padding: '10px', 
+          width: '100%', 
+          border: 'none', 
+          borderRadius: '6px', 
+          color: 'white',
+          opacity: esFormularioValido ? 1 : 0.7 // Un poco de transparencia si está bloqueado
+        }}
       >
         {guardando ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} 
         {guardando ? "Guardando..." : "Guardar Parcela"}
       </button>
+
+      {/* Opcional: un recordatorio visual para el usuario */}
+      {!esFormularioValido && !guardando && (
+        <p style={{ color: '#94a3b8', fontSize: '11px', marginTop: '8px', textAlign: 'center' }}>
+          * Debes asignar un nombre y al menos 3 puntos en el mapa.
+        </p>
+      )}
     </div>
   );
 }

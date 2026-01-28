@@ -428,7 +428,7 @@ export const Reportes = () => {
                     )}
                     {(user?.rol === 'Asesor' || user?.rol === 'Productor'|| user?.rol === 'Manager'|| user?.rol === 'Administrador')&& (
                       <>
-                        <button className="btn btn-guardar"onClick={()=> generarPdfReporte(r.id_reporte)} >Descargar PDF</button>
+                        <button className="btn btn-info"onClick={()=> generarPdfReporte(r.id_reporte)} >Descargar PDF</button>
                       </>
                     )}
                     {user?.rol === 'Administrador' && (

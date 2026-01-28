@@ -1,348 +1,350 @@
+/* ==========================================================================
+   VARIABLES Y CONFIGURACIÓN BASE
+   ========================================================================== */
+:root {
+  --verde-principal: #10b981;
+  --verde-oscuro: #059669;
+  --azul-soft: #3b82f6;
+  --danger: #b91c1c;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --bg-card: #f8fafc;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 10px 25px rgba(0,0,0,0.2);
+}
 
-/* --- Contenedor Principal --- */
 .cultivos-detalle-panel {
   display: flex;
   flex-direction: column;
   height: 100%;
+  color: var(--text-main);
 }
 
+/* ==========================================================================
+   CABECERA Y BOTONES ACCIÓN
+   ========================================================================== */
 .cultivos-flex-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 0.5rem;
 }
 
 .cultivos-form-title {
   margin: 0;
-  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
-.cultivos-zona-info {
-  font-size: 13px;
-  color: #64748b;
-}
-
-.btn-abrir-360{
-    display: inline-flex;
+.btn-abrir-360 {
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1.1rem;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 0.97rem;
-  box-sizing: border-box;
-  border: 1.5px solid transparent;
-  background: #fff;
+  font-size: 0.9rem;
+  border: 1.5px solid var(--border-color);
+  background: white;
   color: var(--verde-oscuro);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border 0.15s;
+  transition: all 0.2s ease;
+  margin: 15px 8px 0 0;
 }
 
-
+.btn-abrir-360:hover {
+  background: #f1f5f9;
+  border-color: var(--verde-oscuro);
+  transform: translateY(-1px);
+}
 
 .btn-close {
   background: none;
   border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 5px;
+  color: var(--text-muted);
+  transition: color 0.2s;
 }
 
-.btn-close:hover {
-  opacity: 0.7;
-}
-
-.cultivos-label {
-  margin-top: 10px;
-  color: #475569;
-}
+.btn-close:hover { color: var(--danger); }
 
 .cultivos-divider {
   margin: 15px 0;
   border: 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* --- Estados de Carga --- */
-.cultivos-loader-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-}
-
-.cultivos-loader-text {
-  margin-top: 10px;
-  color: #64748b;
-}
-
-/* --- Dashboard y Tarjetas (Cards) --- */
+/* ==========================================================================
+   DASHBOARD GRID (SCROLLABLE)
+   ========================================================================== */
 .dashboard-grid {
   display: flex;
   flex-direction: column;
   gap: 20px;
   overflow-y: auto;
-  padding-right: 5px; /* Para que el scrollbar no se coma el contenido */
+  padding-right: 8px;
+  flex: 1;
 }
 
-/* Estilo base para todas las tarjetas */
 .card-base {
-  padding: 15px;
-  border-radius: 8px;
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: white;
 }
 
-.card-grafico, .card-tabla {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-}
+.card-grafico { background: var(--bg-card); }
+.card-plagas { background: #fef2f2; border-color: #fecaca; }
 
-.card-plagas {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-}
-
-/* Títulos de las tarjetas */
 .card-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
-  color: #334155;
-  margin-top: 0;
+  margin: 0 0 15px 0;
+  font-weight: 600;
 }
 
-.card-title.danger {
-  color: #991b1b;
-}
+.card-title.danger { color: var(--danger); }
 
-.chart-container {
-  width: 100%;
-  height: 250px;
-}
-
-/* --- Lista de Plagas --- */
-.plagas-list {
+/* ==========================================================================
+   CONTROLES DEL GRÁFICO
+   ========================================================================== */
+.chart-controls {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  margin-bottom: 15px;
+  background: white;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  flex-wrap: wrap;
 }
+
+.chart-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chart-btn:hover { background: #f1f5f9; }
+
+.chart-btn.active {
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-container { width: 100%; height: 280px; }
+
+/* ==========================================================================
+   ALERTAS DE PLAGAS
+   ========================================================================== */
+.plagas-list { display: flex; flex-direction: column; gap: 10px; }
 
 .plaga-item {
   background: white;
   padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .plaga-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
-}
-
-.plaga-name-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.plaga-name {
-  color: #1e293b;
-  font-size: 15px;
-  text-transform: capitalize;
+  margin-bottom: 4px;
 }
 
 .plaga-risk-badge {
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 11px;
+  font-weight: 800;
   color: white;
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: 20px;
 }
 
-.plaga-status {
-  margin: 0 0 6px 0;
-  font-size: 13px;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.plaga-gdd {
-  font-size: 11px;
-  color: #94a3b8;
-  font-style: italic;
-}
-
-.plagas-empty {
-  font-size: 14px;
-  color: #991b1b;
-  margin: 0;
-}
-
-/* --- Tabla de Sensores --- */
-.tabla-sensores {
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.tabla-sensores th, .tabla-sensores td {
-  padding: 8px;
-}
-
-.tabla-sensores thead tr {
-  border-bottom: 2px solid #cbd5e1;
-  color: #64748b;
-}
-
-.tabla-sensores tbody tr {
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.tabla-sensores td.sensor-name {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tabla-empty {
-  text-align: center;
-  color: #94a3b8;
-}
-
-/* --- Filtros del Gráfico --- */
-.chart-controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  background: white;
-  padding: 5px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  flex-wrap: wrap;
-  max-width: 100%;
-  overflow-x: auto;
-  box-sizing: border-box;
-  justify-content: space-around;
-}
-
-@media (max-width: 600px) {
-  .chart-controls {
-    width: 100%;
-    gap: 6px;
-    padding: 4px 2px;
-  }
-}
-
-.chart-btn {
-  border: none;
-  background: transparent;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.chart-btn:hover {
-  background: #f1f5f9;
-}
-
-.chart-btn.active {
-  background: #3b82f6; /* Azul base */
-  color: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-/* Colores específicos cuando están activos */
-.chart-btn.active.temperatura { background: #f59e0b; }
-.chart-btn.active.humedad { background: #3b82f6; }
-.chart-btn.active.lluvia { background: #10b981; }
-
-.card-meteo {
-  margin-top: 16px;
-}
-
-.meteo-list {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-}
-
-.meteo-item {
-  min-width: 220px;        /* clave para que no se aplasten */
-  flex-shrink: 0;
-  background: #f8fafc;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-
-.meteo-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-}
-
-.meteo-datos {
-  margin-top: 6px;
-  font-size: 13px;
-  color: #475569;
-}
-/* --- ESTILOS DE LA GALERÍA MULTIMEDIA --- */
+/* ==========================================================================
+   GALERÍA MULTIMEDIA
+   ========================================================================== */
 .multimedia-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 15px;
-  margin-top: 10px;
 }
 
 .multimedia-item {
-  display: flex;
-  flex-direction: column;
-  background: #f8fafc;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
+  background: white;
 }
 
 .multimedia-content {
   width: 100%;
-  height: 120px;
-  object-fit: cover; /* Recorta la imagen para que encaje sin deformarse */
-  transition: transform 0.2s ease;
+  height: 130px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
   cursor: pointer;
 }
 
-.multimedia-content:hover {
-  transform: scale(1.05); /* Efecto zoom al pasar el ratón */
+.multimedia-content:hover { transform: scale(1.08); }
+
+/* ==========================================================================
+   VISOR 360 E INTERACCIÓN POR CLIC
+   ========================================================================== */
+.visor-360-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: black;
+  z-index: 2000;
 }
 
-.multimedia-date {
-  font-size: 11px;
-  color: #64748b;
-  text-align: center;
-  padding: 5px;
-  background: #f1f5f9;
+.visor-360-controls {
+  position: absolute;
+  top: 25px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  z-index: 3000;
 }
 
-.multimedia-link {
-  padding: 15px;
-  text-align: center;
-  color: #3b82f6;
-  text-decoration: none;
-  font-size: 12px;
-  display: block;
+/* Estilo para los ICONOS de los marcadores */
+.psv-marker, .panorama-marker-icon {
+  cursor: pointer !important;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.psv-marker:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+}
+
+/* El cuadro de información que aparece al hacer CLIC */
+.psv-tooltip, .custom-360-tooltip {
+  max-width: 280px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(4px);
+  border-radius: 12px !important;
+  padding: 15px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-md) !important;
+  color: var(--text-main) !important;
+  pointer-events: auto !important; /* Permite scroll o clics dentro del popup */
+}
+
+/* ==========================================================================
+   PANEL DE RESULTADO API (SINCRONIZACIÓN)
+   ========================================================================== */
+.panel-resultado-api {
+  position: absolute;
+  top: 80px; /* Debajo de los botones de control */
+  right: 20px;
+  width: 240px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 3000;
+  border: 1px solid #e2e8f0;
+  animation: fadeInRight 0.3s ease;
+}
+
+.resultado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #1e293b;
+  color: white;
+  border-radius: 12px 12px 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.btn-close-mini {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.resultado-content {
+  padding: 12px 15px;
+}
+
+.dato-fila {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.dato-timestamp {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 10px;
+  text-align: right;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 5px;
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.btn-nueva-medicion-360 {
+  background: var(--verde-principal);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 50px;
+  border: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-nueva-medicion-360:hover:not(:disabled) {
+  background: var(--verde-oscuro);
+  transform: scale(1.05) translateY(-2px);
+}
+
+.btn-nueva-medicion-360:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 768px) {
+  .chart-controls { justify-content: flex-start; }
+  .panel-resultado-api {
+    width: 90%;
+    right: 5%;
+    top: auto;
+    bottom: 30px;
+  }
+  .visor-360-controls { flex-direction: column; align-items: center; }
 }

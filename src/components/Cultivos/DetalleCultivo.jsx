@@ -1,12 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History } from "lucide-react";
+import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History, Download, Trash   } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
 
-import sky from "../../assets/sky.png";
-import soil from "../../assets/soil.png";
-import crop from "../../assets/crop.png";
+import datos from "../../assets/icono-datos.png";
 
 import Panorama from "../Panorama"; 
 import { apiPointToPosition } from "../../helpers/coords";
@@ -17,7 +15,6 @@ import { usepdfs } from "../../hooks/usepdfs";
 
 const urlBase = import.meta.env.VITE_BACKEND_URL;
 
-// --- Configuración de las 7 Variables ---
 const configMetricas = {
   temperatura: { 
     label: "Temperatura", color: "#f59e0b", unit: "°C", key15: "temperatura", keyHist: "temp" 
@@ -44,13 +41,16 @@ const configMetricas = {
 
 export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   // --- Estados ---
+
   const [datosGrafico, setDatosGrafico] = useState([]);
   const [alertasMeteo, setAlertasMeteo] = useState([]);
   const [alertasPlagas, setAlertasPlagas] = useState([]);
   const [multimedia, setMultimedia] = useState([]);
   const [infoSuelo, setInfoSuelo] = useState({});
+  const [eliminar, setEliminar] = useState(false)
 
   const [historico, setHistorico] = useState([]);
+  const [resultadoMedicion, setResultadoMedicion] = useState(null);
 
   // Estado para alternar entre 15 Días y Histórico
   const [modoHistorico, setModoHistorico] = useState(false);
@@ -105,7 +105,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       fin: "2025-01-15",
       fruta: "manzana",
       days:'15',
-      cultivo: cultivo.nombre
+      cultivo: cultivo.nombre 
     };
     const urlAnalisisClimatico = `${urlBase}apis/analisis-climatico?lat=${body.lat}&lon=${body.lon}&days=${body.days}`;
     const historicoUrl = `${urlBase}apis/historico?lat=${body.lat}&lon=${body.lon}`;
@@ -118,43 +118,21 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       conectar(urlPlagas, "GET", null, token),
       conectar(urlMultimedia, "GET", null, token),
       conectar(`${urlBase}apis/info-suelo`, "POST", body, token),
-      conectar(historicoUrl, "GET", null, token)
+      conectar(historicoUrl, "GET", null, token),
+
     ]);
 
-    // TRANSFORMAR LOS DATOS DE 15 DÍAS para que coincidan con tu configuración
     const datosTransformados = (resGrafico?.data || []).map(item => ({
-      fecha: item.date, // Mantener fecha
-      // Temperatura (temp_mean → temperatura)
+      fecha: item.date, 
+
       temperatura: item.temp_mean,
-      
-      // Humedad del suelo - la API no proporciona esto, podrías usar humidity_mean como aproximación
-      // o dejarlo como 0 si no está disponible
       humedad_suelo: item.humidity_mean || 0,
-      
-      // Evapotranspiración (evapotranspiration → evapotranspiracion)
       evapotranspiracion: item.evapotranspiration,
-      
-      // Precipitación - la API da precip_prob (probabilidad), no mm
-      // Si necesitas mm, podrías calcularlo o usar otro valor
-      precipitacion: item.precip_prob || 0, // Esto es probabilidad, no mm
-      
-      // Humedad relativa (humidity_mean → humedad_relativa)
+      precipitacion: item.precip_prob || 0,
       humedad_relativa: item.humidity_mean,
-      
-      // Velocidad del viento (wind_speed → velocidad_viento)
       velocidad_viento: item.wind_speed,
-      
-      // Dirección del viento (wind_direction → direccion_viento)
       direccion_viento: item.wind_direction,
-      
-      // Datos originales por si los necesitas
-      date: item.date,
-      temp_mean: item.temp_mean,
-      humidity_mean: item.humidity_mean,
-      evapotranspiration: item.evapotranspiration,
-      precip_prob: item.precip_prob,
-      wind_speed: item.wind_speed,
-      wind_direction: item.wind_direction
+
     }));
 
     setDatosGrafico(datosTransformados);
@@ -164,11 +142,12 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     setInfoSuelo(resSuelo?.data || {});
     setHistorico(resHistorico?.data || resHistorico || []);
 
-    console.log("Datos transformados:", datosTransformados);
+  
+
 
     setCache(cacheKey, {
       alertasPlagas: resPlagas?.alertas || [],
-      datosGrafico: datosTransformados, // Guardar datos transformados
+      datosGrafico: datosTransformados, 
       alertasMeteo: resMeteo?.data || [],
       multimedia: resMultimedia?.archivos || [],
       infoSuelo: resSuelo?.data || {},
@@ -181,6 +160,8 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
   }
 }, [cultivo, token]);
+
+
 
   useEffect(() => {
     cargarDatos();
@@ -197,12 +178,54 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     return imgEnGaleria ? (imgEnGaleria.url_archivo || imgEnGaleria.url) : null;
   }, [cultivo, multimedia]);
 
-  // --- Identificación automática ---
+  const canShow360 = useMemo(() => {
+  return cloudinaryUrl || multimedia.length > 0;
+}, [cloudinaryUrl, multimedia]);
+
   useEffect(() => {
     if (mostrar360 && cloudinaryUrl && !plantaDetectada && !identificando) {
       identificarAutomaticamente();
     }
   }, [mostrar360, cloudinaryUrl]);
+
+  useEffect(() => {
+    eliminarCultivo()
+  
+  }, [eliminar])
+  
+  
+const eliminarCultivo = async () => {
+  if (!eliminar) return; 
+
+  try {
+    const url = `${urlBase}cultivo/eliminar/${cultivo.id_cultivo}`;
+
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: { 
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json" 
+      }
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      console.log("Eliminado con éxito:", data);
+      // Aquí podrías actualizar tu estado local para quitar el cultivo de la lista
+    } else {
+      console.error("Error al eliminar:", data.msg);
+    }
+
+  } catch (error) {
+    console.log("Error de red:", error);
+  } finally {
+    onCerrar()
+    setEliminar(false);
+  }
+};
+
+
 
   const identificarAutomaticamente = async () => {
     setIdentificando(true);
@@ -230,57 +253,60 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     }
   };
 
-  // --- Marcadores 360 ---
-  const marcadores360 = useMemo(() => {
-    const dimensionesIA = { width: 5888, height: 2944 };
-    const puntosIA = {
-      cielo: { x: 1822, y: 491 },
-      cultivo: { x: 2149, y: 1292 },
-      suelo: { x: 3078, y: 1900 }
-    };
 
-    return [
-      {
-        label: "Predicción Climática (7 días)",
-        position: apiPointToPosition(puntosIA.cielo, dimensionesIA),
-        icon: sky,
-        type: "meteo_list",
-        data: alertasMeteo
-      },
-      {
-        label: identificando
-          ? "⏳ Analizando cultivo ..."
-          : plantaDetectada
-            ? `✅ Tipo de cultivo: ${plantaDetectada.nombre_comun || "Identificado"}` + (plantaDetectada.precision ? ` (precision: ${plantaDetectada.precision})` : "")
-            : "⚠️ No se pudo identificar",
-        position: apiPointToPosition(puntosIA.cultivo, dimensionesIA),
-        icon: crop,
-        confidence: plantaDetectada?.precision,
-        extraInfo: plantaDetectada ? {
-          "Científico": plantaDetectada.nombre_cientifico,
-          "Otros": plantaDetectada.otros_nombres?.slice(0, 20) + "..."
-        } : null
-      },
-      {
-        label: "Info Suelo (NDVI)",
-        position: apiPointToPosition(puntosIA.suelo, dimensionesIA),
-        icon: soil,
-        type: "chart",
-        data: infoSuelo?.productividad_ndvi
-          ? Object.entries(infoSuelo.productividad_ndvi).map(([año, val]) => ({ time: año, value: val }))
-          : [],
-        extraInfo: {
-          pH: infoSuelo?.suelo?.ph_superficie || "N/D",
-          "M. Orgánica": `${infoSuelo?.suelo?.materia_organica_gkg || 0} g/kg`
-        }
+const marcadores360 = useMemo(() => {
+  const dimensionesIA = { width: 5888, height: 2944 };
+  const puntosIA = {
+    cielo: { x: 1822, y: 491 },
+    cultivo: { x: 2149, y: 1292 },
+    suelo: { x: 3078, y: 1900 }
+  };
+
+  return [
+    {
+      label: "Predicción Climática (7 días)",
+      position: apiPointToPosition(puntosIA.cielo, dimensionesIA),
+      icon: datos,
+      type: "meteo_list",
+      data: alertasMeteo,
+      // Añadimos esta bandera para que el componente Panorama sepa 
+      // que no debe mostrarlo hasta el click
+      trigger: "click" 
+    },
+    {
+      label: identificando
+        ? "⏳ Analizando cultivo ..."
+        : plantaDetectada
+          ? `✅ Tipo de cultivo: ${plantaDetectada.nombre_comun || "Identificado"}` + (plantaDetectada.precision ? ` (precision: ${plantaDetectada.precision})` : "")
+          : "⚠️ No se pudo identificar",
+      position: apiPointToPosition(puntosIA.cultivo, dimensionesIA),
+      icon: datos,
+      trigger: "click", // Cambiado de hover a click
+      confidence: plantaDetectada?.precision,
+      extraInfo: plantaDetectada ? {
+        "Científico": plantaDetectada.nombre_cientifico,
+        "Otros": plantaDetectada.otros_nombres?.slice(0, 20) + "..."
+      } : null
+    },
+    {
+      label: "Info Suelo (NDVI)",
+      position: apiPointToPosition(puntosIA.suelo, dimensionesIA),
+      icon: datos,
+      type: "chart",
+      trigger: "click", // Cambiado de hover a click
+      data: infoSuelo?.productividad_ndvi
+        ? Object.entries(infoSuelo.productividad_ndvi).map(([año, val]) => ({ time: año, value: val }))
+        : [],
+      extraInfo: {
+        pH: infoSuelo?.suelo?.ph_superficie || "N/D",
+        "M. Orgánica": `${infoSuelo?.suelo?.materia_organica_gkg || 0} g/kg`
       }
-    ];
-  }, [alertasMeteo, infoSuelo, plantaDetectada, identificando]);
+    }
+  ];
+}, [alertasMeteo, infoSuelo, plantaDetectada, identificando]);
 
-  // --- CORRECCIÓN CLAVE: Preparación segura de datos para el gráfico ---
   const datosParaMostrar = useMemo(() => {
     if (modoHistorico) {
-      // Intentamos extraer el array si viene dentro de un objeto
       if (Array.isArray(historico)) return historico;
       if (historico && Array.isArray(historico.data)) return historico.data;
       return []; // Fallback seguro para evitar error .slice
@@ -304,26 +330,78 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         stroke={config.color} 
         strokeWidth={3} 
         dot={modoHistorico ? { r: 1 } : { r: 4 }} 
-        activeDot={{ r: 6 }} 
+        activeDot={{ r: 10, strokeWidth: 2 }} 
       />
     );
   }, [metricaActiva, modoHistorico]);
 
+
+
+  // Dentro de DetalleCultivo, antes del return:
+const [ejecutandoMedicion, setEjecutandoMedicion] = useState(false);
+
+const manejarNuevaMedicion = async () => {
+  setEjecutandoMedicion(true);
+  setResultadoMedicion(null); 
+  try {
+    const body = {
+      parcela_id: cultivo.id_cultivo,
+      lat: cultivo.centro[0],
+      lon: cultivo.centro[1],
+      cultivo: cultivo.nombre 
+    };
+    
+    const res = await conectar(`${urlBase}apis/mediciones/general`, "POST", body, token);
+    
+    if (res && res.data) {
+      setResultadoMedicion(res.data);
+      console.log(res.data,"estos son los datos --------------------------")
+      cargarDatos(); 
+    }
+  } catch (err) {
+    console.error("Error al solicitar medición:", err);
+    alert("No se pudo conectar con el sensor remoto.");
+  } finally {
+    setEjecutandoMedicion(false);
+  }
+};
+
   // --- JSX ---
   return (
     <div className="cultivos-detalle-panel">
-      <div className="cultivos-flex-row">
-        <div>
-          <h3 className="cultivos-form-title">{cultivo.nombre}</h3>
-          <button onClick={() => setMostrar360(true)} className="btn-abrir-360" style={{ marginTop: '10px' }}>
-            <View size={18} /> Explorar Parcela 360°
-          </button>
-          <button className="btn-abrir-360" onClick={()=>generarPdfCultivo(cultivo.id_cultivo)} style={{ marginTop: '10px' }}>
-            Descarga pdf
-          </button>
-        </div>
-        <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
-      </div>
+<div className="cultivos-flex-row">
+  <div>
+    <h3 className="cultivos-form-title">{cultivo.nombre}</h3>
+    
+    {/* SOLUCIÓN SIMPLE Y LIMPIA */}
+    {canShow360 && (
+      <button 
+        onClick={() => setMostrar360(true)} 
+        className="btn-abrir-360" 
+      >
+        <View size={18} /> Explorar Parcela 360°
+      </button>
+    )}
+    
+    {/* Botón PDF siempre visible */}
+    <button 
+      className="btn-abrir-360" 
+      onClick={() => generarPdfCultivo(cultivo.id_cultivo)} 
+      
+    >
+      <Download size={18} /> Descargar PDF
+    </button>
+
+      <button 
+      className="btn-abrir-360" 
+      onClick={() => setEliminar(true)} 
+      
+    >
+      <Trash size={18} /> Eliminar Cultivo
+    </button>
+  </div>
+  <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
+</div>
 
       <hr className="cultivos-divider" />
 
@@ -393,7 +471,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
                   />
                   <YAxis domain={["auto", "auto"]} />
                   <Tooltip 
-                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
+                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" ,padding: "12px"}}
                   />
                   <Legend />
                   {lineaGrafico}
@@ -441,24 +519,66 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         </div>
       </div>
 
-      {/* Visor 360 */}
-      {mostrar360 && (
+{/* Visor 360 */}
+{mostrar360 && (
   <div className="visor-360-overlay">
     <div className="visor-360-controls">
       <button 
-        onClick={() => setMostrar360(false)} 
-        className="btn-cerrar-360"
-      >
-        Cerrar Vista 360
-      </button>
+      onClick={() => { 
+        setMostrar360(false); 
+        setResultadoMedicion(null); 
+      }} 
+      className="btn-cerrar-360"
+    >
+      Cerrar Vista 360
+    </button>
 
-      {identificando && (
-        <div className="analisis-badge">
-          <Loader className="animate-spin" size={16}/> Analizando parcela...
-        </div>
-      )}
+      <button 
+        onClick={manejarNuevaMedicion} 
+        disabled={ejecutandoMedicion}
+        className="btn-nueva-medicion-360"
+      >
+        {ejecutandoMedicion ? <Loader className="animate-spin" size={16} /> : <TrendingUp size={16} />}
+        {ejecutandoMedicion ? "Sincronizando..." : "Sincronizar Medición Real"}
+      </button>
     </div>
 
+{/* PANEL DE DATOS DE RESPUESTA */}
+{resultadoMedicion && (
+  <div className="panel-resultado-api">
+    <div className="resultado-header">
+      <span><TrendingUp size={14} /> Sincronización Real</span>
+      <button onClick={() => setResultadoMedicion(null)} className="btn-close-mini">×</button>
+    </div>
+    <div className="resultado-content">
+      {/* Mapeamos el objeto de resultados, filtrando las llaves que no son métricas */}
+      {Object.entries(resultadoMedicion)
+        .filter(([key]) => typeof resultadoMedicion[key] === 'object' && resultadoMedicion[key].valor !== undefined)
+        .map(([key, data]) => (
+          <div className="dato-fila" key={key}>
+            <span className="dato-label">
+              {key.replace('_', ' ').toUpperCase()}:
+            </span>
+            <span className="dato-valor">
+              {data.valor} 
+              <small style={{ marginLeft: '2px', color: '#64748b' }}>
+                {configMetricas[key]?.unit || 'km/h '}
+              </small>
+            </span>
+          </div>
+        ))
+      }
+
+      <div className="status-badge-api">
+        {resultadoMedicion.temperatura?.status || "Sincronizado"}
+      </div>
+      
+      <p className="dato-timestamp">
+        Parcela ID: {resultadoMedicion.temperatura?.parcela?.parcela_id} • {new Date().toLocaleTimeString()}
+      </p>
+    </div>
+  </div>
+)}
     {cloudinaryUrl ? (
       <Panorama imageUrl={cloudinaryUrl} markers={marcadores360} />
     ) : (

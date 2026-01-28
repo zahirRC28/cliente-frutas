@@ -130,12 +130,14 @@ export const Cultivos = () => {
         toast.error("La zona se solapa con una existente.");
       } else {
         setPoligonoActual(coordsVisuales);
-        toast.success("Zona dibujada correctamente.");
+        setCultivoSeleccionado(null)
       }
     } catch (err) {
       toast.error("Error al procesar el área dibujada");
     }
   };
+
+
 
   const handleZoneDeleted = () => {
     if (deleteLock.current) return;
@@ -221,7 +223,11 @@ export const Cultivos = () => {
           {cultivoSeleccionado ? (
             <DetalleCultivo
               cultivo={cultivoSeleccionado}
-              onCerrar={() => setCultivoSeleccionado(null)}
+              onCerrar={() => {
+              setCultivoSeleccionado(null);
+              const listaActualizada = cultivos.filter(c => c.id_cultivo !== cultivoSeleccionado.id_cultivo);
+              setCultivos(listaActualizada); 
+            }}
               token={token}
             />
           ) : puedeCrear ? (
