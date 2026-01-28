@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, use } from "react";
 import { X, TrendingUp, Loader, AlertTriangle, Image, View } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -23,18 +23,21 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
   const [alertasPlagas, setAlertasPlagas] = useState([]);
   const [multimedia, setMultimedia] = useState([]);
   const [infoSuelo, setInfoSuelo] = useState({});
+  const [historico, setHistorico] = useState([])
 
   const [loading, setLoading] = useState({
     grafico: true,
     meteo: true,
     plagas: true,
     multimedia: true,
+    historico: true
   });
 
   const [metricaActiva, setMetricaActiva] = useState("temperatura");
   const [mostrar360, setMostrar360] = useState(false);
   const [plantaDetectada, setPlantaDetectada] = useState(null);
   const [identificando, setIdentificando] = useState(false);
+
 
   // --- Reset al cambiar de cultivo ---
   useEffect(() => {
@@ -55,12 +58,11 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       setAlertasPlagas(cached.alertasPlagas || []);
       setMultimedia(cached.multimedia || []);
       setInfoSuelo(cached.infoSuelo || {});
-      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false });
+      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
       return;
     }
 
-    setLoading({ grafico: true, meteo: true, plagas: true, multimedia: true });
-
+    setLoading({ grafico: true, meteo: true, plagas: true, multimedia: true, historico: true });
     try {
       const body = {
         parcela_id: cultivo.id_cultivo,
@@ -72,38 +74,44 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
         fruta: "manzana",
         cultivo: cultivo.nombre
       };
-
+      const historicoUrl = `${urlBase}apis/historico?lat=${body.lat}&lon=${body.lon}`;
       const urlPlagas = `https://aanearana-deteccion-plagas.hf.space/plagas?lat=${body.lat}&lon=${body.lon}&fruta=${body.fruta}`;
       const urlMultimedia = `${urlBase}multimedia/cultivo/${cultivo.id_cultivo}`;
 
-      const [resGrafico, resMeteo, resPlagas, resMultimedia, resSuelo] = await Promise.all([
+      const [resGrafico, resMeteo, resPlagas, resMultimedia, resSuelo,resHistorico] = await Promise.all([
         conectar(`${urlBase}apis/historico`, "POST", body, token),
         conectar(`${urlBase}apis/alerta-meteo`, "POST", body, token),
         conectar(urlPlagas, "GET", {}, token),
         conectar(urlMultimedia, "GET", {}, token),
-        conectar(`${urlBase}apis/info-suelo`, "POST", body, token)
+        conectar(`${urlBase}apis/info-suelo`, "POST", body, token),
+        conectar(historicoUrl, "GET", {}, token)
       ]);
 
+      setHistorico(resHistorico?.data || []);
       setAlertasPlagas(resPlagas?.alertas || []);
       setDatosGrafico(resGrafico?.data || []);
       setAlertasMeteo(resMeteo?.data || []);
       setMultimedia(resMultimedia?.archivos || []);
       setInfoSuelo(resSuelo?.data || {});
 
+
       setCache(cacheKey, {
         alertasPlagas: resPlagas?.alertas || [],
         datosGrafico: resGrafico?.data || [],
         alertasMeteo: resMeteo?.data || [],
         multimedia: resMultimedia?.archivos || [],
-        infoSuelo: resSuelo?.data || {}
+        infoSuelo: resSuelo?.data || {},
+        historico: resHistorico?.data || []
       });
 
     } catch (err) {
       console.error("Error cargando analíticas:", err);
     } finally {
-      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false });
+      setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false , historico: false});
     }
   }, [cultivo, token]);
+  
+console.log("HISTORICO:",historico);
 
   useEffect(() => {
     cargarDatos();
