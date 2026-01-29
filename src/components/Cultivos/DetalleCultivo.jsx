@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History, Download, Trash   } from "lucide-react";
+import { X, TrendingUp, Loader, AlertTriangle, Image, View, Calendar, History, Download, Trash ,SquarePen   } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
@@ -39,9 +39,9 @@ const configMetricas = {
   }
 };
 
-export default function DetalleCultivo({ cultivo, onCerrar, token }) {
+export default function DetalleCultivo({ cultivo, onCerrar, token, onEditar }) {
   // --- Estados ---
-
+  console.log(cultivo)
   const [datosGrafico, setDatosGrafico] = useState([]);
   const [alertasMeteo, setAlertasMeteo] = useState([]);
   const [alertasPlagas, setAlertasPlagas] = useState([]);
@@ -101,12 +101,13 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       id: cultivo.id_cultivo,
       lat: cultivo.centro[0],
       lon: cultivo.centro[1],
-      inicio: "2025-01-01",
-      fin: "2025-01-15",
+      inicio: "2026-01-01",
+      fin: "2026-01-15",
       fruta: "manzana",
       days:'15',
       cultivo: cultivo.nombre 
     };
+
     const urlAnalisisClimatico = `${urlBase}apis/analisis-climatico?lat=${body.lat}&lon=${body.lon}&days=${body.days}`;
     const historicoUrl = `${urlBase}apis/historico?lat=${body.lat}&lon=${body.lon}`;
     const urlPlagas = `https://aanearana-deteccion-plagas.hf.space/plagas?lat=${body.lat}&lon=${body.lon}&fruta=${body.fruta}`;
@@ -121,6 +122,8 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
       conectar(historicoUrl, "GET", null, token),
 
     ]);
+
+    console.log(resMeteo,"esto es")
 
     const datosTransformados = (resGrafico?.data || []).map(item => ({
       fecha: item.date, 
@@ -160,6 +163,8 @@ export default function DetalleCultivo({ cultivo, onCerrar, token }) {
     setLoading({ grafico: false, meteo: false, plagas: false, multimedia: false, historico: false });
   }
 }, [cultivo, token]);
+
+console.log(alertasMeteo,"esto tiene alertas meteo")
 
 
 
@@ -212,7 +217,6 @@ const eliminarCultivo = async () => {
 
     if (res.ok) {
       console.log("Eliminado con éxito:", data);
-      // Aquí podrías actualizar tu estado local para quitar el cultivo de la lista
     } else {
       console.error("Error al eliminar:", data.msg);
     }
@@ -224,7 +228,6 @@ const eliminarCultivo = async () => {
     setEliminar(false);
   }
 };
-
 
 
   const identificarAutomaticamente = async () => {
@@ -269,8 +272,6 @@ const marcadores360 = useMemo(() => {
       icon: datos,
       type: "meteo_list",
       data: alertasMeteo,
-      // Añadimos esta bandera para que el componente Panorama sepa 
-      // que no debe mostrarlo hasta el click
       trigger: "click" 
     },
     {
@@ -395,13 +396,25 @@ const manejarNuevaMedicion = async () => {
       <button 
       className="btn-abrir-360" 
       onClick={() => setEliminar(true)} 
+      >
+        <Trash size={18} /> Eliminar Cultivo
+      </button>
+
       
+      <button 
+      className="btn-abrir-360" 
+      onClick={onEditar} 
     >
-      <Trash size={18} /> Eliminar Cultivo
+      <SquarePen size={18} /> Editar
     </button>
-  </div>
-  <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
-</div>
+
+        </div>
+        <button onClick={onCerrar} className="btn-close"><X size={20} /></button>
+
+
+        
+      </div>
+      
 
       <hr className="cultivos-divider" />
 

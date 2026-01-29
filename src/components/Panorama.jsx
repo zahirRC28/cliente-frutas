@@ -70,7 +70,7 @@ const Marker = ({ position, icon, label, data, extraInfo, type }) => {
             {type === "meteo_list" && Array.isArray(data) && (
               <div style={{
                 fontSize: "12px",
-                maxHeight: "300px", // Ajustado para no desbordar el Canvas
+                maxHeight: "300px", 
                 overflowY: "auto",
                 display: "flex",
                 flexDirection: "column",

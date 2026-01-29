@@ -46,6 +46,7 @@ export const Cultivos = () => {
   const [poligonoActual, setPoligonoActual] = useState([]);
   const [cultivoSeleccionado, setCultivoSeleccionado] = useState(null);
   const [usuarioAFiltrar, setUsuarioAFiltrar] = useState(uid);
+  const [editando, setEditando] = useState(false);
 
   // --- CARGA DE DATOS ---
   useEffect(() => {
@@ -81,7 +82,6 @@ export const Cultivos = () => {
     cargarCultivos();
   }, [usuarioAFiltrar, token]);
 
-  // --- MAPEO DE ZONAS ---
   const zonasParaMapa = useMemo(() => {
     if (!cultivos.length) return [];
     return cultivos.map((c) => {
@@ -138,6 +138,9 @@ export const Cultivos = () => {
   };
 
 
+  
+
+
 
   const handleZoneDeleted = () => {
     if (deleteLock.current) return;
@@ -156,7 +159,65 @@ export const Cultivos = () => {
     setPoligonoActual(nuevasCoords);
   };
 
-  const onCultivoClick = (id_cultivo) => {
+  //cambios luego
+/*   const editarCultivoService = async (datosModificados) => {
+  try {
+    const url = `${urlBase}cultivo/editar/${datosModificados.id_cultivo}`;
+
+    const res = await fetch(url, {
+      method: "PUT", 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      },
+      body: JSON.stringify({
+        nombre: datosModificados.nombre,
+        zona_cultivo: datosModificados.zona_cultivo,
+        tipo_cultivo: datosModificados.tipo_cultivo,
+        region: datosModificados.region,
+        pais: datosModificados.pais,
+        sistema_riego: datosModificados.sistema_riego,
+        poligono: datosModificados.poligono 
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.msg || "Error al actualizar");
+    }
+
+    setCultivos((prev) =>
+      prev.map((c) => (c.id_cultivo === data.cultivo.id ? data.cultivo : c))
+    );
+
+    console.log("Cultivo actualizado:", data.cultivo);
+    return data;
+
+  } catch (error) {
+    console.error("Error en la petición:", error.message);
+  }
+};
+ */
+  
+const handleCultivoActualizado = (cultivoUpdate) => {
+  setCultivos(prev => prev.map(c => 
+    c.id_cultivo === cultivoUpdate.id_cultivo ? { ...c, ...cultivoUpdate } : c
+  ));
+  setEditando(false);
+  setCultivoSeleccionado(null);
+};
+
+const handleCancelarEdicion = () => {
+  setEditando(false);         
+  setCultivoSeleccionado(null); 
+  setCultivoSeleccionado(cultivoSeleccionado);
+  setPoligonoActual([]) 
+};
+
+
+
+const onCultivoClick = (id_cultivo) => {
     const zonaEnriquecida = zonasParaMapa.find(z => z.id === id_cultivo);
     if (zonaEnriquecida) setCultivoSeleccionado(zonaEnriquecida);
   };
@@ -220,28 +281,31 @@ export const Cultivos = () => {
         </div>
 
         <div className="cultivos-right-section">
-          {cultivoSeleccionado ? (
-            <DetalleCultivo
-              cultivo={cultivoSeleccionado}
-              onCerrar={() => {
+  {cultivoSeleccionado && !editando ? (
+    <DetalleCultivo
+      cultivo={cultivoSeleccionado}
+      onCerrar={() => {
               setCultivoSeleccionado(null);
               const listaActualizada = cultivos.filter(c => c.id_cultivo !== cultivoSeleccionado.id_cultivo);
               setCultivos(listaActualizada); 
             }}
-              token={token}
-            />
-          ) : puedeCrear ? (
-            <FormularioCultivo
-              poligono={poligonoActual}
-              setPoligonoExterno={handleManualCoords}
-              token={token}
-              onGuardar={(nuevoCultivo) => {
-                setCultivos([nuevoCultivo, ...cultivos]);
-                setPoligonoActual([]);
-              }}
-            />
-          ) : null}
-        </div>
+      onEditar={() => setEditando(true)} 
+      token={token}
+    />
+  ) : puedeCrear ? (
+    <FormularioCultivo
+      poligono={poligonoActual}
+      setPoligonoExterno={handleManualCoords}
+      token={token}
+      edit={editando ? cultivoSeleccionado : null} 
+      onGuardar={editando ? handleCultivoActualizado : (nuevo) => {
+        setCultivos([nuevo, ...cultivos]);
+        setPoligonoActual([]);
+      }}
+      onCancelar={handleCancelarEdicion}
+    />
+  ) : null}
+</div>
       </div>
 
       <div className="herramientas-diagnostico-container" style={{ gridColumn: "1 / -1", width: "100%" }}>
