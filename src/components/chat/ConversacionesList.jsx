@@ -1,11 +1,22 @@
-export const ConversacionesList = ({ conversaciones, onSelect, conversacionActiva }) => {
+export const ConversacionesList = ({
+  conversaciones,
+  onSelect,
+  conversacionActiva,
+}) => {
+  const conversacionesFiltradas = conversaciones.filter(
+    (c) => c.rol_otro_usuario !== "Administrador",
+  );
+
   return (
     <div className="conversaciones-list">
-      {conversaciones.map((c, index) => (
+      {conversacionesFiltradas.map((c) => (
         <div
-          key={index}
-          id={c.id_conversacion}
-          className={`conversacion-item ${conversacionActiva?.id_conversacion === c.id_conversacion ? 'activo' : ''}`}
+          key={c.id_conversacion}
+          className={`conversacion-item ${
+            conversacionActiva?.id_conversacion === c.id_conversacion
+              ? "activo"
+              : ""
+          }`}
           onClick={() => onSelect(c)}
         >
           <strong>{c.nombre_completo}</strong>
@@ -13,5 +24,5 @@ export const ConversacionesList = ({ conversaciones, onSelect, conversacionActiv
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
