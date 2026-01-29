@@ -159,47 +159,6 @@ export const Cultivos = () => {
     setPoligonoActual(nuevasCoords);
   };
 
-  //cambios luego
-/*   const editarCultivoService = async (datosModificados) => {
-  try {
-    const url = `${urlBase}cultivo/editar/${datosModificados.id_cultivo}`;
-
-    const res = await fetch(url, {
-      method: "PUT", 
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` 
-      },
-      body: JSON.stringify({
-        nombre: datosModificados.nombre,
-        zona_cultivo: datosModificados.zona_cultivo,
-        tipo_cultivo: datosModificados.tipo_cultivo,
-        region: datosModificados.region,
-        pais: datosModificados.pais,
-        sistema_riego: datosModificados.sistema_riego,
-        poligono: datosModificados.poligono 
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.msg || "Error al actualizar");
-    }
-
-    setCultivos((prev) =>
-      prev.map((c) => (c.id_cultivo === data.cultivo.id ? data.cultivo : c))
-    );
-
-    console.log("Cultivo actualizado:", data.cultivo);
-    return data;
-
-  } catch (error) {
-    console.error("Error en la petición:", error.message);
-  }
-};
- */
-  
 const handleCultivoActualizado = (cultivoUpdate) => {
   setCultivos(prev => prev.map(c => 
     c.id_cultivo === cultivoUpdate.id_cultivo ? { ...c, ...cultivoUpdate } : c

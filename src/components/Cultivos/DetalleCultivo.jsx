@@ -123,7 +123,7 @@ export default function DetalleCultivo({ cultivo, onCerrar, token, onEditar }) {
 
     ]);
 
-    console.log(resMeteo,"esto es")
+    console.log(resMeteo,"esto es la respuesta del")
 
     const datosTransformados = (resGrafico?.data || []).map(item => ({
       fecha: item.date, 

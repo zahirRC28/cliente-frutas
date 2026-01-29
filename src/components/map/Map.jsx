@@ -17,7 +17,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const SPAIN_CENTER = [40.4637, -3.7492];
+const SPAIN_CENTER = [-33.4489, -70.6693];
 
 // Componente para recentrar cámara
 const RecenterMap = ({ coords }) => {
@@ -62,7 +62,7 @@ const _onDeleted = (e) => {
         <div style={{ height: '500px', width: '100%' }}>
                 <MapContainer 
                 center={SPAIN_CENTER} 
-                zoom={6} 
+                zoom={9} 
                 minZoom={3} 
                 maxBounds={[
                     [-90, -180],

@@ -48,7 +48,7 @@ export const DetectorPlagas = () => {
                 className="btn-file-custom"
                 onClick={() => fileInputRef.current.click()}
             >
-                Seleccionar imagen
+                Subir Imagen
             </button>
 
             {preview && (
@@ -58,7 +58,7 @@ export const DetectorPlagas = () => {
             )}
 
             <button className="btn-analizar" onClick={enviarImagen} disabled={!file || cargando}>
-                {cargando ? <Loader2 className="spinner" /> : 'Buscar Plagas'}
+                {cargando ? <Loader2 className="spinner" /> : 'Enviar Imagen'}
             </button>
 
             {resultado && (
